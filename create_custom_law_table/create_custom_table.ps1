@@ -179,5 +179,4 @@ Function Import-AzLACustomTable {
     } catch {
         Write-Host "An error occurred while sending the table via the REST API:`n$($_.Exception.Message)" -ForegroundColor Red
     }
-
 }
