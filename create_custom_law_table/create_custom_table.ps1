@@ -108,7 +108,7 @@ Function Import-AzLACustomTable {
     $tableParams.properties.schema.columns += $timeGenerated_
     $tableParams.properties.schema.columns += $rawData_
     
-    Write-Host "The mandatory fields `"TimeGenerated:dateTime`" and `"RawData:string `" successfully added to your custom log [$TableName]." -ForegroundColor Magenta
+    Write-Host "Mandatory fields `"TimeGenerated:dateTime`" and `"RawData:string `" successfully added to your custom log [$TableName]." -ForegroundColor Magenta
     Write-Host "How many columns do you want to add to your custom table: `"$TableName`"?" -ForegroundColor Yellow
     $columnCount = Read-Host "value"
     
