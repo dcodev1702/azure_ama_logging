@@ -12,7 +12,7 @@ Function Import-AzLACustomeTable {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
-	[ValidateSet('AzureCloud','AzureUSGovernment')]
+	    [ValidateSet('AzureCloud','AzureUSGovernment')]
         [string]$Environment,
         [Parameter(Mandatory=$false)]
         [string]$SaveFile=$null,
@@ -26,10 +26,10 @@ Function Import-AzLACustomeTable {
 
     # Check if the user has an active Azure session
     if(Get-AzContext -ErrorAction SilentlyContinue){
-        Write-Output "Active Azure session found."
+        Write-Host "Active Azure session found." -ForegroundColor Green
         $SubscriptionId = (Get-AzContext).Subscription.Id
     } else {
-        Write-Output "No active Azure session found. Please run Connect-AzAccount to connect to Azure."
+        Write-Host "No active Azure session found. Please run Connect-AzAccount to connect to Azure." -ForegroundColor Red
         Connect-AzAccount -Environment $Environment -UseDeviceAuthentication
         $SubscriptionId = (Get-AzContext).Subscription.Id
     }
@@ -47,7 +47,8 @@ Function Import-AzLACustomeTable {
     }
 
     
-    # LA Custom Table Creation (LA -eq Log Analytics)
+
+    <#
     $TimeGenerated_ = @{
         name = "TimeGenerated"
         type = "DateTime"
@@ -135,12 +136,62 @@ Function Import-AzLACustomeTable {
     $table = @{
         properties = $properties
     }
+#>
+    $tableParams = [ordered]@{
+        properties = [ordered]@{
+            schema = [ordered]@{
+                name = $TableName
+                columns = @()
+            }
+        }
+    }
+    
+    $TimeGenerated_ = @{
+        name = "TimeGenerated"
+        type = "dateTime"
+    }
+    
+    $RawData_ = @{
+        name = "RawData"
+        type = "string"
+    }
+    
+    $tableParams.properties.schema.columns += $timeGenerated_
+    $tableParams.properties.schema.columns += $rawData_
+    
+    Write-Host "The mandatory fields `"TimeGenerated:dateTime`" and `"RawData:string `" have already been added to your custom log (CL)." -ForegroundColor Magenta
+    Write-Host "How many columns do you want to add to custom table: `"$TableName`"?" -ForegroundColor Yellow
+    $columnCount = Read-Host "value"
+    
+    # Define the accepted data types
+    $dataTypes = "string", "dynamic", "dateTime", "bool", "float", "int"
 
+    Write-Host "Valid datatypes are: string, dynamic, dateTime, bool, float, and int" -ForegroundColor Yellow
+    for ($i = 1; $i -le $columnCount; $i++) {
+        $columnName = Read-Host "Enter the column name for column $i"
+        #$dataType = Read-Host "Enter the column datatype for column $columnName"
+        
+        # Validate the column type
+        do {
+            $dataType = Read-Host "Enter the column data type for column $i (accepted types: $dataTypes)"
+            $isValidType = $dataTypes.Contains($dataType)
+            if (-not $isValidType) {
+                Write-Host "Invalid column type. Please enter one of the accepted data types."
+            }
+        } until ($isValidType)
+            
+        $column = [ordered]@{
+            name = $columnName
+            type = $dataType
+        }
+        $tableParams.properties.schema.columns += $column
+    }
+    
     if ($SaveFile) {
-        $table | ConvertTo-Json -Depth 32 | Out-File -FilePath $SaveFile
+        $tableParams | ConvertTo-Json -Depth 32 | Out-File -FilePath $SaveFile
     }
 
-    $TableParams = $table | ConvertTo-JSON -Depth 32
+    $Table = $tableParams | ConvertTo-JSON -Depth 32
 
     # Do something with the input parameters
     Write-Host "Subscription Id: $SubscriptionId" -ForegroundColor Green
@@ -149,15 +200,15 @@ Function Import-AzLACustomeTable {
     Write-Host "WorkspaceName: $Workspace" -ForegroundColor Green
     Write-Host "TableName: $TableName" -ForegroundColor Green
 
-    Write-Host "Do you want to send the table via API call? (Y/N)" -ForegroundColor Red
-    $sendTable = Read-Host 
+    Write-Host "Do you want to send your custom table to Log Analytics via API? (Y/N)" -ForegroundColor Red
+    $sendTable = Read-Host "Selection "
 
     if ($sendTable.ToLower() -eq "y") {
-        Invoke-AzRestMethod -Path "/subscriptions/$subscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" -Method PUT -payload $TableParams
+        Invoke-AzRestMethod -Path "/subscriptions/$subscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" -Method PUT -payload $Table
         Write-Host "Table `"$TableName`" created and sent via RESTFul API." -ForegroundColor Green
     } else {
-        Write-Host "Table `"$TableName`" created and $SaveFile but not sent via API call." -ForegroundColor Yellow
-        Write-Output $TableParams
+        Write-Host "Table `"$TableName`" created and $($pwd)\$SaveFile but not sent via the REST API." -ForegroundColor Yellow
+        Write-Output $Table
     }
 
 }
