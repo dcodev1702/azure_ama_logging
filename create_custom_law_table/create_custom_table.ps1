@@ -83,7 +83,7 @@ Function Import-AzLACustomeTable {
         $columnName = Read-Host "Enter the column name for column $i"
         #$dataType = Read-Host "Enter the column datatype for column $columnName"
         
-        # Validate the column type
+        # Validate the data type
         do {
             $dataType = Read-Host "Enter the column data type for column $i (accepted types: $dataTypes)"
             $isValidType = $dataTypes.Contains($dataType)
@@ -114,7 +114,6 @@ Function Import-AzLACustomeTable {
     $sendTable = Read-Host "Selection "
 
     if ($sendTable.ToLower() -eq "y") {
-        # $Table is used for the REST API call
         $Table = $tableParams | ConvertTo-JSON -Depth 32
     
         Invoke-AzRestMethod -Path "/subscriptions/$subscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" -Method PUT -payload $Table
