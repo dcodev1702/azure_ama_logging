@@ -2,7 +2,7 @@
 Author: dcodev1702
 Date: 10 March 2023
 
-Usage: Import-AzLACustomeTable -Environment AzureCloud `
+Usage: Import-AzLACustomeTable -Environment 'AzureCloud' `
        -ResourceGroup 'myRG' -Workspace 'myWorkspace' `
        -TableName 'Apache2_AccessLog_CL' -SaveFile 'apache2_accesslog_table.json'
 
@@ -12,7 +12,7 @@ Function Import-AzLACustomeTable {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
-	    [ValidateSet('AzureCloud','AzureUSGovernment')]
+	[ValidateSet('AzureCloud','AzureUSGovernment')]
         [string]$Environment,
         [Parameter(Mandatory=$false)]
         [string]$SaveFile=$null,
@@ -46,97 +46,7 @@ Function Import-AzLACustomeTable {
         $TableName = Read-Host "Enter TableName"
     }
 
-    
-
-    <#
-    $TimeGenerated_ = @{
-        name = "TimeGenerated"
-        type = "DateTime"
-    }
-    
-    $RawData_ = @{
-        name = "RawData"
-        type = "String"
-    }
-
-    $PID_ = @{
-        name = "PID"
-        type = "dynamic"
-    }
-    
-    $Filename_ = @{
-        name = "Filename"
-        type = "dynamic"
-    }
-    
-    $RemoteIP_ = @{
-        name = "RemoteIP"
-        type = "dynamic"
-    }
-    
-    $Server_ = @{
-        name = "Server"
-        type = "dynamic"
-    }
-    
-    $Request_ = @{
-        name = "Request"
-        type = "dynamic"
-    }
-    
-    $Method_ = @{
-        name = "Method"
-        type = "dynamic"
-    }
-    
-    $Status_ = @{
-        name = "Status"
-        type = "dynamic"
-    }
-    
-    $BytesSent_ = @{
-        name = "BytesSent"
-        type = "dynamic"
-    }
-    
-    $UserAgent_ = @{
-        name = "UserAgent"
-        type = "dynamic"
-    }
-    
-    $Referer_ = @{
-        name = "Referer"
-        type = "dynamic"
-    }
-    
-    $columns = @(
-        $TimeGenerated_,
-        $RawData_,
-        $PID_,
-        $Filename_,
-        $RemoteIP_,
-        $Server_,
-        $Request_,
-        $Method_,
-        $Status_,
-        $BytesSent_,
-        $UserAgent_,
-        $Referer_
-    )
-    
-    $schema = @{
-        name = $TableName
-        columns = $columns
-    }
-
-    $properties = @{
-        schema = $schema
-    }
-
-    $table = @{
-        properties = $properties
-    }
-#>
+    # Create JSON structure for the custom log (table)
     $tableParams = [ordered]@{
         properties = [ordered]@{
             schema = [ordered]@{
@@ -146,6 +56,8 @@ Function Import-AzLACustomeTable {
         }
     }
     
+    # As per the requirement for a custom log
+    # TimeGenerated:dateTime and RawData:string MUST be provided at a minimum
     $TimeGenerated_ = @{
         name = "TimeGenerated"
         type = "dateTime"
@@ -191,9 +103,7 @@ Function Import-AzLACustomeTable {
         $tableParams | ConvertTo-Json -Depth 32 | Out-File -FilePath $SaveFile
     }
 
-    $Table = $tableParams | ConvertTo-JSON -Depth 32
-
-    # Do something with the input parameters
+    # Radiate information to the user for self validation
     Write-Host "Subscription Id: $SubscriptionId" -ForegroundColor Green
     Write-Host "FilePath: $SaveFile" -ForegroundColor Green
     Write-Host "ResourceName: $ResourceGroup" -ForegroundColor Green
@@ -204,6 +114,9 @@ Function Import-AzLACustomeTable {
     $sendTable = Read-Host "Selection "
 
     if ($sendTable.ToLower() -eq "y") {
+        # $Table is used for the REST API call
+        $Table = $tableParams | ConvertTo-JSON -Depth 32
+    
         Invoke-AzRestMethod -Path "/subscriptions/$subscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" -Method PUT -payload $Table
         Write-Host "Table `"$TableName`" created and sent via RESTFul API." -ForegroundColor Green
     } else {
