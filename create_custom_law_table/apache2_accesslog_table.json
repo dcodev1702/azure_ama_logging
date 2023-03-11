@@ -1,6 +1,7 @@
 {
    "properties": {
       "schema": {
+          "name": "Apache2_AccessLog_CL",
           "columns": [
              {
                 "name": "TimeGenerated",
