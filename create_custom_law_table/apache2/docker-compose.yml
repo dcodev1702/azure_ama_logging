@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  apache2-web:
+    container_name: apache2-web
+    image: ubuntu/apache2:2.4-22.04_beta
+    hostname: apache2-web
+    mem_limit: 256m
+    mem_reservation: 256m
+    cpus: 0.3
+    environment:
+      - TZ=America/New_York
+    ports:
+      - 192.168.XX.XX:80:80/tcp
+    volumes:
+      - apache2log-volume:/var/log/apache2
+      - ./etc/apache2.conf:/etc/apache2/apache2.conf:ro
+    restart: unless-stopped
+
+volumes:
+  apache2log-volume:
+    driver: local
