@@ -75,7 +75,6 @@ Function Import-AzLACustomTable {
     if (-not $ResourceGroup) {
         $ResourceGroup = Read-Host "Enter ResourceName"
     }
-    
     if (-not $Workspace) {
         $Workspace = Read-Host "Enter WorkspaceName"
     }
