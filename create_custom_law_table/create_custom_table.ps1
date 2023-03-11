@@ -167,7 +167,7 @@ Function Import-AzLACustomTable {
         if ($sendTable.ToLower() -eq "y") {
         
             # Need to add check to ensure Access Token is current before calling Invoke-AzRestMethod
-            Write-Host "Sending Custom Log [`"$TableName`"] to $Environment::$SubscriptionId::$ResourceGroup::$Workspace" -ForegroundColor Yellow
+            Write-Host "Sending Custom Log [`"$TableName`"] -> [Env]:$Environment[Id]:$SubscriptionId[RG:]$ResourceGroup[LAW:]$Workspace" -ForegroundColor Yellow
             Invoke-AzRestMethod -Path "/subscriptions/$SubscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" -Method PUT -payload $Table
             Write-Host "Table `"$TableName`" created and sent via RESTFul API." -ForegroundColor Green
         } else {
