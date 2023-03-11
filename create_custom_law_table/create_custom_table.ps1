@@ -150,7 +150,7 @@ Function Import-AzLACustomTable {
 
     $validInput = $false
     while (-not $validInput) {
-        Write-Host "Do you want to send your custom table to Log Analytics via REST API? (Y/N)" -ForegroundColor Red
+        Write-Host "Do you want to upload custom table -> [$TableName] to [$Workspace] in Log Analytics via REST API? (Y/N)" -ForegroundColor Red
         $sendTable = Read-Host "Make your selection "
         if ($sendTable.ToLower() -eq "y" -or $sendTable.ToLower() -eq "n") {
             $validInput = $true
