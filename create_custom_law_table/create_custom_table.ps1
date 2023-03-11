@@ -71,8 +71,8 @@ Function Import-AzLACustomTable {
     $tableParams.properties.schema.columns += $timeGenerated_
     $tableParams.properties.schema.columns += $rawData_
     
-    Write-Host "The mandatory fields `"TimeGenerated:dateTime`" and `"RawData:string `" have already been added to your custom log (CL)." -ForegroundColor Magenta
-    Write-Host "How many columns do you want to add to custom table: `"$TableName`"?" -ForegroundColor Yellow
+    Write-Host "The mandatory fields `"TimeGenerated:dateTime`" and `"RawData:string `" have been added to your custom log (CL)." -ForegroundColor Magenta
+    Write-Host "How many columns would you like to add to your custom table: `"$TableName`"?" -ForegroundColor Yellow
     $columnCount = Read-Host "value"
     
     # Define the accepted data types
@@ -113,7 +113,7 @@ Function Import-AzLACustomTable {
 
     $validInput = $false
     while (-not $validInput) {
-        Write-Host "Do you want to send your custom table to Log Analytics via API? (Y/N)" -ForegroundColor Red
+        Write-Host "Do you want to send your custom table to Log Analytics via the API? (Y/N)" -ForegroundColor Red
         $sendTable = Read-Host "Make your selection "
         if ($sendTable.ToLower() -eq "y" -or $sendTable.ToLower() -eq "n") {
             $validInput = $true
@@ -129,7 +129,7 @@ Function Import-AzLACustomTable {
         if ($sendTable.ToLower() -eq "y") {
         
             Invoke-AzRestMethod -Path "/subscriptions/$subscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" -Method PUT -payload $Table
-            Write-Host "Table `"$TableName`" created and sent via RESTFul API." -ForegroundColor Green
+            Write-Host "Table `"$TableName`" created and sent via REST API." -ForegroundColor Green
         } else {
             Write-Host "Table `"$TableName`" created and $($pwd)\$SaveFile but not sent via the REST API." -ForegroundColor Yellow
             Write-Output $Table
