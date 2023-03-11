@@ -75,15 +75,16 @@ Function Import-AzLACustomeTable {
     Write-Host "How many columns do you want to add to custom table: `"$TableName`"?" -ForegroundColor Yellow
     $columnCount = Read-Host "value"
     
-    # Define the accepted data types
-    $dataTypes = "string", "dynamic", "dateTime", "bool", "float", "int"
 
-    Write-Host "Valid datatypes are: string, dynamic, dateTime, bool, float, and int" -ForegroundColor Yellow
     for ($i = 1; $i -le $columnCount; $i++) {
-        $columnName = Read-Host "Enter the column name for column $i"
-        #$dataType = Read-Host "Enter the column datatype for column $columnName"
+
+        # Define the accepted data types
+        $dataTypes = "string", "dynamic", "dateTime", "bool", "float", "int"
         
-        # Validate the data type
+        Write-Host "Valid datatypes are: string, dynamic, dateTime, bool, float, and int" -ForegroundColor Yellow
+        $columnName = Read-Host "Enter the column name for column $i"
+        
+        # Validate the provided data type(s)
         do {
             $dataType = Read-Host "Enter the column data type for column $i (accepted types: $dataTypes)"
             $isValidType = $dataTypes.Contains($dataType)
@@ -110,17 +111,32 @@ Function Import-AzLACustomeTable {
     Write-Host "WorkspaceName: $Workspace" -ForegroundColor Green
     Write-Host "TableName: $TableName" -ForegroundColor Green
 
-    Write-Host "Do you want to send your custom table to Log Analytics via API? (Y/N)" -ForegroundColor Red
-    $sendTable = Read-Host "Selection "
 
-    if ($sendTable.ToLower() -eq "y") {
+    $validInput = $false
+    while (-not $validInput) {
+        Write-Host "Do you want to send your custom table to Log Analytics via API? (Y/N)" -ForegroundColor Red
+        $sendTable = Read-Host "Make your selection: "
+        if ($sendTable.ToLower() -eq "y" -or $sendTable.ToLower() -eq "n") {
+            $validInput = $true
+        } else {
+            Write-Host "Invalid input. Please enter 'Y' or 'N'." -ForegroundColor Red
+        }
+    }
+
+
+    try {
+
         $Table = $tableParams | ConvertTo-JSON -Depth 32
-    
-        Invoke-AzRestMethod -Path "/subscriptions/$subscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" -Method PUT -payload $Table
-        Write-Host "Table `"$TableName`" created and sent via RESTFul API." -ForegroundColor Green
-    } else {
-        Write-Host "Table `"$TableName`" created and $($pwd)\$SaveFile but not sent via the REST API." -ForegroundColor Yellow
-        Write-Output $Table
+        if ($sendTable.ToLower() -eq "y") {
+        
+            Invoke-AzRestMethod -Path "/subscriptions/$subscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" -Method PUT -payload $Table
+            Write-Host "Table `"$TableName`" created and sent via RESTFul API." -ForegroundColor Green
+        } else {
+            Write-Host "Table `"$TableName`" created and $($pwd)\$SaveFile but not sent via the REST API." -ForegroundColor Yellow
+            Write-Output $Table
+        }
+    } catch {
+        Write-Host "An error occurred while sending the table via API call:`n$($_.Exception.Message)" -ForegroundColor Red
     }
 
 }
