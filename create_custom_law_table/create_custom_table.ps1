@@ -46,20 +46,6 @@ Function Import-AzLACustomeTable {
         $TableName = Read-Host "Enter TableName"
     }
 
-    #$TableParams = Get-Content $FilePath -Raw
-    #$jsonObject = ConvertFrom-Json $TableParams
-
-    # Add the new property to the object
-    # $newprop =  @{"name" = $TableName}
-
-    #This works but it isn't need right now
-    #$jsonObject.properties.schema | Add-Member -Name "name" -Value $TableName -MemberType NoteProperty
-    
-    # Convert the updated object back to JSON
-    #$TableParams = ConvertTo-Json $jsonObject -Depth 32
-
-    # Write the updated JSON back to the file
-    #Set-Content -Path "$($(pwd).Path)\hello-updated.json" -Value $TableParams
 
     $TimeGenerated_ = @{
         name = "TimeGenerated"
