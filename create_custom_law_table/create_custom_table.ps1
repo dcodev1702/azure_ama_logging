@@ -12,7 +12,7 @@ Function Import-AzLACustomeTable {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
-	    [ValidateSet('AzureCloud','AzureUSGovernment')]
+	[ValidateSet('AzureCloud','AzureUSGovernment')]
         [string]$Environment,
         [Parameter(Mandatory=$false)]
         [string]$SaveFile=$null,
