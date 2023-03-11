@@ -2,13 +2,13 @@
 Author: dcodev1702 & my AI Sidekick (ChatGPT)
 Date: 10 March 2023
 
-Usage: Import-AzLACustomeTable -Environment 'AzureCloud' `
+Usage: Import-AzLACustomTable -Environment 'AzureCloud' `
        -ResourceGroup 'myRG' -Workspace 'myWorkspace' `
        -TableName 'Apache2_AccessLog_CL' -SaveFile 'apache2_accesslog_table.json'
 
 #>
 
-Function Import-AzLACustomeTable {
+Function Import-AzLACustomTable {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
