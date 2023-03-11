@@ -75,11 +75,10 @@ Function Import-AzLACustomTable {
     Write-Host "How many columns do you want to add to custom table: `"$TableName`"?" -ForegroundColor Yellow
     $columnCount = Read-Host "value"
     
-
+    # Define the accepted data types
+    $dataTypes = "string", "dynamic", "dateTime", "bool", "float", "int"
+    
     for ($i = 1; $i -le $columnCount; $i++) {
-
-        # Define the accepted data types
-        $dataTypes = "string", "dynamic", "dateTime", "bool", "float", "int"
         
         Write-Host "Valid datatypes are: string, dynamic, dateTime, bool, float, and int" -ForegroundColor Yellow
         $columnName = Read-Host "Enter the column name for column $i"
