@@ -1,0 +1,56 @@
+{
+   "properties": {
+      "schema": {
+          "columns": [
+             {
+                "name": "TimeGenerated",
+                "type": "DateTime"
+             }, 
+             {
+                "name": "RawData",
+                "type": "String"
+             },
+             {
+                "name": "PID",
+                "type": "dynamic"
+             },
+             {
+                "name": "Filename",
+                "type": "dynamic"
+             },
+             {
+                "name": "RemoteIP",
+                "type": "dynamic"
+             },
+             {
+                "name": "Server",
+                "type": "dynamic"
+             },
+             {
+                "name": "Request",
+                "type": "dynamic"
+             },
+             {
+                "name": "Method",
+                "type": "dynamic"
+             },
+             {
+                "name": "Status",
+                "type": "dynamic"
+             },
+             {
+                "name": "BytesSent",
+                "type": "dynamic"
+             },
+             {
+                "name": "UserAgent",
+                "type": "dynamic"
+             },
+             {
+                "name": "Referer",
+                "type": "dynamic"
+             }
+         ]
+      }
+   }
+}
