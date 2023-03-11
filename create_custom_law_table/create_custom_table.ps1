@@ -58,12 +58,12 @@ Function Import-AzLACustomeTable {
     
     # As per the requirement for a custom log
     # TimeGenerated:dateTime and RawData:string MUST be provided at a minimum
-    $TimeGenerated_ = @{
+    $TimeGenerated_ = [ordered]@{
         name = "TimeGenerated"
         type = "dateTime"
     }
     
-    $RawData_ = @{
+    $RawData_ = [ordered]@{
         name = "RawData"
         type = "string"
     }
