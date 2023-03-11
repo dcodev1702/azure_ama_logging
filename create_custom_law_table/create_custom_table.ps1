@@ -4,15 +4,18 @@ Date: 10 March 2023
 
 Purpose: Create a Custom Log (CL) for a Log Analytics Workspace
 ----------------------------------------------------------------
-1.  Checks to see if the user is logged into Azure and which Cloud (AzureCloud or AzureUSGovernment) via the Environment switch (mandatory)   
-     -- This will also set the ResourceURL based on your environment 
-2.  Checks to see required Az Modules are installed with the -CheckAzModules switch.
-3.  Will save the custom table in JSON if the SaveFile switch is used.
-4.  Allows the user to name your Custom Log ( CL ) with the -TableName switch (mandatory) and saves it to the table in JSON.
-5.  Allows the user to specify the number of columns and corresponding data types for their CL.
-6.  Automatically includes the 2 required columns for all Tables
-       (TimeGenerated:dateTime and RawData:string)
-7.  Provides the user the ability to send their Custom Log to a specified Log A via REST API.
+1.  Checks to see if the user is logged into Azure and which Cloud (AzureCloud or AzureUSGovernment) via the Environment switch (mandatory)   
+     -- This will also set the ResourceURL based on your environment
+     -- AzureCloud: 'https://management.azure.com'
+     -- AzureUSGov: 'https://management.usgovcloudapi.net/'
+2.  Checks to see required Az Modules are installed with the -CheckAzModules switch.
+3.  Will save the custom table in JSON if the SaveFile switch is used.
+4.  Allows the user to name your Custom Log ( CL ) with the -TableName switch (mandatory) and saves it to the table in JSON.
+5.  Allows the user to specify the number of columns and corresponding data types for their CL.
+6.  Automatically includes the 2 required columns for all Tables
+        TimeGenerated:dateTime
+        RawData:string
+7.  Provides the user the ability to send their Custom Log to a specified Log A via REST API.
 
 Usage: 
 ------
