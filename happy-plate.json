@@ -1,0 +1,17 @@
+{
+  "properties": {
+    "schema": {
+      "name": "KPopKansas_GizzyRuffies_CL",
+      "columns": [
+        {
+          "name": "TimeGenerated",
+          "type": "dateTime"
+        },
+        {
+          "name": "RawData",
+          "type": "string"
+        }
+      ]
+    }
+  }
+}
