@@ -23,7 +23,7 @@ Function Import-AzLACustomeTable {
         [string]$ResourceGroup,
         [Parameter(Mandatory=$false)]
         [string]$Workspace,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [string]$TableName,
         [Parameter(Mandatory = $false)]
         [Switch] $CheckAzModules = $false
