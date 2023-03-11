@@ -1,5 +1,5 @@
 <#
-Author: dcodev1702
+Author: dcodev1702 & my AI Sidekick (ChatGPT)
 Date: 10 March 2023
 
 Usage: Import-AzLACustomeTable -Environment 'AzureCloud' `
