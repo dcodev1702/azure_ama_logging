@@ -53,6 +53,7 @@ Function Import-AzLACustomeTable {
 
     # Before querying Azure, ensure we are logged in
     $AzContext = Get-AzureSubscription($Environment)
+    $SubscriptionId = $AzContext.Subscription.Id
 
     # Get Azure Access (JWT) Token for API Auth/Access 
     if($AzContext.Environment.Name -eq 'AzureCloud') {
@@ -61,6 +62,7 @@ Function Import-AzLACustomeTable {
         $resourceUrl = 'https://management.usgovcloudapi.net/'
     }
 
+    # API Auth for Invoke-AzRestMethod
     $token = (Get-AzAccessToken -ResourceUrl $resourceUrl).Token
     $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
     $headers.Add("Authorization","Bearer $token")
@@ -161,8 +163,7 @@ Function Import-AzLACustomeTable {
         if ($sendTable.ToLower() -eq "y") {
         
             # Need to add check to ensure Access Token is current before calling Invoke-AzRestMethod
-            $subscriptionId = $AzContext.Subscription.Id
-            Invoke-AzRestMethod -Path "/subscriptions/$subscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" -Method PUT -payload $Table
+            Invoke-AzRestMethod -Path "/subscriptions/$SubscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" -Method PUT -payload $Table
             Write-Host "Table `"$TableName`" created and sent via RESTFul API." -ForegroundColor Green
         } else {
             Write-Host "Table `"$TableName`" created and $($pwd)\$SaveFile but not sent via the REST API." -ForegroundColor Yellow
