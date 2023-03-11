@@ -168,7 +168,10 @@ Function Import-AzLACustomTable {
         
             # Need to add check to ensure Access Token is current before calling Invoke-AzRestMethod
             Write-Host "Sending Custom Log [`"$TableName`"] -> [Env]:$Environment[Id]:$SubscriptionId[RG:]$ResourceGroup[LAW:]$Workspace" -ForegroundColor Yellow
-            Invoke-AzRestMethod -Path "/subscriptions/$SubscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" -Method PUT -payload $Table
+            Invoke-AzRestMethod `
+                -Path "/subscriptions/$SubscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" `
+                -Method PUT `
+                -Payload $Table
             Write-Host "Table `"$TableName`" created and sent via RESTFul API." -ForegroundColor Green
         } else {
             Write-Host "Table `"$TableName`" created and $($pwd)\$SaveFile but not sent via the REST API." -ForegroundColor Yellow
