@@ -46,7 +46,8 @@ Function Import-AzLACustomeTable {
         $TableName = Read-Host "Enter TableName"
     }
 
-
+    
+    # LA Custom Table Creation (LA -eq Log Analytics)
     $TimeGenerated_ = @{
         name = "TimeGenerated"
         type = "DateTime"
@@ -142,19 +143,20 @@ Function Import-AzLACustomeTable {
     $TableParams = $table | ConvertTo-JSON -Depth 32
 
     # Do something with the input parameters
-    Write-Output "Subscription Id: $SubscriptionId"
-    Write-Output "FilePath: $FilePath"
-    Write-Output "ResourceName: $ResourceGroup"
-    Write-Output "WorkspaceName: $Workspace"
-    Write-Output "TableName: $TableName"
+    Write-Host "Subscription Id: $SubscriptionId" -ForegroundColor Green
+    Write-Host "FilePath: $SaveFile" -ForegroundColor Green
+    Write-Host "ResourceName: $ResourceGroup" -ForegroundColor Green
+    Write-Host "WorkspaceName: $Workspace" -ForegroundColor Green
+    Write-Host "TableName: $TableName" -ForegroundColor Green
 
-    $sendTable = Read-Host "Do you want to send the table via API call? (Y/N)"
+    Write-Host "Do you want to send the table via API call? (Y/N)" -ForegroundColor Red
+    $sendTable = Read-Host 
 
     if ($sendTable.ToLower() -eq "y") {
         Invoke-AzRestMethod -Path "/subscriptions/$subscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" -Method PUT -payload $TableParams
-        Write-Output "Table $TableName created and sent via RESTFul API."
+        Write-Host "Table `"$TableName`" created and sent via RESTFul API." -ForegroundColor Green
     } else {
-        Write-Output "Table $TableName created and $File but not sent via API call."
+        Write-Host "Table `"$TableName`" created and $SaveFile but not sent via API call." -ForegroundColor Yellow
         Write-Output $TableParams
     }
 
