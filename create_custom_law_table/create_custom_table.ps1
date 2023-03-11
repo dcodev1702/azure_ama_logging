@@ -22,16 +22,16 @@ Usage:
 . .\helper_functions.ps1
 . .\create_custom_table.ps1
 
-Import-AzLACustomeTable -Environment 'AzureCloud' `
+Import-AzLACustomTable -Environment 'AzureCloud' `
        -ResourceGroup 'myRG' -Workspace 'myWorkspace' `
        -TableName 'Apache2_AccessLog_CL' -SaveFile 'apache2_accesslog_table.json'
-       
+
 #>
 
 # This feature requires PS >= 4.0
 #Requires -RunAsAdministrator
 
-Function Import-AzLACustomeTable {
+Function Import-AzLACustomTable {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
@@ -69,6 +69,7 @@ Function Import-AzLACustomeTable {
     $token = (Get-AzAccessToken -ResourceUrl $resourceUrl).Token
     $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
     $headers.Add("Authorization","Bearer $token")
+    
 
     # Prompt the user for information
     if (-not $ResourceGroup) {
@@ -107,8 +108,8 @@ Function Import-AzLACustomeTable {
     $tableParams.properties.schema.columns += $timeGenerated_
     $tableParams.properties.schema.columns += $rawData_
     
-    Write-Host "The mandatory fields `"TimeGenerated:dateTime`" and `"RawData:string `" have already been added to your custom log (CL)." -ForegroundColor Magenta
-    Write-Host "How many columns do you want to add to custom table: `"$TableName`"?" -ForegroundColor Yellow
+    Write-Host "The mandatory fields `"TimeGenerated:dateTime`" and `"RawData:string `" successfully added to your custom log [$TableName]." -ForegroundColor Magenta
+    Write-Host "How many columns do you want to add to your custom table: `"$TableName`"?" -ForegroundColor Yellow
     $columnCount = Read-Host "value"
     
 
@@ -150,7 +151,7 @@ Function Import-AzLACustomeTable {
 
     $validInput = $false
     while (-not $validInput) {
-        Write-Host "Do you want to send your custom table to Log Analytics via API? (Y/N)" -ForegroundColor Red
+        Write-Host "Do you want to send your custom table to Log Analytics via REST API? (Y/N)" -ForegroundColor Red
         $sendTable = Read-Host "Make your selection "
         if ($sendTable.ToLower() -eq "y" -or $sendTable.ToLower() -eq "n") {
             $validInput = $true
@@ -166,6 +167,7 @@ Function Import-AzLACustomeTable {
         if ($sendTable.ToLower() -eq "y") {
         
             # Need to add check to ensure Access Token is current before calling Invoke-AzRestMethod
+            Write-Host "Sending Custom Log [`"$TableName`"] to $Environment::$SubscriptionId::$ResourceGroup::$Workspace" -ForegroundColor Yellow
             Invoke-AzRestMethod -Path "/subscriptions/$SubscriptionId/resourcegroups/$ResourceGroup/providers/microsoft.operationalinsights/workspaces/$Workspace/tables/$($TableName)?api-version=2021-12-01-preview" -Method PUT -payload $Table
             Write-Host "Table `"$TableName`" created and sent via RESTFul API." -ForegroundColor Green
         } else {
@@ -173,7 +175,7 @@ Function Import-AzLACustomeTable {
             Write-Output $Table
         }
     } catch {
-        Write-Host "An error occurred while sending the table via API call:`n$($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "An error occurred while sending the table via the REST API:`n$($_.Exception.Message)" -ForegroundColor Red
     }
 
 }
