@@ -165,9 +165,9 @@ Function New-AzDCR {
             destinations = [ordered]@{
                 logAnalytics = @(
                     [ordered]@{
-                        workspaceResourceId = $DCEResults.Id
-                        workspaceId = $DCEResults.properties.Id
-                        name = $DCEResults.Name
+                        workspaceResourceId = $WorkspaceContent.Id
+                        workspaceId = $WorkspaceContent.properties.Id
+                        name = $WorkspaceContent.Name
                     }
                 )
             }
@@ -177,7 +177,7 @@ Function New-AzDCR {
                         "Custom-$TableName"
                     )
                     destinations = @(
-                        $DCEResults.Name
+                        $WorkspaceContent.Name
                     )
                     transformKql = "source"
                     outputStream = "Custom-$TableName"
@@ -231,8 +231,8 @@ Function New-AzDCR {
         
             # Need to add check to ensure Access Token is current before calling Invoke-AzRestMethod
             Write-Host "Getting Workspace [`"$Workspace`"] -> [Env]:$Environment[Id]:$SubscriptionId[RG:]$ResourceGroup" -ForegroundColor Yellow
-            $url_dcr = "$($resourceUrl)/subscriptions/$($SubscriptionId)/resourcegroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$Workspace"
-            $WorkspaceContent = Invoke-RestMethod ($url_dcr+"?api-version=2021-12-01-preview") -Method GET -Headers $headers
+            #$url_dcr = "$($resourceUrl)/subscriptions/$($SubscriptionId)/resourcegroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$Workspace"
+            #$WorkspaceContent = Invoke-RestMethod ($url_dcr+"?api-version=2021-12-01-preview") -Method GET -Headers $headers
         
             Write-Host "Workspace `"$Workspace`" recieved via RESTFul API." -ForegroundColor Green
             Write-Host "Workspace Name: $($WorkspaceContent.Name)" -ForegroundColor Cyan
