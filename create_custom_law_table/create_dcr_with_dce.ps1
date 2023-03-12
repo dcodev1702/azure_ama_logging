@@ -52,8 +52,9 @@ Order to make this work, three objects have to be fetched from Azure.
    [X]  -- transformKql: "source"
    [X]  -- outputStream: Custom-$TableName
 
-New-AzDCR -Environment 'AzureCloud' -ResourceGroup 'myRG' -Workspace 'myWorkspace' -TableName 'Apache2_AccessLog_CL'
-
+New-AzDCR -Environment 'AzureCloud' -ResourceGroup 'sec_telem_law_1' -Workspace 'aad-telem' `
+          -EndpointName 'CLI-OGKANSAS-DCE' -SaveTable DCR_TABLE.json -TableName 'KPopKansas_GizzyRuffies_CL' `
+          -LogSource '/var/log/apache2/access.log'
 #>
 
 # This feature requires PS >= 4.0
