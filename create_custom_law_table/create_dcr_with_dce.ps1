@@ -287,7 +287,7 @@ Function New-AzDCR {
             #$url_dcr = "$($resourceUrl)/subscriptions/$($SubscriptionId)/resourcegroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$Workspace"
             #$WorkspaceContent = Invoke-RestMethod ($url_dcr+"?api-version=2021-12-01-preview") -Method GET -Headers $headers
             $DCRRuleName = Read-Host "Enter a name for your Data Collection Rule (DCR)"
-            #New-AzDataCollectionRule -Location $DCEResults.location -ResourceGroupName $ResourceGroup -RuleName $DCRRuleName  -RuleFile "./$SaveTable"
+            New-AzDataCollectionRule -Location $DCEResults.location -ResourceGroupName $ResourceGroup -RuleName $DCRRuleName  -RuleFile $SaveTable
             
             # DO THIS UPDATE AFTER YOU CREATE A NEW DCR RULE
             #$url_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
@@ -297,16 +297,23 @@ Function New-AzDCR {
             Write-Host "Workspace Name: $($WorkspaceContent.Name)" -ForegroundColor Cyan
             Write-Host "Workspace ID: $($WorkspaceContent.properties.customerId)" -ForegroundColor Cyan
             Write-Host "Workspace ResourceId: $($WorkspaceContent.Id)" -ForegroundColor Cyan
+        
+            #Write-Host "Sleeping for 20 seconds..." -ForegroundColor Red
+            #Start-Sleep -Seconds 20
+            
+            #$url_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+            #Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $DCR_JSON
         } else {
             Write-Output "Did not create Data Collection Rule: $DCRRuleName"
         }
     } catch {
         Write-Host "An error occurred while sending the table via the REST API:`n$($_.Exception.Message)" -ForegroundColor Red
     }
-    return ($WorkspaceContent)
+    #return ($WorkspaceContent)
 
     
     #$url_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
     #$DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
 
+    
 }
