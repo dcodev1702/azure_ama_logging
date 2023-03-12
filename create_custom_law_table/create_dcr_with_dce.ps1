@@ -126,6 +126,7 @@ Function New-AzDCR {
     Write-Host "Fetching -> $EndpointName"
     $DCEResults = Get-AzDCE -Environment AzureCloud -ResourceGroup 'sec_telem_law_1' -EndpointName $EndpointName
 
+
     # Create JSON structure for the custom log (table)
     $tableParams = [ordered]@{
         properties = [ordered]@{
@@ -187,6 +188,52 @@ Function New-AzDCR {
         }
     }
 
+
+    <#
+    $tableParams = [ordered]@{
+        properties = [ordered]@{
+            dataCollectionEndpointId = $DCEResults.id
+            streamDeclarations = [ordered]@{
+                "Custom-$TableName" = [ordered]@{
+                    columns = @(
+                        [ordered]@{
+                            name = "TimeGenerated"
+                            type = "dateTime"
+                        }
+                        [ordered]@{
+                            name = "RawData"
+                            type = "string"
+                        }
+                    )
+                }
+            }
+            destinations = [ordered]@{
+                logAnalytics = @(
+                    [ordered]@{
+                        workspaceResourceId = $WorkspaceContent.Id
+                        name = $WorkspaceContent.Name
+                    }
+                )
+            }
+            dataFlows = @(
+                [ordered]@{
+                    streams = @(
+                        "Custom-$TableName"
+                    )
+                    destinations = @(
+                        $WorkspaceContent.Name
+                    )
+                    transformKql = "source | project TimeGenerated, RawData"
+                    outputStream = "Custom-$TableName"
+                }
+            )
+        }
+    }
+    #>
+
+
+
+
     # Deserialize JSON object ($DCEContent) so it can be submitted via REST API 
     $DCR_JSON = ConvertTo-Json -InputObject $tableParams -Depth 32
     Write-Output "Current Structure of your DCR:"
@@ -240,7 +287,10 @@ Function New-AzDCR {
             #$url_dcr = "$($resourceUrl)/subscriptions/$($SubscriptionId)/resourcegroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$Workspace"
             #$WorkspaceContent = Invoke-RestMethod ($url_dcr+"?api-version=2021-12-01-preview") -Method GET -Headers $headers
             $DCRRuleName = Read-Host "Enter a name for your Data Collection Rule (DCR)"
-            New-AzDataCollectionRule -Location $DCEResults.location -ResourceGroupName $ResourceGroup -RuleName $DCRRuleName  -RuleFile $SaveTable
+            $url_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+            Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $DCR_JSON
+            
+            #New-AzDataCollectionRule -Location $DCEResults.location -ResourceGroupName $ResourceGroup -RuleName $DCRRuleName  -RuleFile "./$SaveTable"
             Write-Host "Workspace `"$Workspace`" recieved via RESTFul API." -ForegroundColor Green
             Write-Host "Workspace Name: $($WorkspaceContent.Name)" -ForegroundColor Cyan
             Write-Host "Workspace ID: $($WorkspaceContent.properties.customerId)" -ForegroundColor Cyan
@@ -252,4 +302,9 @@ Function New-AzDCR {
         Write-Host "An error occurred while sending the table via the REST API:`n$($_.Exception.Message)" -ForegroundColor Red
     }
     return ($WorkspaceContent)
+
+    
+    #$url_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+    #$DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
+
 }
