@@ -6,24 +6,23 @@ Purpose: Create a Data Collection Endpoint (DCE)
 -------------------------------------------------
 1.  Checks to see if the user is logged into Azure and which Cloud (AzureCloud or AzureUSGovernment) via the Environment switch (mandatory)   
      -- This will also set the ResourceURL based on your environment
-     -- AzureCloud: 'https://management.azure.com'
-     -- AzureUSGov: 'https://management.usgovcloudapi.net/'
+     -- Same Resource URL regardless of Environment: providers/Microsoft.Insights/dataCollectionEndpoints
 2.  Checks to see required Az Modules are installed with the -CheckAzModules switch.
-3.  Will save the custom table in JSON if the SaveFile switch is used.
-4.  Allows the user to name your Custom Log ( CL ) with the -TableName switch (mandatory) and saves it to the table in JSON.
-5.  Allows the user to specify the number of columns and corresponding data types for their CL.
-6.  Automatically includes the 2 required columns for all Tables
-        TimeGenerated:dateTime
-        RawData:string
-7.  Provides the user the ability to send their Custom Log to a specified Log A via REST API.
+3.  Allows the user to name the Data Collection Endpoint ( DCE ) with the -EndpointName switch (mandatory).
+4.  Allows the user to specify the operating system
+5.  Allows the user to define network access of the endpoint:
+      -- Enabled
+      -- Disabled
+6.  Allows the user to specify the location.
+7.  Allows the user to send their DCE to Azure Monitor via REST API.
 
 Usage: 
 ------
 . .\helper_functions.ps1
-. .\create_custom_table.ps1
+. .\create_dce.ps1
 
-New-AzDCE -Environment 'AzureCloud' -ResourceGroup 'myRG' -Workspace 'myWorkspace' `
-    -Location 'eastus' -EndpointName 'CLI-OGKANSAS-DCE' -OperatingSystem 'Linux'
+New-AzDCE -Environment 'AzureCloud' -ResourceGroup 'myRG' -Location 'eastus' `
+          -EndpointName 'CLI-OGKANSAS-DCE' -OperatingSystem 'Linux'
 
 #>
 
@@ -60,19 +59,11 @@ Function New-AzDCE {
     $AzContext = Get-AzureSubscription($Environment)
     $SubscriptionId = $AzContext.Subscription.Id
 
-    # Get Azure Access (JWT) Token for API Auth/Access 
-    if($AzContext.Environment.Name -eq 'AzureCloud') {
-        $resourceUrl = 'https://management.azure.com'
-    } else {
-        $resourceUrl = 'https://management.usgovcloudapi.net/'
-    }
-
     # API Auth for Invoke-AzRestMethod
     $token = (Get-AzAccessToken -ResourceUrl $resourceUrl).Token
     $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
     $headers.Add("Authorization","Bearer $token")
     
-
     # Prompt the user for information
     if (-not $Location) {
         $Location = Read-Host "Enter Endpoint Location"
@@ -88,8 +79,7 @@ Function New-AzDCE {
     } else {
         $NetworkAccess = 'Disabled'
     }
-
-    
+   
     # Create JSON structure for the custom log (table)
     $DCEContent = [ordered]@{
         location = $Location
