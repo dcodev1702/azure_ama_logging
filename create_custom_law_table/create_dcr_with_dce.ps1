@@ -180,7 +180,7 @@ Function New-AzDCR {
                     destinations = @(
                         $WorkspaceContent.Name
                     )
-                    transformKql = "source"
+                    transformKql = "source | project TimeGenerated, RawData"
                     outputStream = "Custom-$TableName"
                 }
             )

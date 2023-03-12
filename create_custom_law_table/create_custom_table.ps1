@@ -87,13 +87,23 @@ Function Import-AzLACustomTable {
         properties = [ordered]@{
             schema = [ordered]@{
                 name = $TableName
-                columns = @()
+                columns = @(
+                    [ordered]@{
+                        name = "TimeGenerated"
+                        type = "dateTime"
+                    }
+                    [ordered]@{
+                        name = "RawData"
+                        type = "string"
+                    }
+                )
             }
         }
     }
     
     # As per the requirement for a custom log
     # TimeGenerated:dateTime and RawData:string MUST be provided at a minimum
+    <#
     $timeGenerated_ = [ordered]@{
         name = "TimeGenerated"
         type = "dateTime"
@@ -106,7 +116,7 @@ Function Import-AzLACustomTable {
     
     $tableParams.properties.schema.columns += $timeGenerated_
     $tableParams.properties.schema.columns += $rawData_
-    
+    #>
     Write-Host "Mandatory columns `"TimeGenerated:dateTime`" and `"RawData:string `" successfully added to your custom log [$TableName]." -ForegroundColor Magenta
     Write-Host "How many columns do you want to add to your custom table: `"$TableName`"?" -ForegroundColor Yellow
     $columnCount = Read-Host "value"
