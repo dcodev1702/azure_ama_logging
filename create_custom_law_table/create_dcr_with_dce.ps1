@@ -239,7 +239,8 @@ Function New-AzDCR {
             Write-Host "Getting Workspace [`"$Workspace`"] -> [Env]:$Environment[Id]:$SubscriptionId[RG:]$ResourceGroup" -ForegroundColor Yellow
             #$url_dcr = "$($resourceUrl)/subscriptions/$($SubscriptionId)/resourcegroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$Workspace"
             #$WorkspaceContent = Invoke-RestMethod ($url_dcr+"?api-version=2021-12-01-preview") -Method GET -Headers $headers
-        
+            $DCRRuleName = Read-Host "Enter a name for your Data Collection Rule (DCR)"
+            New-AzDataCollectionRule -Location $DCEResults.location -ResourceGroupName $ResourceGroup -RuleName $DCRRuleName  -RuleFile $SaveTable
             Write-Host "Workspace `"$Workspace`" recieved via RESTFul API." -ForegroundColor Green
             Write-Host "Workspace Name: $($WorkspaceContent.Name)" -ForegroundColor Cyan
             Write-Host "Workspace ID: $($WorkspaceContent.properties.customerId)" -ForegroundColor Cyan
