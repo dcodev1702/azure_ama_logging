@@ -23,6 +23,10 @@ Usage:
 . .\create_custom_table.ps1
 
 Order to make this work, three objects have to be fetched from Azure.
+   a. Data Collection Endpoint (DCE - ResourceId) that you want to assign to the DCR
+   b. The Log Analytics Table you want to assign to the DCR
+   c. Log Analytics Workspace that you want to assign to the DCR
+
 1. Details about the Data Collection Endpoint (assign to DCR)
      -- DCE ResourceId
 2. Stream Declarations:
