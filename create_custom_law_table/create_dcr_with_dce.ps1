@@ -136,7 +136,7 @@ Function New-AzDCR {
                     columns = @(
                         [ordered]@{
                             name = "TimeGenerated"
-                            type = "dateTime"
+                            type = "datetime"
                         }
                         [ordered]@{
                             name = "RawData"
@@ -198,7 +198,7 @@ Function New-AzDCR {
                     columns = @(
                         [ordered]@{
                             name = "TimeGenerated"
-                            type = "dateTime"
+                            type = "datetime"
                         }
                         [ordered]@{
                             name = "RawData"

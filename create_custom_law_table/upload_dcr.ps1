@@ -36,12 +36,12 @@ Function Upload-AzDataCollectionRule {
         [Parameter(Mandatory=$true)]
         [ValidateSet('AzureCloud','AzureUSGovernment')]
         [string]$Environment,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [string]$ResourceGroup,
-        [Parameter(Mandatory=$false)]
-        [string]$EndpointName,
         [Parameter(Mandatory=$true)]
         [string]$DCRRuleName,
+        [Parameter(Mandatory=$true)]
+        [string]$DCRJSONFile,
         [Parameter(Mandatory=$false)]
         [Switch] $CheckAzModules=$false
     )
@@ -68,14 +68,11 @@ Function Upload-AzDataCollectionRule {
     $headers.Add("Authorization","Bearer $token")
     
     # Prompt the user for information
-    if (-not $Location) {
-        $Location = Read-Host "Enter Endpoint Location"
-    }
     if (-not $ResourceGroup) {
         $ResourceGroup = Read-Host "Enter ResourceName"
     }
     if (-not $DCRRuleName) {
-        $EndpointName = Read-Host "Enter name of Endpoint"
+        $DCRRuleName = Read-Host "Enter name of Endpoint"
     }
     
     # Radiate information to the user for self validation
@@ -105,9 +102,9 @@ Function Upload-AzDataCollectionRule {
             Write-Host "Sending Modified DCR [`"$DCRRuleName`"] -> [Env]:$Environment[Id]:$SubscriptionId[RG:]$ResourceGroup" -ForegroundColor Yellow
             
             # PUT -- Get Modified JSON to upload to DCR
-            $DCR_JSON = Get-Content -Path ".\CLI-WHYTHO-DCR-Rule.json" -Raw
+            $DCR_JSON = Get-Content -Path $DCRJSONFile -Raw
             
-            $url_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+            $url_DCRRule = "$resourceUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
             Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $DCR_JSON
 
 
