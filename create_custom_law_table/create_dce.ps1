@@ -141,7 +141,7 @@ Function Get-AzDCE {
         [Parameter(Mandatory=$true)]
         [ValidateSet('AzureCloud','AzureUSGovernment')]
         [string]$Environment,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [string]$ResourceGroup,
         [Parameter(Mandatory=$true)]
         [string]$EndpointName,
