@@ -28,24 +28,27 @@ Order to make this work, three objects have to be fetched from Azure.
    c. Log Analytics Workspace that you want to assign to the DCR
 
 1. Details about the Data Collection Endpoint (assign to DCR)
-   [X]  -- DCE ResourceId
+   [X]  -- DCE ResourceId (DCEResult.Id)
+        -- CMD: $DCEResult = Get-AzDCE -Environment AzureCloud -ResourceGroup 'sec_telem_law_1' -EndpointName 'CLI-OGKANSAS-DCE' 
 2. Stream Declarations:
-   [ ]  -- Table Name
+   [ ]  -- $TableName
    [ ]  -- Table Structure
 3. Data Sources | LogFiles:
-   [ ]  -- Streams: Table Name
+   [ ]  -- Streams: Custom-$TableName
    [X]  -- FilePatterns: [ "/var/log/apache2/access.log" ]
    [X]  -- Format: text
    [X]  -- Name (logFile data source)
 4. Destinations:
      -- Log Analytics Workspace (assign to destination within DCR)
-   [X]  -- Workspace ResourceId
-   [X]  -- Workspace Id
-   [X]  -- Workspace Name
+     -- CMD: $LAResult = New-AzDCR -Environment AzureCloud -ResourceGroup 'sec_telem_law_1' -Workspace 'aad-telem'
+   [X]  -- $LAResult.Id (ResourceId)
+   [X]  -- $LAResult.properties.customerId (Workspace Id)
+   [X]  -- $LAResult.Name
 5. DataFlow:
-   [ ]  -- Streams: Table Name
-   [X]  -- Destination: Workspace Name
+   [ ]  -- Streams: Custom-$TableName
+   [X]  -- Destination: Workspace Name [$LAResult.Name]
    [X]  -- transformKql: "source"
+   [ ]  -- outputStream: Custom-$TableName
 
 New-AzDCR -Environment 'AzureCloud' -ResourceGroup 'myRG' -Workspace 'myWorkspace' -TableName 'Apache2_AccessLog_CL'
 
@@ -64,6 +67,8 @@ Function New-AzDCR {
         [string]$ResourceGroup,
         [Parameter(Mandatory=$false)]
         [string]$Workspace,
+        [Parameter(Mandatory=$false)]
+        [string]$TableName,
         [Parameter(Mandatory = $false)]
         [Switch] $CheckAzModules = $false
     )

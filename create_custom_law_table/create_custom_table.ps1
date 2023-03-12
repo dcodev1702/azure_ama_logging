@@ -115,9 +115,9 @@ Function Import-AzLACustomTable {
     for ($i = 1; $i -le $columnCount; $i++) {
 
         # Define the accepted data types
-        $dataTypes = "string", "dynamic", "dateTime", "bool", "float", "int"
+        $dataTypes = "string", "dynamic", "dateTime", "boolean", "long", "int", "real", "guid"
         
-        Write-Host "Valid data types are: [string|dynamic|dateTime|bool|float|int]" -ForegroundColor Yellow
+        Write-Host "Valid data types are: [string|dynamic|dateTime|boolean|long|int|real|guid]" -ForegroundColor Yellow
         $columnName = Read-Host "Enter the column name for column $i"
         
         # Validate the provided data type(s)
