@@ -29,6 +29,7 @@ New-AzDCE -Environment 'AzureCloud' -ResourceGroup 'myRG' -Location 'eastus' `
 # This feature requires PS >= 4.0
 #Requires -RunAsAdministrator
 
+
 Function New-AzDCE {
     [CmdletBinding()]
     param(
@@ -128,4 +129,47 @@ Function New-AzDCE {
     } catch {
         Write-Host "An error occurred while sending Data Collection Endpoint via the REST API:`n$($_.Exception.Message)" -ForegroundColor Red
     }
+}
+
+Function Get-AzDCE {
+
+    # Usage:
+    # $DCEResult = Get-AzDCE -Environment AzureCloud -ResourceGroup 'sec_telem_law_1' -EndpointName 'CLI-OGKANSAS-DCE' 
+
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [ValidateSet('AzureCloud','AzureUSGovernment')]
+        [string]$Environment,
+        [Parameter(Mandatory=$false)]
+        [string]$ResourceGroup,
+        [Parameter(Mandatory=$true)]
+        [string]$EndpointName,
+        [Parameter(Mandatory=$false)]
+        [Switch] $CheckAzModules=$false
+    )
+
+    # Before querying Azure, ensure we are logged in
+    $AzContext = Get-AzureSubscription($Environment)
+    $SubscriptionId = $AzContext.Subscription.Id
+
+    # Get Azure Access (JWT) Token for API Auth/Access 
+    if($AzContext.Environment.Name -eq 'AzureCloud') {
+        $resourceUrl = 'https://management.azure.com'
+    } else {
+        $resourceUrl = 'https://management.usgovcloudapi.net/'
+    }
+
+    # API Auth for Invoke-AzRestMethod
+    $token = (Get-AzAccessToken -ResourceUrl $resourceUrl).Token
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+    $headers.Add("Authorization","Bearer $token")
+
+    $url_get_dce = "$resourceUrl/subscriptions/$($SubscriptionId)/resourceGroups/$($ResourceGroup)/providers/Microsoft.Insights/dataCollectionEndpoints/$($EndpointName)"
+    $DCEInfo = Invoke-RestMethod ("$url_get_dce"+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
+
+    Write-Host "DCE Id:" -ForegroundColor Cyan
+    Write-Host $DCEInfo
+
+    return($DCEInfo)
 }
