@@ -240,9 +240,11 @@ Function New-AzDCR {
     Write-Output $DCR_JSON
 
     <#
+    DATA TYPES MUST BE ALL LOWERCASE!!!
+    THIS HUNG ME UP FOR AN ENTIRE DAT!!
     $timeGenerated_ = [ordered]@{
         name = "TimeGenerated"
-        type = "dateTime"
+        type = "datetime"
     }
     $rawData_ = [ordered]@{
         name = "RawData"
