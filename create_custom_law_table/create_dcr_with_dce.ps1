@@ -28,24 +28,24 @@ Order to make this work, three objects have to be fetched from Azure.
    c. Log Analytics Workspace that you want to assign to the DCR
 
 1. Details about the Data Collection Endpoint (assign to DCR)
-     -- DCE ResourceId
+   [X]  -- DCE ResourceId
 2. Stream Declarations:
-     -- Table Name
-     -- Table Structure
+   [ ]  -- Table Name
+   [ ]  -- Table Structure
 3. Data Sources | LogFiles:
-     -- Streams: Table Name
-     -- FilePatterns: [ "/var/log/apache2/access.log" ]
-     -- Format: text
-     -- Name (logFile data source)
+   [ ]  -- Streams: Table Name
+   [X]  -- FilePatterns: [ "/var/log/apache2/access.log" ]
+   [X]  -- Format: text
+   [X]  -- Name (logFile data source)
 4. Destinations:
      -- Log Analytics Workspace (assign to destination within DCR)
-        ++ Workspace ResourceId
-        ++ Workspace Id
-        ++ Workspace Name
+   [X]  -- Workspace ResourceId
+   [X]  -- Workspace Id
+   [X]  -- Workspace Name
 5. DataFlow:
-     -- Streams: Table Name
-     -- Destination: Workspace Name
-     -- transformKql: "source"
+   [ ]  -- Streams: Table Name
+   [X]  -- Destination: Workspace Name
+   [X]  -- transformKql: "source"
 
 New-AzDCR -Environment 'AzureCloud' -ResourceGroup 'myRG' -Workspace 'myWorkspace' -TableName 'Apache2_AccessLog_CL'
 
