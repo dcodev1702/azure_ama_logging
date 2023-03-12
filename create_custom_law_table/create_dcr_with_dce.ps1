@@ -31,6 +31,8 @@ Order to make this work, three objects have to be fetched from Azure.
    [X]  -- DCE ResourceId (DCEResult.Id)
         -- CMD: $DCEResult = Get-AzDCE -Environment AzureCloud -ResourceGroup 'sec_telem_law_1' -EndpointName 'CLI-OGKANSAS-DCE' 
 2. Stream Declarations:
+   [X]  -- INFO: This table needs to match parameters coming from the logging source (e.g. AMA, Logstash, NXLog, Filebeats, etc)
+   [ ]  -- CMD: 
    [ ]  -- $TableName
    [ ]  -- Table Structure
 3. Data Sources | LogFiles:
