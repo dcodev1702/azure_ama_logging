@@ -246,7 +246,7 @@ Function New-AzDCR {
             Write-Host "Workspace ID: $($WorkspaceContent.properties.customerId)" -ForegroundColor Cyan
             Write-Host "Workspace ResourceId: $($WorkspaceContent.Id)" -ForegroundColor Cyan
         } else {
-            Write-Output "Did not fetch LA Workspace: $Workspace"
+            Write-Output "Did not create Data Collection Rule: $DCRRuleName"
         }
     } catch {
         Write-Host "An error occurred while sending the table via the REST API:`n$($_.Exception.Message)" -ForegroundColor Red
