@@ -168,8 +168,6 @@ Function Get-AzDCE {
     $url_get_dce = "$resourceUrl/subscriptions/$($SubscriptionId)/resourceGroups/$($ResourceGroup)/providers/Microsoft.Insights/dataCollectionEndpoints/$($EndpointName)"
     $DCEInfo = Invoke-RestMethod ("$url_get_dce"+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
 
-    Write-Host "DCE Id:" -ForegroundColor Cyan
-    Write-Host $DCEInfo
-
+    Write-Host "Data Collection Endpoint ID: $($DCEInfo.Id)" -ForegroundColor Cyan
     return($DCEInfo)
 }
