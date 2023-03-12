@@ -167,7 +167,7 @@ Function New-AzDCR {
                 logAnalytics = @(
                     [ordered]@{
                         workspaceResourceId = $WorkspaceContent.Id
-                        workspaceId = $WorkspaceContent.properties.Id
+                        workspaceId = $WorkspaceContent.properties.customerId
                         name = $WorkspaceContent.Name
                     }
                 )
