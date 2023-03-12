@@ -1,6 +1,6 @@
 <#
 Authors: dcodev1702 & my AI Sidekick (ChatGPT)
-Date: 11 March 2023
+Date: 12 March 2023
 
 Purpose: Create a Data Collection Endpoint (DCE)
 -------------------------------------------------
@@ -107,10 +107,9 @@ Function Upload-AzDataCollectionRule {
             $url_DCRRule = "$resourceUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
             Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $DCR_JSON
 
-
             Write-Host "DCR [$DCRRuleName] successfully modified and sent via RESTFul API." -ForegroundColor Green
         } else {
-            Write-Host "Data Collection Endpoint:" -ForegroundColor Cyan 
+            Write-Host "Data Collection Endpoint: $DCRRuleName" -ForegroundColor Cyan 
             Write-Host $DCE_JSON
         }
     } catch {
