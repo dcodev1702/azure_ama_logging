@@ -22,7 +22,7 @@ Usage:
 . .\create_dce.ps1
 
 New-AzDCE -Environment 'AzureCloud' -ResourceGroup 'myRG' -Location 'eastus' `
-          -EndpointName 'CLI-OGKANSAS-DCE' -OperatingSystem 'Linux'
+          -EndpointName 'CLI-UNIQUENAME-DCE' -OperatingSystem 'Linux'
 
 #>
 
