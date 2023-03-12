@@ -298,11 +298,19 @@ Function New-AzDCR {
             Write-Host "Workspace ID: $($WorkspaceContent.properties.customerId)" -ForegroundColor Cyan
             Write-Host "Workspace ResourceId: $($WorkspaceContent.Id)" -ForegroundColor Cyan
         
+            # HAVE TO CREATE NEW DCR, THEN DOWNLOAD IT, CHANGE IT, AND UPLOAD IT.
             #Write-Host "Sleeping for 20 seconds..." -ForegroundColor Red
             #Start-Sleep -Seconds 20
             
-            #$url_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+            # GET DCR
+            $url_Get_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+            $GOT_DCRContent = Invoke-RestMethod ($url_Get_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
+        
+            $GOT_DCRContent | ConvertTo-JSON -Depth 32 | Out-File "$($DCRRuleName)-Rule.json"
+            # PUT
+            #$url_Get_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
             #Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $DCR_JSON
+            
         } else {
             Write-Output "Did not create Data Collection Rule: $DCRRuleName"
         }
