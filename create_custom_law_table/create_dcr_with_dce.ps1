@@ -186,6 +186,11 @@ Function New-AzDCR {
         }
     }
 
+    # Deserialize JSON object ($DCEContent) so it can be submitted via REST API 
+    $DCR_JSON = ConvertTo-Json -InputObject $tableParams -Depth 32
+    Write-Output "Current Structure of your DCR:"
+    Write-Output $DCR_JSON
+
     <#
     $timeGenerated_ = [ordered]@{
         name = "TimeGenerated"
