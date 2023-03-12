@@ -1,6 +1,6 @@
 <#
 Authors: dcodev1702 & my AI Sidekick (ChatGPT)
-Date: 10 March 2023
+Date: 11 March 2023
 
 Purpose: Create a Data Collection Endpoint (DCE)
 -------------------------------------------------
@@ -80,7 +80,7 @@ Function New-AzDCE {
         $NetworkAccess = 'Disabled'
     }
    
-    # Create JSON structure for the custom log (table)
+    # Create JSON structure for the data collection endpoint
     $DCEContent = [ordered]@{
         location = $Location
         properties = [ordered]@{
@@ -110,6 +110,7 @@ Function New-AzDCE {
 
     try {
 
+        # Deserialize JSON object ($DCEContent) so it can be submitted via REST API 
         $DCE_JSON = ConvertTo-Json -InputObject $DCEContent -Depth 32
         if ($sendTable.ToLower() -eq "y") {
         
