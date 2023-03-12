@@ -77,6 +77,8 @@ Function New-AzDCR {
         [string]$SaveTable=$null,
         [Parameter(Mandatory=$true)]
         [string]$LogSource,
+        [Parameter(Mandatory=$true)]
+        [string]$EndpointName,
         [Parameter(Mandatory=$false)]
         [Switch] $CheckAzModules=$false
     )
@@ -114,8 +116,14 @@ Function New-AzDCR {
         $TableName = Read-Host "Enter TableName"
     }
 
-    # Make Get-AzDCE Call here!!
-    $DCEResults = Get-AzDCE -Environment AzureCloud -ResourceGroup 'sec_telem_law_1' -EndpointName 'CLI-OGKANSAS-DCE'
+    # Fetch the specified Log Analytics Workspace
+    Write-Host "Fetching -> $Workspace"
+    $url_law = "$($resourceUrl)/subscriptions/$($SubscriptionId)/resourcegroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$Workspace"
+    $WorkspaceContent = Invoke-RestMethod ($url_law+"?api-version=2021-12-01-preview") -Method GET -Headers $headers
+
+    # Make Get-AzDCE Call here!! (e.g. 'CLI-OGKANSAS-DCE')
+    Write-Host "Fetching -> $EndpointName"
+    $DCEResults = Get-AzDCE -Environment AzureCloud -ResourceGroup 'sec_telem_law_1' -EndpointName $EndpointName
 
     # Create JSON structure for the custom log (table)
     $tableParams = [ordered]@{
