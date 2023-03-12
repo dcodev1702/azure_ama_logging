@@ -28,8 +28,8 @@ Order to make this work, three objects have to be fetched from Azure.
    c. Log Analytics Workspace that you want to assign to the DCR
 
 1. Details about the Data Collection Endpoint (assign to DCR)
-   [X]  -- DCE ResourceId (DCEResult.Id)
-        -- CMD: $DCEResult = Get-AzDCE -Environment AzureCloud -ResourceGroup 'sec_telem_law_1' -EndpointName 'CLI-OGKANSAS-DCE' 
+   [X]  -- CMD: $DCEResults = Get-AzDCE -Environment AzureCloud -ResourceGroup 'sec_telem_law_1' -EndpointName 'CLI-OGKANSAS-DCE' 
+   [X]  -- DCE ResourceId -> $DCEResults.Id
 2. Stream Declarations:
    [X]  -- INFO: This table needs to match parameters coming from the logging source (e.g. AMA, Logstash, NXLog, Filebeats, etc)
    [ ]  -- CMD: 
@@ -71,6 +71,10 @@ Function New-AzDCR {
         [string]$Workspace,
         [Parameter(Mandatory=$false)]
         [string]$TableName,
+        [Parameter(Mandatory=$false)]
+        [string]$TableProvided,
+        [Parameter(Mandatory=$false)]
+        [string]$SaveTable=$null,
         [Parameter(Mandatory = $false)]
         [Switch] $CheckAzModules = $false
     )
@@ -103,6 +107,74 @@ Function New-AzDCR {
     }
     if (-not $Workspace) {
         $Workspace = Read-Host "Enter WorkspaceName"
+    }
+    if (-not $TableName) {
+        $TableName = Read-Host "Enter TableName"
+    }
+
+    # Make Get-AzDCE Call here!!
+    $DCEResults = Get-AzDCE -Environment AzureCloud -ResourceGroup 'sec_telem_law_1' -EndpointName 'CLI-OGKANSAS-DCE'
+
+    # Create JSON structure for the custom log (table)
+    $tableParams = [ordered]@{
+        properties = [ordered]@{
+            dataCollectionEndpointId = $DCEResults.id
+            streamDeclarations = [ordered]@{
+                "Custom-$TableName" = [ordered]@{
+                    columns = @()
+                }
+            }
+            dataSources = [ordered]@{
+                logFiles = @(
+                    [ordered]@{
+                        streams = @(
+                            "Custom-$TableName"
+                        )
+                        filePatterns = @(
+                            "/var/lib/docker/volumes/apache2-web_apache2log-volume/_data/access.log"
+                        )
+                        format = "text"
+                        settings = [ordered]@{
+                            text = [ordered]@{
+                                recordStartTimestampFormat = "ISO 8601"
+                            }
+                        }
+                        name = $TableName
+                    }
+                )
+            }
+            destinations = [ordered]@{
+                logAnalytics = @(
+                    [ordered]@{
+                        
+                    }
+                )
+            }
+            dataFlows = @(
+                [ordered]@{
+
+                }
+            )
+        }
+    }
+
+    $timeGenerated_ = [ordered]@{
+        name = "TimeGenerated"
+        type = "dateTime"
+    }
+    $rawData_ = [ordered]@{
+        name = "RawData"
+        type = "string"
+    }
+    
+    # As per the requirement for a custom log
+    # TimeGenerated:dateTime and RawData:string MUST be provided at a minimum
+    
+    $tableParams.properties.schema.columns += $timeGenerated_
+    $tableParams.properties.schema.columns += $rawData_
+
+    if ($SaveTable) {
+        $tableParams | ConvertTo-Json -Depth 32 | Out-File -FilePath $SaveTable
     }
     
 
