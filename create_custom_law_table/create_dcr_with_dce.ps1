@@ -54,7 +54,7 @@ Order to make this work, three objects have to be fetched from Azure.
 
 New-AzDCR -Environment 'AzureCloud' -ResourceGroup 'sec_telem_law_1' -Workspace 'aad-telem' `
           -EndpointName 'CLI-OGKANSAS-DCE' -SaveTable DCR_TABLE.json -TableName 'KPopKansas_GizzyRuffies_CL' `
-          -LogSource '/var/log/apache2/access.log'
+          -LogSource '/var/log/secure'
 #>
 
 # This feature requires PS >= 4.0
@@ -206,8 +206,8 @@ Function New-AzDCR {
     # TimeGenerated:dateTime and RawData:string MUST be provided at a minimum
     $tableParams.properties.streamDeclarations."Custom-$TableName".columns += $timeGenerated_
     $tableParams.properties.streamDeclarations."Custom-$TableName".columns += $rawData_
-
     #>
+
     if ($SaveTable) {
         $tableParams | ConvertTo-Json -Depth 32 | Out-File -FilePath $SaveTable
     }
