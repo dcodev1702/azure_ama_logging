@@ -65,18 +65,20 @@ Function New-AzDCR {
         [Parameter(Mandatory=$true)]
         [ValidateSet('AzureCloud','AzureUSGovernment')]
         [string]$Environment,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [string]$ResourceGroup,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [string]$Workspace,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [string]$TableName,
         [Parameter(Mandatory=$false)]
-        [string]$TableProvided,
+        [string]$TableProvided=$null,
         [Parameter(Mandatory=$false)]
         [string]$SaveTable=$null,
-        [Parameter(Mandatory = $false)]
-        [Switch] $CheckAzModules = $false
+        [Parameter(Mandatory=$true)]
+        [string]$LogSource,
+        [Parameter(Mandatory=$false)]
+        [Switch] $CheckAzModules=$false
     )
 
     
@@ -146,13 +148,22 @@ Function New-AzDCR {
             destinations = [ordered]@{
                 logAnalytics = @(
                     [ordered]@{
-                        
+                        workspaceResourceId = $DCEResults.Id
+                        workspaceId = $DCEResults.properties.Id
+                        name = $DCEResults.Name
                     }
                 )
             }
             dataFlows = @(
                 [ordered]@{
-
+                    streams = @(
+                        "Custom-$TableName"
+                    )
+                    destinations = @(
+                        $DCEResults.Name
+                    )
+                    transformKql = "source"
+                    outputStream = "Custom-$TableName"
                 }
             )
         }
