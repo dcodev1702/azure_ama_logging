@@ -19,10 +19,10 @@ Purpose: Create a Data Collection Endpoint (DCE)
 Usage: 
 ------
 . .\helper_functions.ps1
-. .\create_dce.ps1
+. .\upload_dcr.ps1
 
-New-AzDCE -Environment 'AzureCloud' -ResourceGroup 'myRG' -Location 'eastus' `
-          -EndpointName 'CLI-UNIQUENAME-DCE' -OperatingSystem 'Linux'
+Upload-AzDataCollectionRule -Environment 'AzureCloud' -ResourceGroup 'sec_telem_law_1' `
+  -DCRRuleName 'CLI-WHYTHO-DCR' -DCRJSONFile "./CLI-WHYTHO-DCR-Rule.json"
 
 #>
 
