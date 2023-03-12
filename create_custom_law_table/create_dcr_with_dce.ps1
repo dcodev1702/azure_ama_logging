@@ -32,12 +32,12 @@ Order to make this work, three objects have to be fetched from Azure.
    [X]  -- DCE ResourceId -> $DCEResults.Id
 2. Stream Declarations:
    [X]  -- INFO: This table needs to match parameters coming from the logging source (e.g. AMA, Logstash, NXLog, Filebeats, etc)
-   [ ]  -- CMD: 
-   [ ]  -- $TableName
-   [ ]  -- Table Structure
+   [_]  -- CMD: N/A
+   [X]  -- $TableName
+   [X]  -- Table Structure
 3. Data Sources | LogFiles:
-   [ ]  -- Streams: Custom-$TableName
-   [X]  -- FilePatterns: [ "/var/log/apache2/access.log" ]
+   [X]  -- Streams: Custom-$TableName
+   [X]  -- FilePatterns: [ "/var/lib/docker/volumes/apache2-web_apache2log-volume/_data/access.log" ]
    [X]  -- Format: text
    [X]  -- Name (logFile data source)
 4. Destinations:
@@ -47,10 +47,10 @@ Order to make this work, three objects have to be fetched from Azure.
    [X]  -- $LAResult.properties.customerId (Workspace Id)
    [X]  -- $LAResult.Name
 5. DataFlow:
-   [ ]  -- Streams: Custom-$TableName
+   [X]  -- Streams: Custom-$TableName
    [X]  -- Destination: Workspace Name [$LAResult.Name]
    [X]  -- transformKql: "source"
-   [ ]  -- outputStream: Custom-$TableName
+   [X]  -- outputStream: Custom-$TableName
 
 New-AzDCR -Environment 'AzureCloud' -ResourceGroup 'myRG' -Workspace 'myWorkspace' -TableName 'Apache2_AccessLog_CL'
 
@@ -123,7 +123,16 @@ Function New-AzDCR {
             dataCollectionEndpointId = $DCEResults.id
             streamDeclarations = [ordered]@{
                 "Custom-$TableName" = [ordered]@{
-                    columns = @()
+                    columns = @(
+                        [ordered]@{
+                            name = "TimeGenerated"
+                            type = "dateTime"
+                        }
+                        [ordered]@{
+                            name = "RawData"
+                            type = "string"
+                        }
+                    )
                 }
             }
             dataSources = [ordered]@{
@@ -133,7 +142,7 @@ Function New-AzDCR {
                             "Custom-$TableName"
                         )
                         filePatterns = @(
-                            "/var/lib/docker/volumes/apache2-web_apache2log-volume/_data/access.log"
+                            $LogSource
                         )
                         format = "text"
                         settings = [ordered]@{
@@ -169,6 +178,7 @@ Function New-AzDCR {
         }
     }
 
+    <#
     $timeGenerated_ = [ordered]@{
         name = "TimeGenerated"
         type = "dateTime"
@@ -178,12 +188,12 @@ Function New-AzDCR {
         type = "string"
     }
     
-    # As per the requirement for a custom log
+    # As per the Azure Monitor Agent requirement for a Custom Log (CL)
     # TimeGenerated:dateTime and RawData:string MUST be provided at a minimum
-    
-    $tableParams.properties.schema.columns += $timeGenerated_
-    $tableParams.properties.schema.columns += $rawData_
+    $tableParams.properties.streamDeclarations."Custom-$TableName".columns += $timeGenerated_
+    $tableParams.properties.streamDeclarations."Custom-$TableName".columns += $rawData_
 
+    #>
     if ($SaveTable) {
         $tableParams | ConvertTo-Json -Depth 32 | Out-File -FilePath $SaveTable
     }
