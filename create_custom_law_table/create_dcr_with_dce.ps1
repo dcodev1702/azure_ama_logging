@@ -1,8 +1,8 @@
 <#
 Authors: dcodev1702 & my AI Sidekick (ChatGPT)
-Date: 10 March 2023
+Date: 12 March 2023
 
-Purpose: Create a Custom Log (CL) for a Log Analytics Workspace
+Purpose: Create a Data Collection Rule w/ Data Collection Endpoint (DCR / DCE)
 ----------------------------------------------------------------
 1.  Checks to see if the user is logged into Azure and which Cloud (AzureCloud or AzureUSGovernment) via the Environment switch (mandatory)   
      -- This will also set the ResourceURL based on your environment
@@ -22,9 +22,28 @@ Usage:
 . .\helper_functions.ps1
 . .\create_custom_table.ps1
 
-Import-AzLACustomTable -Environment 'AzureCloud' `
-       -ResourceGroup 'myRG' -Workspace 'myWorkspace' `
-       -TableName 'Apache2_AccessLog_CL' -SaveFile 'apache2_accesslog_table.json'
+Order to make this work, three objects have to be fetched from Azure.
+1. Details about the Data Collection Endpoint (assign to DCR)
+     -- DCE ResourceId
+2. Stream Declarations:
+     -- Table Name
+     -- Table Structure
+3. Data Sources | LogFiles:
+     -- Streams: Table Name
+     -- FilePatterns: [ "/var/log/apache2/access.log" ]
+     -- Format: text
+     -- Name (logFile data source)
+4. Destinations:
+     -- Log Analytics Workspace (assign to destination within DCR)
+        ++ Workspace ResourceId
+        ++ Workspace Id
+        ++ Workspace Name
+5. DataFlow:
+     -- Streams: Table Name
+     -- Destination: Workspace Name
+     -- transformKql: "source"
+
+New-AzDCR -Environment 'AzureCloud' -ResourceGroup 'myRG' -Workspace 'myWorkspace' -TableName 'Apache2_AccessLog_CL'
 
 #>
 
