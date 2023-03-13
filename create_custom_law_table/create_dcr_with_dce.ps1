@@ -55,6 +55,17 @@ Order to make this work, three objects have to be fetched from Azure.
 New-AzDCR -Environment 'AzureCloud' -ResourceGroup 'sec_telem_law_1' -Workspace 'aad-telem' `
           -EndpointName 'CLI-OGKANSAS-DCE' -SaveTable DCR_TABLE.json -TableName 'KPopKansas_GizzyRuffies_CL' `
           -LogSource '/var/log/secure'
+
+NOTES:
+------
+When creating a NEW DCR, only essential fields are filled in the during creation
+From there, it's required pull down (GET) the newly created DCR Rule, MODIFY the 
+newly created DCR rule and then push (PUT) the modifications via the REST API.
+
+1. Create a new data collection rule
+2. Modify the newly created data collection rule
+3. Uploaded the modified DCR via JSON using the REST API
+
 #>
 
 # This feature requires PS >= 4.0
@@ -291,9 +302,6 @@ Function New-AzDCR {
             $DCRRuleName = Read-Host "Enter a name for your Data Collection Rule (DCR)"
             New-AzDataCollectionRule -Location $DCEResults.location -ResourceGroupName $ResourceGroup -RuleName $DCRRuleName  -RuleFile $SaveTable
             
-            # DO THIS UPDATE AFTER YOU CREATE A NEW DCR RULE
-            #$url_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
-            #Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $DCR_JSON
             
             Write-Host "Workspace `"$Workspace`" recieved via RESTFul API." -ForegroundColor Green
             Write-Host "Workspace Name: $($WorkspaceContent.Name)" -ForegroundColor Cyan
@@ -304,14 +312,7 @@ Function New-AzDCR {
             #Write-Host "Sleeping for 20 seconds..." -ForegroundColor Red
             #Start-Sleep -Seconds 20
             
-            # GET DCR
-            $url_Get_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
-            $GOT_DCRContent = Invoke-RestMethod ($url_Get_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
-        
-            $GOT_DCRContent | ConvertTo-JSON -Depth 32 | Out-File "$($DCRRuleName)-Rule.json"
-            # PUT
-            #$url_Get_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
-            #Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $DCR_JSON
+            
             
         } else {
             Write-Output "Did not create Data Collection Rule: $DCRRuleName"
@@ -325,5 +326,78 @@ Function New-AzDCR {
     #$url_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
     #$DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
 
+    # GET DCR
+    $url_Get_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+    $GOT_DCRContent = Invoke-RestMethod ($url_Get_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
+
+
+    # Add DCE ResourceId
+    #$c = [ordered]@{
+    #    dataCollectionEndpointId = $($DCEResults.id)
+    #}
+       
+    #$hh = ConvertFrom-JSON -Depth 10 -InputObject $addMe
+    #$GOT_DCRContent.properties += $hh
+    #$GOT_DCRContent.properties.dataCollectionEndpointId = $($DCEResults.id)
+
+    <#
+    $streamDeclarations = [ordered]@{
+        "Custom-$TableName" = [ordered]@{
+            columns = @(
+                [ordered]@{
+                    name = "TimeGenerated"
+                    type = "datetime"
+                }
+                [ordered]@{
+                    name = "RawData"
+                    type = "string"
+                }
+            )
+        }
+    }
+    $GOT_DCRContent.properties.streamDeclarations += $streamDeclarations
+
+    $logFiles = @(
+                    [ordered]@{
+                        streams = @(
+                            "Custom-$TableName"
+                        )
+                        filePatterns = @()
+                        format = "text"
+                        settings = [ordered]@{
+                            text = [ordered]@{
+                                recordStartTimestampFormat = "ISO 8601"
+                            }
+                        }
+                        name = $TableName
+                    }
+                )
+    $GOT_DCRContent.properties.dataSources.logFiles += $logFiles 
+
+    $transformKql = "source | project TimeGenerated, RawData"
+    $GOT_DCRContent.properties.dataFlows.transformKql = $transformKql
     
+    $outputStream = "Custom-$TableName"
+    $GOT_DCRContent.properties.dataFlows.outputStream += $outputStream
+
+    #>
+
+    # Serialized JSON ..modify in place ..then dump to a file and PUT the modified JSON via REST API
+    $DCRContentJSON = ConvertTo-JSON -Depth 32 -InputObject $GOT_DCRContent
+    $DCRContentJSON | Out-File "$($DCRRuleName)-$(Get-Date -Format yyyyMMddTHHmmssffffZ)-Rule.json"
+
+    Write-Host "Just printing to print so I have a line of code before the break point!" -ForegroundColor Red
+
+    <#
+    MODIFY THE DOWNLOADED DCR in order to add the following logic to the DCR:
+    1. DCE ResourceId
+    2. Custom Table via StreamDeclarations
+    3. Add logFiles :: DataSources (the whole thing!)
+        -- Prompt the user to add their own data source collection path (e.g. /var/log/secure)
+
+    # PUT
+    #$url_Get_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+    #Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $GOT_DCRContent
+    #>
 }
+
