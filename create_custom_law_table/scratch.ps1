@@ -15,7 +15,7 @@ W3CIISLog Setup:
     TEMPORARY WORK-AROUND: Create a new DCR rule via the Azure Portal.
     MOST IMPORTANT PARTS TO MODIFY:
         - kind = Windows
-        - dataCollectionEndpointId = /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/CEF/providers/Microsoft.Insights/dataCollectionEndpoints/CLI-W3CIISLogs-DCE
+        - dataCollectionEndpointId = /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/CEF/providers/Microsoft.Insights/dataCollectionEndpoints/CLI-W3CIISLogs-ZO-DCE
         "streamDeclarations": {
             "Custom-MyTable_CL": {
                 "columns": [
