@@ -76,7 +76,7 @@ newly created DCR rule and then push (PUT) the modifications via the REST API.
 # This feature requires PS >= 4.0
 #Requires -RunAsAdministrator
 
-Function New-AzDCR {
+Function New-AzW3CIISLog-DCR {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
@@ -216,11 +216,7 @@ Function New-AzDCR {
     } catch {
         Write-Host "An error occurred while sending the table via the REST API:`n$($_.Exception.Message)" -ForegroundColor Red
     }
-    #return ($WorkspaceContent)
-
     
-    #$url_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
-    #$DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
 
     # GET DCR
     $url_Get_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
@@ -231,7 +227,6 @@ Function New-AzDCR {
     $DCRContentJSON = ConvertTo-JSON -Depth 32 -InputObject $GOT_DCRContent
     $DCRContentJSON | Out-File "$($DCRRuleName)-$(Get-Date -Format yyyyMMddTHHmmssffffZ)-Rule.json"
 
-    Write-Host "Just printing to print so I have a line of code before the break point!" -ForegroundColor Red
 
     <#
     MODIFY THE DOWNLOADED DCR in order to add the following logic to the DCR:
