@@ -2,7 +2,7 @@
 Authors: dcodev1702 & my AI Sidekick (ChatGPT)
 Date: 12 March 2023
 
-Purpose: Create a Data Collection Rule w/ Data Collection Endpoint (DCR / DCE)
+Purpose: Create a Data Collection Rule
 ------------------------------------------------------------------------------
 1.  Checks to see if the user is logged into Azure and which Cloud (AzureCloud or AzureUSGovernment) via the Environment switch (mandatory)   
      -- This will also set the ResourceURL based on your environment
@@ -146,83 +146,7 @@ Function New-AzDCR {
     # Create JSON structure for the custom log (table)
     $tableParams = [ordered]@{
         properties = [ordered]@{
-            dataCollectionEndpointId = $DCEResults.id
-            streamDeclarations = [ordered]@{
-                "Custom-$TableName" = [ordered]@{
-                    columns = @(
-                        [ordered]@{
-                            name = "TimeGenerated"
-                            type = "datetime"
-                        }
-                        [ordered]@{
-                            name = "RawData"
-                            type = "string"
-                        }
-                    )
-                }
-            }
-            dataSources = [ordered]@{
-                logFiles = @(
-                    [ordered]@{
-                        streams = @(
-                            "Custom-$TableName"
-                        )
-                        filePatterns = @(
-                            $LogSource
-                        )
-                        format = "text"
-                        settings = [ordered]@{
-                            text = [ordered]@{
-                                recordStartTimestampFormat = "ISO 8601"
-                            }
-                        }
-                        name = $TableName
-                    }
-                )
-            }
-            destinations = [ordered]@{
-                logAnalytics = @(
-                    [ordered]@{
-                        workspaceResourceId = $WorkspaceContent.Id
-                        workspaceId = $WorkspaceContent.properties.customerId
-                        name = $WorkspaceContent.Name
-                    }
-                )
-            }
-            dataFlows = @(
-                [ordered]@{
-                    streams = @(
-                        "Custom-$TableName"
-                    )
-                    destinations = @(
-                        $WorkspaceContent.Name
-                    )
-                    transformKql = "source | project TimeGenerated, RawData"
-                    outputStream = "Custom-$TableName"
-                }
-            )
-        }
-    }
-
-
-    <#
-    $tableParams = [ordered]@{
-        properties = [ordered]@{
-            dataCollectionEndpointId = $DCEResults.id
-            streamDeclarations = [ordered]@{
-                "Custom-$TableName" = [ordered]@{
-                    columns = @(
-                        [ordered]@{
-                            name = "TimeGenerated"
-                            type = "datetime"
-                        }
-                        [ordered]@{
-                            name = "RawData"
-                            type = "string"
-                        }
-                    )
-                }
-            }
+            dataSources = [ordered]@{}
             destinations = [ordered]@{
                 logAnalytics = @(
                     [ordered]@{
@@ -231,23 +155,9 @@ Function New-AzDCR {
                     }
                 )
             }
-            dataFlows = @(
-                [ordered]@{
-                    streams = @(
-                        "Custom-$TableName"
-                    )
-                    destinations = @(
-                        $WorkspaceContent.Name
-                    )
-                    transformKql = "source | project TimeGenerated, RawData"
-                    outputStream = "Custom-$TableName"
-                }
-            )
+            dataFlows = @()
         }
     }
-    #>
-
-
 
 
     # Deserialize JSON object ($DCEContent) so it can be submitted via REST API 
@@ -255,29 +165,10 @@ Function New-AzDCR {
     Write-Output "Current Structure of your DCR:"
     Write-Output $DCR_JSON
 
-    <#
-    DATA TYPES MUST BE ALL LOWERCASE!!!
-    THIS HUNG ME UP FOR AN ENTIRE DAT!!
-    $timeGenerated_ = [ordered]@{
-        name = "TimeGenerated"
-        type = "datetime"
-    }
-    $rawData_ = [ordered]@{
-        name = "RawData"
-        type = "string"
-    }
-    
-    # As per the Azure Monitor Agent requirement for a Custom Log (CL)
-    # TimeGenerated:dateTime and RawData:string MUST be provided at a minimum
-    $tableParams.properties.streamDeclarations."Custom-$TableName".columns += $timeGenerated_
-    $tableParams.properties.streamDeclarations."Custom-$TableName".columns += $rawData_
-    #>
-
     if ($SaveTable) {
         $tableParams | ConvertTo-Json -Depth 32 | Out-File -FilePath $SaveTable
     }
     
-
     # Radiate information to the user for self validation
     Write-Host "Subscription Id: $SubscriptionId" -ForegroundColor Green
     Write-Host "ResourceName: $ResourceGroup" -ForegroundColor Green
@@ -335,57 +226,6 @@ Function New-AzDCR {
     $url_Get_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
     $GOT_DCRContent = Invoke-RestMethod ($url_Get_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
 
-
-    # Add DCE ResourceId
-    #$c = [ordered]@{
-    #    dataCollectionEndpointId = $($DCEResults.id)
-    #}
-       
-    #$hh = ConvertFrom-JSON -Depth 10 -InputObject $addMe
-    #$GOT_DCRContent.properties += $hh
-    #$GOT_DCRContent.properties.dataCollectionEndpointId = $($DCEResults.id)
-
-    <#
-    $streamDeclarations = [ordered]@{
-        "Custom-$TableName" = [ordered]@{
-            columns = @(
-                [ordered]@{
-                    name = "TimeGenerated"
-                    type = "datetime"
-                }
-                [ordered]@{
-                    name = "RawData"
-                    type = "string"
-                }
-            )
-        }
-    }
-    $GOT_DCRContent.properties.streamDeclarations += $streamDeclarations
-
-    $logFiles = @(
-                    [ordered]@{
-                        streams = @(
-                            "Custom-$TableName"
-                        )
-                        filePatterns = @()
-                        format = "text"
-                        settings = [ordered]@{
-                            text = [ordered]@{
-                                recordStartTimestampFormat = "ISO 8601"
-                            }
-                        }
-                        name = $TableName
-                    }
-                )
-    $GOT_DCRContent.properties.dataSources.logFiles += $logFiles 
-
-    $transformKql = "source | project TimeGenerated, RawData"
-    $GOT_DCRContent.properties.dataFlows.transformKql = $transformKql
-    
-    $outputStream = "Custom-$TableName"
-    $GOT_DCRContent.properties.dataFlows.outputStream += $outputStream
-
-    #>
 
     # Serialized JSON ..modify in place ..then dump to a file and PUT the modified JSON via REST API
     $DCRContentJSON = ConvertTo-JSON -Depth 32 -InputObject $GOT_DCRContent
