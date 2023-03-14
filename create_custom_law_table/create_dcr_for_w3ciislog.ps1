@@ -214,6 +214,7 @@ Function New-AzW3CIISLog-DCR {
     
 
     # GET DCR
+    $DCRRuleName = 'testing123'
     $url_Get_DCRRule = "$resourceUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
     $GOT_DCRContent = Invoke-RestMethod ($url_Get_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
 

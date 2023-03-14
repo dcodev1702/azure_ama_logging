@@ -10,13 +10,42 @@ W3CIISLog Setup:
 2. We will be using the existing table (No need to create a new table):
     [W3CIISLog] = Verify the table exists in your Log Analytics Workspace
 
-3. Create a new DCR rule with no dataSources, etc
+3. Create a new DCR rule via REST API.
+    Currently doing something wrong in MAG and unable to create a new DCR rule via the CLI.
+    TEMPORARY WORK-AROUND: Create a new DCR rule via the Azure Portal.
+    MOST IMPORTANT PARTS TO MODIFY:
+        - kind = Windows
+        - dataCollectionEndpointId = /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/CEF/providers/Microsoft.Insights/dataCollectionEndpoints/CLI-W3CIISLogs-DCE
+        "streamDeclarations": {
+            "Custom-MyTable_CL": {
+                "columns": [
+                    {
+                        "name": "TimeGenerated",
+                        "type": "datetime"
+                    },
+                    {
+                        "name": "RawData",
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        - dataSources:
+            - iisLogs
+            - "logDirectories": [ "D:\\IIS_LOGS\\LogFiles\\W3SVC1" ]
+        - dataFlows:
+            - transformKql, outputStream
+        - streamDeclarations = W3CIISLog
 
+4. Modify the DCR rule by hand (VSCode) to add the DCE, dataSources, dataFlows, and transformKql/outputStream fields.
 
-4. Modify the DCR rule to add the DCE, dataSources, dataFlows, and transformKql/outputStrream
-   and then upload the DCR rule to Azure Monitor via REST API.
+5. Upload the DCR to Azure Monitor using [upload_dcr.ps1] via the REST API.
+    Upload-AzDataCollectionRule -Environment 'AzureUSGovernment' -ResourceGroup 'CEF' `
+    -DCRRuleName 'CLI-W3CIISLogs-ZO-DCR' -DCRJSONFile ./CLI-W3CIISLogs-ZO-DCR-Rule.json
 
+6. Assign VM in the Resource Group to the DCE
 
+7. Assign VM in the Resource Group to the DCR
 
 #>
 
