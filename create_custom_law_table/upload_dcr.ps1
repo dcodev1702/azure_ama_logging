@@ -2,27 +2,26 @@
 Authors: dcodev1702 & my AI Sidekick (ChatGPT)
 Date: 12 March 2023
 
-Purpose: Create a Data Collection Endpoint (DCE)
--------------------------------------------------
+Purpose: Upload Data Collection Rule (DCR) to Azure Monitor
+-----------------------------------------------------------
 1.  Checks to see if the user is logged into Azure and which Cloud (AzureCloud or AzureUSGovernment) via the Environment switch (mandatory)   
-     -- This will also set the ResourceURL based on your environment
-     -- Same Resource URL regardless of Environment: providers/Microsoft.Insights/dataCollectionEndpoints
-2.  Checks to see required Az Modules are installed with the -CheckAzModules switch.
-3.  Allows the user to name the Data Collection Endpoint ( DCE ) with the -EndpointName switch (mandatory).
-4.  Allows the user to specify the operating system
-5.  Allows the user to define network access of the endpoint:
-      -- Enabled
-      -- Disabled
-6.  Allows the user to specify the location.
-7.  Allows the user to send their DCE to Azure Monitor via REST API.
+        -- This will also set the ResourceURL based on your environment
+
 
 Usage: 
 ------
 . .\helper_functions.ps1
 . .\upload_dcr.ps1
 
+Azure Commercial:
+------------------
 Upload-AzDataCollectionRule -Environment 'AzureCloud' -ResourceGroup 'sec_telem_law_1' `
-  -DCRRuleName 'CLI-WHYTHO-DCR' -DCRJSONFile "./CLI-WHYTHO-DCR-Rule.json"
+-DCRRuleName 'CLI-WHYTHO-DCR' -DCRJSONFile "./CLI-WHYTHO-DCR-Rule.json"
+
+Microsoft Azure Government (MAG):
+---------------------------------
+Upload-AzDataCollectionRule -Environment 'AzureUSGovernment' -ResourceGroup 'CEF' `
+-DCRRuleName 'CLI-W3CIISLogs-ZO-DCE' -DCRJSONFile "./CLI-WHYTHO-DCR-Rule.json"
 
 #>
 

@@ -24,6 +24,11 @@ Usage:
 New-AzDCE -Environment 'AzureCloud' -ResourceGroup 'myRG' -Location 'eastus' `
           -EndpointName 'CLI-UNIQUENAME-DCE' -OperatingSystem 'Linux'
 
+US GOVERNMENT CLOUD:
+--------------------
+New-AzDCE -Environment 'AzureUSGovernment' -ResourceGroup 'CEF' `
+ -Location 'usgovvirginia' -EndpointName 'CLI-W3CIISLogs-ZO-DCE' -OperatingSystem 'Windows' -NetworkIsPublic $true
+
 #>
 
 # This feature requires PS >= 4.0
@@ -59,6 +64,13 @@ Function New-AzDCE {
     # Before querying Azure, ensure we are logged in
     $AzContext = Get-AzureSubscription($Environment)
     $SubscriptionId = $AzContext.Subscription.Id
+
+    # Get Azure Access (JWT) Token for API Auth/Access 
+    if($AzContext.Environment.Name -eq 'AzureCloud') {
+        $resourceUrl = 'https://management.azure.com'
+    } else {
+        $resourceUrl = 'https://management.usgovcloudapi.net/'
+    }
 
     # API Auth for Invoke-AzRestMethod
     $token = (Get-AzAccessToken -ResourceUrl $resourceUrl).Token

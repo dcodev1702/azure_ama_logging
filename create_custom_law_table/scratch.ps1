@@ -1,3 +1,25 @@
+<#
+
+W3CIISLog Setup:
+-----------------
+1. Create a new DCE
+    New-AzDCE -Environment 'AzureUSGovernment' -ResourceGroup 'CEF' `
+    -Location 'usgovvirginia' -EndpointName 'CLI-W3CIISLogs-ZO-DCE' `
+    -OperatingSystem 'Windows' -NetworkIsPublic $true
+
+2. We will be using the existing table (No need to create a new table):
+    [W3CIISLog] = Verify the table exists in your Log Analytics Workspace
+
+3. Create a new DCR rule with no dataSources, etc
+
+
+4. Modify the DCR rule to add the DCE, dataSources, dataFlows, and transformKql/outputStrream
+   and then upload the DCR rule to Azure Monitor via REST API.
+
+
+
+#>
+
 
 $lo = ConvertFrom-JSON -Depth 20 -InputObject $zo
 
