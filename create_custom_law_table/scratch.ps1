@@ -2,6 +2,8 @@
 
 W3CIISLog DCR Setup:
 --------------------
+# WRITE THIS FROM THE PERSPECTIVE OF USING CLOUD SHELL
+
 1. Create a new DCE
     New-AzDCE -Environment 'AzureUSGovernment' -ResourceGroup 'CEF' `
     -Location 'usgovvirginia' -EndpointName 'CLI-W3CIISLogs-ZO-DCE' `
