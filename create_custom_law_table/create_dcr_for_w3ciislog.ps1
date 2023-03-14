@@ -54,11 +54,15 @@ Order to make this work, three objects have to be fetched from Azure.
 
 COMMAND:
 ---------
+. ./helper_functions.ps1
+. ./create_dce.ps1
+. ./create_dcr_for_w3ciislog.ps1
+
 New-AzDCR -Environment 'AzureCloud' -ResourceGroup 'sec_telem_law_1' -Workspace 'aad-telem' `
           -EndpointName 'CLI-APACHE2-AL-DCE' -SaveTable DCR_TABLE.json -TableName 'Apache2_AccessLog_CL' `
           -LogSource '/var/log/secure'
 
-New-AzDCR -Environment 'AzureUSGovernment' -ResourceGroup 'CEF `
+New-AzDCR -Environment 'AzureUSGovernment' -ResourceGroup 'CEF' `
 -Workspace 'sentinel-law' -EndpointName 'CLI-OGKANSAS-DCE' -SaveTable CLI-APACHE2-AL-DCR.json
 
 NOTES:
@@ -85,15 +89,9 @@ Function New-AzW3CIISLog-DCR {
         [Parameter(Mandatory=$true)]
         [string]$ResourceGroup,
         [Parameter(Mandatory=$true)]
+        [string]$WorkspaceResourceGroup,
+        [Parameter(Mandatory=$true)]
         [string]$Workspace,
-        [Parameter(Mandatory=$false)]
-        [string]$TableName=$null,
-        [Parameter(Mandatory=$false)]
-        [string]$TableProvided=$null,
-        [Parameter(Mandatory=$false)]
-        [string]$SaveTable=$null,
-        [Parameter(Mandatory=$false)]
-        [string]$LogSource=$null,
         [Parameter(Mandatory=$true)]
         [string]$EndpointName,
         [Parameter(Mandatory=$false)]
@@ -129,18 +127,15 @@ Function New-AzW3CIISLog-DCR {
     if (-not $Workspace) {
         $Workspace = Read-Host "Enter WorkspaceName"
     }
-    if (-not $TableName) {
-        $TableName = Read-Host "Enter TableName"
-    }
 
     # Fetch the specified Log Analytics Workspace
     Write-Host "Fetching -> $Workspace"
-    $url_law = "$($resourceUrl)/subscriptions/$($SubscriptionId)/resourcegroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$Workspace"
+    $url_law = "$($resourceUrl)/subscriptions/$($SubscriptionId)/resourcegroups/$WorkspaceResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$Workspace"
     $WorkspaceContent = Invoke-RestMethod ($url_law+"?api-version=2021-12-01-preview") -Method GET -Headers $headers
 
     # Make Get-AzDCE Call here!! (e.g. 'CLI-OGKANSAS-DCE')
     Write-Host "Fetching -> $EndpointName"
-    $DCEResults = Get-AzDCE -Environment AzureCloud -ResourceGroup 'sec_telem_law_1' -EndpointName $EndpointName
+    $DCEResults = Get-AzDCE -Environment AzureCloud -ResourceGroup $ResourceGroup -EndpointName $EndpointName
 
 
     # Create JSON structure for the custom log (table)
