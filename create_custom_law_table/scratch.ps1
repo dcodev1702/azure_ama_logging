@@ -1,7 +1,7 @@
 <#
 
-W3CIISLog Setup:
------------------
+W3CIISLog DCR Setup:
+--------------------
 1. Create a new DCE
     New-AzDCE -Environment 'AzureUSGovernment' -ResourceGroup 'CEF' `
     -Location 'usgovvirginia' -EndpointName 'CLI-W3CIISLogs-ZO-DCE' `
@@ -50,7 +50,7 @@ W3CIISLog Setup:
 #>
 
 
-$lo = ConvertFrom-JSON -Depth 20 -InputObject $zo
+$exp = ConvertFrom-JSON -Depth 20 -InputObject $zo
 
 # Add properties to a JSON Obj
 # zo.json represents a new DCR rule with no dataSources, DCE, Table, etc
