@@ -94,6 +94,8 @@ Function New-AzW3CIISLog-DCR {
         [string]$Workspace,
         [Parameter(Mandatory=$true)]
         [string]$EndpointName,
+        [Parameter(Mandatory=$true)]
+        [string]$SaveDCR,
         [Parameter(Mandatory=$false)]
         [Switch] $CheckAzModules=$false
     )
@@ -126,6 +128,9 @@ Function New-AzW3CIISLog-DCR {
     }
     if (-not $Workspace) {
         $Workspace = Read-Host "Enter WorkspaceName"
+    }
+    if (-not $WorkspaceResourceGroup) {
+        $WorkspaceResourceGroup = Read-Host "Enter WorkspaceName"
     }
 
     # Fetch the specified Log Analytics Workspace
@@ -160,8 +165,8 @@ Function New-AzW3CIISLog-DCR {
     Write-Output "Current Structure of your DCR:"
     Write-Output $DCR_JSON
 
-    if ($SaveTable) {
-        $tableParams | ConvertTo-Json -Depth 32 | Out-File -FilePath $SaveTable
+    if ($SaveDCR) {
+        $tableParams | ConvertTo-Json -Depth 32 | Out-File -FilePath $SaveDCR
     }
     
     # Radiate information to the user for self validation
@@ -191,7 +196,7 @@ Function New-AzW3CIISLog-DCR {
             #$url_dcr = "$($resourceUrl)/subscriptions/$($SubscriptionId)/resourcegroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$Workspace"
             #$WorkspaceContent = Invoke-RestMethod ($url_dcr+"?api-version=2021-12-01-preview") -Method GET -Headers $headers
             $DCRRuleName = Read-Host "Enter a name for your Data Collection Rule (DCR)"
-            New-AzDataCollectionRule -Location $DCEResults.location -ResourceGroupName $ResourceGroup -RuleName $DCRRuleName  -RuleFile $SaveTable
+            New-AzDataCollectionRule -Location $DCEResults.location -ResourceGroupName $ResourceGroup -RuleName $DCRRuleName  -RuleFile "./NEWDCR.json"
             
             
             Write-Host "Workspace `"$Workspace`" recieved via RESTFul API." -ForegroundColor Green
@@ -199,11 +204,6 @@ Function New-AzW3CIISLog-DCR {
             Write-Host "Workspace ID: $($WorkspaceContent.properties.customerId)" -ForegroundColor Cyan
             Write-Host "Workspace ResourceId: $($WorkspaceContent.Id)" -ForegroundColor Cyan
         
-            # HAVE TO CREATE NEW DCR, THEN DOWNLOAD IT, CHANGE IT, AND UPLOAD IT.
-            #Write-Host "Sleeping for 20 seconds..." -ForegroundColor Red
-            #Start-Sleep -Seconds 20
-            
-            
             
         } else {
             Write-Output "Did not create Data Collection Rule: $DCRRuleName"
@@ -214,7 +214,7 @@ Function New-AzW3CIISLog-DCR {
     
 
     # GET DCR
-    $url_Get_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+    $url_Get_DCRRule = "$resourceUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
     $GOT_DCRContent = Invoke-RestMethod ($url_Get_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
 
 
@@ -235,4 +235,3 @@ Function New-AzW3CIISLog-DCR {
     #Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $GOT_DCRContent
     #>
 }
-
