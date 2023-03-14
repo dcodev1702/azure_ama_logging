@@ -58,7 +58,7 @@ Function Import-AzLACustomTable {
     $AzContext = Get-AzureSubscription($Environment)
     $SubscriptionId = $AzContext.Subscription.Id
 
-    # Get Azure Access (JWT) Token for API Auth/Access 
+    # Get Azure Access (JWT) Token for API Auth/Access
     if($AzContext.Environment.Name -eq 'AzureCloud') {
         $resourceUrl = 'https://management.azure.com'
     } else {
