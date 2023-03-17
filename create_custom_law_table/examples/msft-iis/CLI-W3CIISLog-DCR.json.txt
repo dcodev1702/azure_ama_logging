@@ -23,7 +23,8 @@
                 "Microsoft-W3CIISLog"
             ],
             "logDirectories": [
-                "D:\\IIS_LOGS\\LogFiles\\W3SVC1"
+                "D:\\IIS_LOGS\\LogFiles\\W3SVC1",
+                "D:\\IIS_LOGS\\LogFiles\\W3SVC2"
             ],
             "name": "iisLogsDataSource"
         }
