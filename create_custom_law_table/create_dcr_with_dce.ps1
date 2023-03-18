@@ -299,4 +299,3 @@ Function New-AzDCR {
     #Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $GOT_DCRContent
     #>
 }
-
