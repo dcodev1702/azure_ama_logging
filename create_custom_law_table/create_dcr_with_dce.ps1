@@ -202,7 +202,14 @@ Function New-AzDCR {
                 }
             )
         }
+        location = $DCEResults.location
     }
+
+    # Now execute the command below.  This will create the DCR in AzureUSGovernment.
+    # $DCR_JSON = Get-Content -Path "./NEWDCR.json" -Raw 
+    
+    # $url_newDCR = "$resourceUrl/subscriptions/$($SubscriptionId)/resourceGroups/$($ResourceGroup)/providers/Microsoft.Insights/dataCollectionRules/$($dataCollectionRuleName)”
+    # Invoke-AzRestMethod ($url_newDCR+"?api-version=2019-11-01-preview") -Method PUT -Payload $DCR_JSON
 
 
     <#
@@ -363,20 +370,20 @@ Function New-AzDCR {
     $GOT_DCRContent.properties.streamDeclarations += $streamDeclarations
 
     $logFiles = @(
-                    [ordered]@{
-                        streams = @(
-                            "Custom-$TableName"
-                        )
-                        filePatterns = @()
-                        format = "text"
-                        settings = [ordered]@{
-                            text = [ordered]@{
-                                recordStartTimestampFormat = "ISO 8601"
-                            }
-                        }
-                        name = $TableName
-                    }
-                )
+        [ordered]@{
+            streams = @(
+                "Custom-$TableName"
+            )
+            filePatterns = @()
+            format = "text"
+            settings = [ordered]@{
+                text = [ordered]@{
+                    recordStartTimestampFormat = "ISO 8601"
+                }
+            }
+            name = $TableName
+        }
+    )
     $GOT_DCRContent.properties.dataSources.logFiles += $logFiles 
 
     $transformKql = "source | project TimeGenerated, RawData"

@@ -157,6 +157,7 @@ Function New-AzW3CIISLog-DCR {
             }
             dataFlows = @()
         }
+        location = "usgovvirginia"
     }
 
 
@@ -198,7 +199,54 @@ Function New-AzW3CIISLog-DCR {
             $DCRRuleName = Read-Host "Enter a name for your Data Collection Rule (DCR)"
             New-AzDataCollectionRule -Location $DCEResults.location -ResourceGroupName $ResourceGroup -RuleName $DCRRuleName  -RuleFile "./NEWDCR.json"
             
-            
+            # Create NEW DCR RULE FOR AzureUSGovernment
+            # This worked ..I had to provide the following information in the DCR JSON file:
+            <#
+                
+            {    
+                "properties": {
+                    "dataSources" : {
+                        "windowsEventLogs" : [
+                          {
+                            "streams": [
+                                "Microsoft-SecurityEvent"
+                            ],
+                            "xPathQueries": [
+                                "Security!*[System[(band(Keywords,13510798882111488))]]"
+                            ],
+                            "name": "eventLogsDataSource"
+                          }
+                        ]
+                    },
+                    "destinations": {
+                        "logAnalytics": [
+                            {
+                                "workspaceResourceId": "/subscriptions/354d7e25-1be3-4cc4-a42d-bb49141dcb86/resourcegroups/sentinel/providers/microsoft.operationalinsights/workspaces/sentinel-law",
+                                "name": "sentinel-law"
+                            }
+                        ]
+                    },
+                    "dataFlows": [
+                        {
+                            "streams": [
+                                "Microsoft-SecurityEvent"
+                            ],
+                            "destinations": [
+                                "sentinel-law"
+                            ]
+                        }
+                    ]
+                },
+                "location": "usgovvirginia"
+            }
+
+            # Now execute the command below.  This will create the DCR in AzureUSGovernment.
+            $DCR_JSON = Get-Content -Path "./NEWDCR.json" -Raw 
+            #>
+            $url_newDCR = "https://management.usgovcloudapi.net/subscriptions/$($SubscriptionId)/resourceGroups/$($ResourceGroup)/providers/Microsoft.Insights/dataCollectionRules/$($dataCollectionRuleName)”
+            Invoke-AzRestMethod ($url_newDCR+"?api-version=2019-11-01-preview") -Method PUT -Payload $DCR_JSON
+
+
             Write-Host "Workspace `"$Workspace`" recieved via RESTFul API." -ForegroundColor Green
             Write-Host "Workspace Name: $($WorkspaceContent.Name)" -ForegroundColor Cyan
             Write-Host "Workspace ID: $($WorkspaceContent.properties.customerId)" -ForegroundColor Cyan
