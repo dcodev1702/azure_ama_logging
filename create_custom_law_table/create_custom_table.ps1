@@ -58,7 +58,7 @@ Function Import-AzLACustomTable {
     $AzContext = Get-AzureSubscription($Environment)
     $SubscriptionId = $AzContext.Subscription.Id
 
-    # Get Azure Access (JWT) Token for API Auth/Access
+    # Get the correct REST API Endpoint for Resource Management
     $resourceUrl = (Get-AzContext).Environment.ResourceManagerUrl
     
     # API Auth for Invoke-AzRestMethod
