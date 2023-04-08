@@ -65,7 +65,7 @@ Function New-AzDCE {
     $AzContext = Get-AzureSubscription($Environment)
     $subscriptionId = $AzContext.Subscription.Id
 
-    # Get the right REST API Endpoint for Resource Management
+    # Get the correct REST API Endpoint for Resource Management
     $resourceUrl = (Get-AzContext).Environment.ResourceManagerUrl
 
     # API Auth for Invoke-AzRestMethod
