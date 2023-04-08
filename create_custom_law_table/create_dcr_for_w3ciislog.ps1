@@ -107,14 +107,10 @@ Function New-AzW3CIISLog-DCR {
 
     # Before querying Azure, ensure we are logged in
     $AzContext = Get-AzureSubscription($Environment)
-    $SubscriptionId = $AzContext.Subscription.Id
+    $subscriptionId = $AzContext.Subscription.Id
 
-    # Get Azure Access (JWT) Token for API Auth/Access 
-    if($AzContext.Environment.Name -eq 'AzureCloud') {
-        $resourceUrl = 'https://management.azure.com'
-    } else {
-        $resourceUrl = 'https://management.usgovcloudapi.net/'
-    }
+    # Get the correct REST API Endpoint for Resource Management
+    $resourceUrl = (Get-AzContext).Environment.ResourceManagerUrl
 
     # API Auth for Invoke-AzRestMethod
     $token = (Get-AzAccessToken -ResourceUrl $resourceUrl).Token
@@ -135,7 +131,7 @@ Function New-AzW3CIISLog-DCR {
 
     # Fetch the specified Log Analytics Workspace
     Write-Host "Fetching -> $Workspace"
-    $url_law = "$($resourceUrl)/subscriptions/$($SubscriptionId)/resourcegroups/$WorkspaceResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$Workspace"
+    $url_law = "$($resourceUrl)/subscriptions/$($subscriptionId)/resourcegroups/$WorkspaceResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$Workspace"
     $WorkspaceContent = Invoke-RestMethod ($url_law+"?api-version=2021-12-01-preview") -Method GET -Headers $headers
 
     # Make Get-AzDCE Call here!! (e.g. 'CLI-OGKANSAS-DCE')
@@ -171,7 +167,8 @@ Function New-AzW3CIISLog-DCR {
     }
     
     # Radiate information to the user for self validation
-    Write-Host "Subscription Id: $SubscriptionId" -ForegroundColor Green
+    Write-Host "Resource Manager Url: $resourceUrl" -Foreground Green
+    Write-Host "Subscription Id: $subscriptionId" -ForegroundColor Green
     Write-Host "ResourceName: $ResourceGroup" -ForegroundColor Green
     Write-Host "WorkspaceName: $Workspace" -ForegroundColor Green
 
@@ -193,7 +190,7 @@ Function New-AzW3CIISLog-DCR {
         if ($sendTable.ToLower() -eq "y") {
         
             # Need to add check to ensure Access Token is current before calling Invoke-AzRestMethod
-            Write-Host "Getting Workspace [`"$Workspace`"] -> [Env]:$Environment[Id]:$SubscriptionId[RG:]$ResourceGroup" -ForegroundColor Yellow
+            Write-Host "Getting Workspace [`"$Workspace`"] -> [Env]:$Environment[Id]:$subscriptionId[RG:]$ResourceGroup" -ForegroundColor Yellow
             #$url_dcr = "$($resourceUrl)/subscriptions/$($SubscriptionId)/resourcegroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$Workspace"
             #$WorkspaceContent = Invoke-RestMethod ($url_dcr+"?api-version=2021-12-01-preview") -Method GET -Headers $headers
             $DCRRuleName = Read-Host "Enter a name for your Data Collection Rule (DCR)"
@@ -243,7 +240,7 @@ Function New-AzW3CIISLog-DCR {
             # Now execute the command below.  This will create the DCR in AzureUSGovernment.
             $DCR_JSON = Get-Content -Path "./NEWDCR.json" -Raw 
             #>
-            $url_newDCR = "https://management.usgovcloudapi.net/subscriptions/$($SubscriptionId)/resourceGroups/$($ResourceGroup)/providers/Microsoft.Insights/dataCollectionRules/$($dataCollectionRuleName)”
+            $url_newDCR = $resourceUrl/subscriptions/$($subscriptionId)/resourceGroups/$($ResourceGroup)/providers/Microsoft.Insights/dataCollectionRules/$($dataCollectionRuleName)”
             Invoke-AzRestMethod ($url_newDCR+"?api-version=2019-11-01-preview") -Method PUT -Payload $DCR_JSON
 
 
@@ -263,13 +260,14 @@ Function New-AzW3CIISLog-DCR {
 
     # GET DCR
     $DCRRuleName = 'testing123'
-    $url_Get_DCRRule = "$resourceUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+    $url_DCRRule = "$resourceUrl/subscriptions/$subscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
     $GOT_DCRContent = Invoke-RestMethod ($url_Get_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
 
 
     # Serialized JSON ..modify in place ..then dump to a file and PUT the modified JSON via REST API
-    $DCRContentJSON = ConvertTo-JSON -Depth 32 -InputObject $GOT_DCRContent
-    $DCRContentJSON | Out-File "$($DCRRuleName)-$(Get-Date -Format yyyyMMddTHHmmssffffZ)-Rule.json"
+    ConvertTo-JSON -Depth 32 -InputObject $GOT_DCRContent | Out-File "$DCRRuleName.json"
+  
+    #$DCRContentJSON | Out-File "$($DCRRuleName)-$(Get-Date -Format yyyyMMddTHHmmssffffZ)-Rule.json"
 
 
     <#
@@ -279,8 +277,9 @@ Function New-AzW3CIISLog-DCR {
     3. Add logFiles :: DataSources (the whole thing!)
         -- Prompt the user to add their own data source collection path (e.g. /var/log/secure)
 
-    # PUT
-    #$url_Get_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+    # Copy the modified Data Collection Rule (DCR) to a variable ($DCRRuleName) and call REST API IOT send (PUT) the modified DCR to Azure.
+    #$GOT_DCRContent = Get-Content ./"$DCRRuleName.json" -Raw
+    #$url_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
     #Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $GOT_DCRContent
     #>
 }
