@@ -63,7 +63,7 @@ Function New-AzDCE {
 
     # Before querying Azure, ensure we are logged in
     $AzContext = Get-AzureSubscription($Environment)
-    $SubscriptionId = $AzContext.Subscription.Id
+    $subscriptionId = $AzContext.Subscription.Id
 
     # Get the right REST API Endpoint for Resource Management
     $resourceUrl = (Get-AzContext).Environment.ResourceManagerUrl
@@ -100,7 +100,8 @@ Function New-AzDCE {
     }
     
     # Radiate information to the user for self validation
-    Write-Host "Subscription Id: $SubscriptionId" -ForegroundColor Green
+    Write-Host "Subscription Id: $subscriptionId" -ForegroundColor Green
+    Write-Host "Resource Management URL: $resourceUrl" -ForegroundColor Green
     Write-Host "Resource Group: $ResourceGroup" -ForegroundColor Green
     Write-Host "EndpointName: $EndpointName" -ForegroundColor Green
     Write-Host "Operating System: $OperatingSystem" -ForegroundColor Cyan
@@ -124,9 +125,9 @@ Function New-AzDCE {
         if ($sendTable.ToLower() -eq "y") {
         
             # Need to add check to ensure Access Token is current before calling Invoke-AzRestMethod
-            Write-Host "Sending DCE [`"$EndpointName`"] -> [Env]:$Environment[Id]:$SubscriptionId[RG:]$ResourceGroup" -ForegroundColor Yellow
+            Write-Host "Sending DCE [`"$EndpointName`"] -> [Env]:$Environment[Id]:$subscriptionId[RG:]$ResourceGroup" -ForegroundColor Yellow
             
-            $url_dce = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionEndpoints/$($EndpointName)"
+            $url_dce = "/subscriptions/$subscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionEndpoints/$($EndpointName)"
             Invoke-AzRestMethod -Path ($url_dce+"?api-version=2021-09-01-preview") -Method PUT -Payload $DCE_JSON
 
             Write-Host "DCE [$EndpointName::$OperatingSystem] created and sent via RESTFul API." -ForegroundColor Green
@@ -159,7 +160,7 @@ Function Get-AzDCE {
 
     # Before querying Azure, ensure we are logged in
     $AzContext = Get-AzureSubscription($Environment)
-    $SubscriptionId = $AzContext.Subscription.Id
+    $subscriptionId = $AzContext.Subscription.Id
 
     # Get Azure Access (JWT) Token for API Auth/Access 
     $resourceUrl = (Get-AzContext).Environment.ResourceManagerUrl
@@ -170,7 +171,7 @@ Function Get-AzDCE {
     $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
     $headers.Add("Authorization","Bearer $token")
 
-    $url_get_dce = "$resourceUrl/subscriptions/$($SubscriptionId)/resourceGroups/$($ResourceGroup)/providers/Microsoft.Insights/dataCollectionEndpoints/$($EndpointName)"
+    $url_get_dce = "$resourceUrl/subscriptions/$($subscriptionId)/resourceGroups/$($ResourceGroup)/providers/Microsoft.Insights/dataCollectionEndpoints/$($EndpointName)"
     $DCEInfo = Invoke-RestMethod ("$url_get_dce"+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
 
     Write-Host "Data Collection Endpoint ID: $($DCEInfo.Id)" -ForegroundColor Cyan
