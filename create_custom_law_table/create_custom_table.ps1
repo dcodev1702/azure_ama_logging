@@ -59,12 +59,8 @@ Function Import-AzLACustomTable {
     $SubscriptionId = $AzContext.Subscription.Id
 
     # Get Azure Access (JWT) Token for API Auth/Access
-    if($AzContext.Environment.Name -eq 'AzureCloud') {
-        $resourceUrl = 'https://management.azure.com'
-    } else {
-        $resourceUrl = 'https://management.usgovcloudapi.net/'
-    }
-
+    $resourceUrl = (Get-AzContext).Environment.ResourceManagerUrl
+    
     # API Auth for Invoke-AzRestMethod
     $token = (Get-AzAccessToken -ResourceUrl $resourceUrl).Token
     $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
