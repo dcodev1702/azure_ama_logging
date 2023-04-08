@@ -54,12 +54,8 @@ Function Upload-AzDataCollectionRule {
     $AzContext = Get-AzureSubscription($Environment)
     $SubscriptionId = $AzContext.Subscription.Id
 
-    # Get Azure Access (JWT) Token for API Auth/Access 
-    if($AzContext.Environment.Name -eq 'AzureCloud') {
-        $resourceUrl = 'https://management.azure.com'
-    } else {
-        $resourceUrl = 'https://management.usgovcloudapi.net/'
-    }
+    # Get the correct REST API Endpoint for Resource Management
+    $resourceUrl = (Get-AzContext).Environment.ResourceManagerUrl
 
     # API Auth for Invoke-AzRestMethod
     $token = (Get-AzAccessToken -ResourceUrl $resourceUrl).Token
