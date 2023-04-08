@@ -1,7 +1,7 @@
 {
   "properties": {
-    "immutableId": "dcr-b5c53a9ef5074f22994b6518dc115390",
-    "dataCollectionEndpointId": "/subscriptions/354d7e25-1be3-4cc4-a42d-bb49141dcb86/resourceGroups/CEF/providers/Microsoft.Insights/dataCollectionEndpoints/CLI-W3CIISLogs-ZO-DCE",
+    "immutableId": "dcr-xxxxxa9ef5074f22994b6518dcxxxxx",
+    "dataCollectionEndpointId": "/subscriptions/xxxxxxx-1be3-xxxx-a42d-bb49141xxxxxx/resourceGroups/CEF/providers/Microsoft.Insights/dataCollectionEndpoints/CLI-W3CIISLogs-ZO-DCE",
     "streamDeclarations": {
       "Custom-MyTable_CL": {
           "columns": [
@@ -33,9 +33,9 @@
     "destinations": {
       "logAnalytics": [
         {
-          "workspaceResourceId": "/subscriptions/354d7e25-1be3-4cc4-a42d-bb49141dcb86/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/sentinel-law",
-          "workspaceId": "2d10fab8-c5c6-4c35-8678-8aa521bd2e6f",
-          "name": "la--1546208464"
+          "workspaceResourceId": "/subscriptions/354xxxxx-1be3-xxxx-a42d-bb49xxxxxxxx/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/sentinel-law",
+          "workspaceId": "xxxxfab8-xxxx-1111-xxxx-8aa521bxxxxxx",
+          "name": "la--xxxxxxxxxx"
         }
       ]
     },
@@ -45,7 +45,7 @@
           "Microsoft-W3CIISLog"
         ],
         "destinations": [
-          "la--1546208464"
+          "la--xxxxxxxxxxx"
         ],
         "transformKql": "source",
         "outputStream": "Microsoft-W3CIISLog"
@@ -56,15 +56,15 @@
   "location": "usgovvirginia",
   "tags": {},
   "kind": "Windows",
-  "id": "/subscriptions/354d7e25-1be3-4cc4-a42d-bb49141dcb86/resourceGroups/CEF/providers/Microsoft.Insights/dataCollectionRules/testing123",
+  "id": "/subscriptions/subscriptionId/resourceGroups/CEF/providers/Microsoft.Insights/dataCollectionRules/testing123",
   "name": "testing123",
   "type": "Microsoft.Insights/dataCollectionRules",
   "etag": "\"1b02479c-0000-2700-0000-64101db20000\"",
   "systemData": {
-    "createdBy": "lireland@wvcranemag.onmicrosoft.us",
+    "createdBy": "",
     "createdByType": "User",
     "createdAt": "2023-03-14T07:09:37.8744498Z",
-    "lastModifiedBy": "lireland@wvcranemag.onmicrosoft.us",
+    "lastModifiedBy": "",
     "lastModifiedByType": "User",
     "lastModifiedAt": "2023-03-14T07:09:37.8744498Z"
   }
