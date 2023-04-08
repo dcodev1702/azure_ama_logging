@@ -220,6 +220,7 @@ Function New-AzDCR {
     
 
     # Radiate information to the user for self validation
+    Write-Host "Resource Management Url: $resourceUrl" -ForegroundColor Green
     Write-Host "Subscription Id: $SubscriptionId" -ForegroundColor Green
     Write-Host "ResourceName: $ResourceGroup" -ForegroundColor Green
     Write-Host "WorkspaceName: $Workspace" -ForegroundColor Green
@@ -258,8 +259,6 @@ Function New-AzDCR {
             #Write-Host "Sleeping for 20 seconds..." -ForegroundColor Red
             #Start-Sleep -Seconds 20
             
-            
-            
         } else {
             Write-Output "Did not create Data Collection Rule: $DCRRuleName"
         }
@@ -268,18 +267,13 @@ Function New-AzDCR {
     }
     #return ($WorkspaceContent)
 
-    
-    #$url_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
-    #$DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
-
     # GET DCR
-    $url_Get_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
-    $GOT_DCRContent = Invoke-RestMethod ($url_Get_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
+    $url_DCRRule = "$resourceUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+    $GOT_DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
 
-
-    # Serialized JSON ..modify in place ..then dump to a file and PUT the modified JSON via REST API
-    $DCRContentJSON = ConvertTo-JSON -Depth 32 -InputObject $GOT_DCRContent
-    $DCRContentJSON | Out-File "$($DCRRuleName)-$(Get-Date -Format yyyyMMddTHHmmssffffZ)-Rule.json"
+    # Serialized JSON ..modify in place ..then dump the contents to a file and send (PUT) the modified JSON via REST API call.
+    $DCRContentJSON = ConvertTo-JSON -Depth 32 -InputObject $GOT_DCRContent | Out-File "$DCRRuleName.json"
+    #$DCRContentJSON | Out-File "$($DCRRuleName)-$(Get-Date -Format yyyyMMddTHHmmssffffZ)-Rule.json"
 
     Write-Host "Just printing to print so I have a line of code before the break point!" -ForegroundColor Red
 
@@ -290,8 +284,10 @@ Function New-AzDCR {
     3. Add logFiles :: DataSources (the whole thing!)
         -- Prompt the user to add their own data source collection path (e.g. /var/log/secure)
 
-    # PUT
-    #$url_Get_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
-    #Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $GOT_DCRContent
+    # Copy the modified Data Collection Rule (DCR) to a variable ($DCRRuleName) and call REST API IOT send (PUT) the modified DCR to Azure.
+    $GOT_DCRContent = Get-Content ./"$DCRRuleName.json" -Raw
+    $url_DCRRule = "$resourceURL/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+    Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $GOT_DCRContent
+    
     #>
 }
