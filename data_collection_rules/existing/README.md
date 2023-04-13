@@ -7,7 +7,8 @@ All of this can be accomplished through the Azure Cloud Shell using PowerShell.
 3. You can navigate PowerShell and understand basic coding concepts.
 
 # Instructions: From the Azure Cloud Shell within the Azure Portal
-Obtain the following values to setup the REST API to GET and PUT Data Collection Rules <br />
+
+## Obtain the following values to setup the REST API to GET and PUT Data Collection Rules <br />
 ```PowerShell
 $resourceUrl    = (Get-AzContext).Environment.ResourceManagerUrl
 $subscriptionId = (Get-AzContext).Subscription.Id
