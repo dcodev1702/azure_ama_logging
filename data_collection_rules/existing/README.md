@@ -18,7 +18,7 @@ $resourceGroup  = 'CHANGE-TO-YOUR-RG'   # (Get-AzResourceGroup).ResourceGroupNam
 ```
 
 ```PowerShell
-$DCRRuleName    = 'CHANGE-TO-YOUR-DCR'  # (Get-AzDataCollectionRule).Name
+$DCRRuleName    = 'CHANGE-TO-YOUR-EXISTING-DCR'  # (Get-AzDataCollectionRule).Name
 ```
 
 ## Setup Authorization for REST API (Invoke-RestMethod|Invoke-AzRestMethod)
