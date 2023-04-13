@@ -38,7 +38,7 @@ $url_DCRRule = "$resourceUrl/subscriptions/$subscriptionId/resourceGroups/$resou
 $GOT_DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
 ```
 
-## Convert serialized JSON ($GOT_DCRContent) & send to a file named $DCRRuleName.json
+## Convert serialized JSON & send to a file
 ```PowerShell
 ConvertTo-JSON -Depth 64 -InputObject $GOT_DCRContent | Out-File "$DCRRuleName.json"
 ```
