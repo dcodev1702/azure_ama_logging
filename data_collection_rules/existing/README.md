@@ -12,7 +12,13 @@ Obtain the following values to setup the REST API to GET and PUT Data Collection
 ```PowerShell
 $resourceUrl    = (Get-AzContext).Environment.ResourceManagerUrl
 $subscriptionId = (Get-AzContext).Subscription.Id
+```
+
+```PowerShell
 $resourceGroup  = 'CHANGE-TO-YOUR-RG'   # (Get-AzResourceGroup).ResourceGroupName
+```
+
+```PowerShell
 $DCRRuleName    = 'CHANGE-TO-YOUR-DCR'  # (Get-AzDataCollectionRule).Name
 ```
 
