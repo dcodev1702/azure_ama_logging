@@ -44,7 +44,7 @@ Use your editor of choice and save your work
  
 ## Copy the modified DCR into a variable '$GOT_DCRContent' for ease of use. 
 ```PowerShell
-$GOT_DCRContent = Get-Content ./$DCRRuleName.json -Raw
+$GOT_DCRContent = Get-Content ./"$DCRRuleName.json" -Raw
 ```
 
 ## Send the modified DCR to Azure via REST API  
