@@ -7,6 +7,9 @@
 The PowerShell code below is used to pull down a Data Collection Rule (DCR) so that it can be modified and published via requesite API call.
 All of this can be accomplished through the Azure Cloud Shell using PowerShell.
 
+![Azure_CloudShell](https://user-images.githubusercontent.com/32214072/231885364-9a989838-9ec7-4df3-8cdf-66dd059586f0.png)
+
+
 ## Setup the REST API to GET and PUT Data Collection Rules <br />
 ```PowerShell
 $resourceUrl    = (Get-AzContext).Environment.ResourceManagerUrl
