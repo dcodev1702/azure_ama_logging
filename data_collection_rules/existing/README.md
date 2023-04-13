@@ -46,7 +46,7 @@ ConvertTo-JSON -Depth 64 -InputObject $GOT_DCRContent | Out-File "$DCRRuleName.j
 ## Modify the DCR as required
 Use your editor of choice and save your work 
  
-## Copy the modified DCR into a variable '$GOT_DCRContent' for ease of use. 
+## Copy the modified DCR into a variable (for ease of use)
 ```PowerShell
 $GOT_DCRContent = Get-Content ./"$DCRRuleName.json" -Raw
 ```
