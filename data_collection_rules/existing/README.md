@@ -4,7 +4,7 @@
 3. You can navigate PowerShell and understand basic coding concepts.
 
 # Instructions: From the Azure Cloud Shell
-The PowerShell code below is used to pull down an existing Data Collection Rule (DCR) so that it can be modified and published via requesite API call.
+The PowerShell code below is used to pull down an existing Data Collection Rule (DCR) so that it can be modified and published via requisite API calls.
 All of this can be accomplished through the Azure Cloud Shell using PowerShell.
 
 
