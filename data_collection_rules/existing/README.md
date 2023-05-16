@@ -44,7 +44,8 @@ ConvertTo-JSON -Depth 64 -InputObject $GOT_DCRContent | Out-File "$DCR_RuleName.
 ```
 
 ## Modify the DCR as required
-Use your editor of choice and save your work 
+Use your editor of choice and save your work <br/>
+If you're using the Azure Cloud Shell, you can use the upload/download feature to assist in editing the DCR
  
 ## Copy the modified DCR into a variable (for ease of use)
 ```PowerShell
