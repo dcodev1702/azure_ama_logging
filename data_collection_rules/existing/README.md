@@ -22,7 +22,7 @@ $resourceGroup  = 'CHANGE-TO-YOUR-RG'   # (Get-AzResourceGroup).ResourceGroupNam
 ```
 
 ```PowerShell
-$DCRRuleName    = 'CHANGE-TO-YOUR-EXISTING-DCR'  # (Get-AzDataCollectionRule).Name
+$DCR_RuleName = 'CHANGE-TO-YOUR-EXISTING-DCR'  # (Get-AzDataCollectionRule).Name
 ```
 
 ## Setup Authorization for REST API
@@ -40,7 +40,7 @@ $GOT_DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-previ
 
 ## Convert serialized JSON & send to a file
 ```PowerShell
-ConvertTo-JSON -Depth 64 -InputObject $GOT_DCRContent | Out-File "$DCRRuleName.json"
+ConvertTo-JSON -Depth 64 -InputObject $GOT_DCRContent | Out-File "$DCR_RuleName.json"
 ```
 
 ## Modify the DCR as required
