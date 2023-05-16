@@ -34,7 +34,7 @@ $headers.Add("Authorization","Bearer $token")
 
 ## GET the existing DCR using the REST API
 ```PowerShell
-$url_DCRRule = "$resourceUrl/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRRuleName)"
+$url_DCRRule = "$resourceUrl/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCR_RuleName)"
 $GOT_DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
 ```
 
