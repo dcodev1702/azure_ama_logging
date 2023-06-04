@@ -20,6 +20,13 @@ Pre-Condition:
 3. Log in to your Azure tenant with the necessary permissions
    Connect-AzAccount -UseDeviceAuthentication -Environment <Your Cloud Env>
 
+Assumptions:
+------------
+Data Collection Rule names take on the name of their corresponding JSON file. If you change
+the name of that JSON file, this script will NOT work as intended.  The assumption is made
+that you make the necessary changes to the JSON file that resembles the name of the DCR
+downloaded from Azure Monitor via the REST API.
+
 TODO:
 -----
 Very little exception handling exists.  This is a down and dirty PowerShell script designed
