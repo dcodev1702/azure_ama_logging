@@ -88,7 +88,6 @@ function Invoke-DCRModify {
 
         if ($DCR_Action.ToLower() -eq 'set') {
 
-            Write-Host "Process Block::DCR Action: $DCR_Action" -ForegroundColor Yellow
             $DCRJsonFiles = (Get-ChildItem -Path .\ -Filter *.json).Name
 
             $idxLen = $DCRJsonFiles.Count.ToString().Length
