@@ -151,25 +151,22 @@ function Invoke-DCRModify {
 
             if ($confirm -eq 'Y' -or $confirm -eq 'y') {
                 $result = Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $DCRJsonFile
+                
                 Write-Host "PUT / REST API call for $DCRJsonFile completed successfully! $result" -ForegroundColor Green
-            
                 Write-Host "Your modified DCR: $DCRName.json, is now ready to be sent via Azure REST API!" -ForegroundColor Yellow
                 Write-Host "You can now go to Azure Monitor and validate the modification of: $DCRName." -ForegroundColor Yellow
             } else {
                 Write-Host "API call cancelled by user."
             }
-        }
-        
+        }      
     }
 
     End {
         
         if ($DCR_Action.ToLower() -eq 'get') {
             Write-Host "Action Selected: $DCR_Action" -ForegroundColor Red
-            
         }else{
-            Write-Host "Action Selected: `"$DCR_Action`"" -ForegroundColor Red
-            
+            Write-Host "Action Selected: `"$DCR_Action`"" -ForegroundColor Red          
         }
     }
 }
