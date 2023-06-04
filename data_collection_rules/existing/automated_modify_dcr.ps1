@@ -84,7 +84,6 @@ function Invoke-DCRModify {
                 Write-Host "Invalid index entered.  Exiting script." -ForegroundColor Red
                 Exit
             }
-
         }
 
         if ($DCR_Action.ToLower() -eq 'set') {
