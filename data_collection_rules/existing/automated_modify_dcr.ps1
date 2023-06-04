@@ -164,12 +164,12 @@ function Invoke-DCRModify {
                     ConvertTo-JSON -Depth 64 -InputObject $GOT_DCRContent | Out-File "$DCRName.json"
                 }
 
-                Write-Host "Your DCR `'$DCRName`' is now ready to be modified -> $DCRName.json" -ForegroundColor Magenta
+                Write-Host "Your DCR `'$DCRName`' is now ready to be modified -> $DCRName.json" -ForegroundColor Yellow
                 Write-Host "Upon completion, you can run Invoke-DCRModify with the `"-DCR_Action Set`" option." -ForegroundColor Yellow
 
             }
             else {
-                Write-Host "API call cancelled by user."
+                Write-Host "DCR REST API call to Azure Monitor for $DCRName was cancelled by the user." -ForegroundColor Red
             }
         }
 
@@ -197,7 +197,7 @@ function Invoke-DCRModify {
                     Write-Host "Error Message: $($result.Content.message)" -ForegroundColor Red
                 }
             } else {
-                Write-Host "API call cancelled by user."
+                Write-Host "DCR REST API call to Azure Monitor for $DCRName was cancelled by the user." -ForegroundColor Red
             }
         }      
     }
