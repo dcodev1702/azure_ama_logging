@@ -104,7 +104,7 @@ function Invoke-DCRModify {
         
         if ($DCR_Action.ToLower() -eq 'get') {
 
-            $confirm = Read-Host "Do you want to make the REST API call (GET)? (Y/N)"
+            $confirm = Read-Host "Do you want to make a REST API call to GET `'$DCRName`'? (Y/N)"
 
             if ($confirm -eq 'Y' -or $confirm -eq 'y') {
                 $GOT_DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
