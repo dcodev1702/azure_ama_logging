@@ -152,7 +152,7 @@ function Invoke-DCRModify {
         if ($DCR_Action.ToLower() -eq 'get') {
 
             # Construct the URL for the REST API call
-            url_DCRRule = "$resourceUrl/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRName)"
+            $url_DCRRule = "$resourceUrl/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRName)"
 
             $confirm = Read-Host "Do you want to make a REST API call to GET `'$DCRName`'? (Y/N)"
 
