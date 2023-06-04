@@ -105,7 +105,6 @@ function Invoke-DCRModify {
         if ($DCR_Action.ToLower() -eq 'get') {
 
             $confirm = Read-Host "Do you want to make a REST API call to GET `'$DCRName`'? (Y/N)"
-
             if ($confirm -eq 'Y' -or $confirm -eq 'y') {
                 $GOT_DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
                 Sleep 0.5
@@ -147,7 +146,6 @@ function Invoke-DCRModify {
             $GOT_DCRContent = Get-Content ./"$DCRJsonFile" -Raw
             
             $confirm = Read-Host "Do you want to make the REST API call (PUT)? (Y/N)"
-
             if ($confirm -eq 'Y' -or $confirm -eq 'y') {
                 $result = Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $GOT_DCRContent
                 
