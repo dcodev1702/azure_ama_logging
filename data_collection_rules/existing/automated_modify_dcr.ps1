@@ -59,7 +59,6 @@ function Invoke-DCRModify {
             }
 
             Write-Host ""
-
             # Prompt the user to enter an index
             $index = Read-Host -Prompt 'Enter the index of the Data Collection Rule (DCR) you want to select'
             $index = [int]$index.Trim()
@@ -166,7 +165,7 @@ function Invoke-DCRModify {
                 if ($GOT_DCRContent) {
                     ConvertTo-JSON -Depth 64 -InputObject $GOT_DCRContent | Out-File "$DCRName.json"
                 
-                    Write-Host "DCR REST API call to Azure Monitor for $DCRName was successful!`n" -ForegroundColor Green
+                    Write-Host "`nDCR REST API call to Azure Monitor for $DCRName was successful!`n" -ForegroundColor Green
                     Write-Host "Your DCR `'$DCRName`' is now ready to be modified -> $DCRName.json" -ForegroundColor Yellow
                     Write-Host "Upon completion, you can run Invoke-DCRModify with the `"-DCR_Action Set`" option." -ForegroundColor Yellow
                 }else{
