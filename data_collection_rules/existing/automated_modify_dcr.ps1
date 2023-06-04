@@ -67,8 +67,10 @@ function Invoke-DCRModify {
             if ($index -ge 0 -and $index -lt $dataCollectionRules.Count) {
                 $dataCollectionRule = $dataCollectionRules[$index]
                 $DCRName = $dataCollectionRule.Name
+            }else{
+                Write-Host "Invalid index entered.  Exiting script." -ForegroundColor Red
+                Exit
             }
-
         }
 
         if ($DCR_Action.ToLower() -eq 'set') {
