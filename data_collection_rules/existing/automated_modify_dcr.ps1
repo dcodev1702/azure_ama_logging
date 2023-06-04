@@ -175,11 +175,10 @@ function Invoke-DCRModify {
                     Write-Host "`nDCR REST API call to Azure Monitor for `'$DCRName`' was successful!`n" -ForegroundColor Green
                     Write-Host "Your DCR `'$DCRName`' is now ready to be modified -> $DCRName.json" -ForegroundColor Yellow
                     Write-Host "Upon completion, you can run Invoke-DCRModify with the `"-DCR_Action Set`" option." -ForegroundColor Yellow
-                }else{
+                } else {
                     Write-Host "DCR REST API call to Azure Monitor for $DCRName returned empty (null)" -ForegroundColor Red
                 }
-            }
-            else {
+            } else {
                 Write-Host "DCR REST API call to Azure Monitor for $DCRName was cancelled by the user." -ForegroundColor Red
             }
         }
@@ -212,6 +211,6 @@ function Invoke-DCRModify {
             }
         }      
     }
-
+    
     End {}
 }
