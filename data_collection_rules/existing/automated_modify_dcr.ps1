@@ -135,7 +135,6 @@ function Invoke-DCRModify {
                 }
             }
         }
-
     }
 
     Process {
