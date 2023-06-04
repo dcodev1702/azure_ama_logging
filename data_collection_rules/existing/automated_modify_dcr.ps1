@@ -159,12 +159,12 @@ function Invoke-DCRModify {
         
         if ($DCR_Action.ToLower() -eq 'get') {
             Write-Host "Action Selected: $DCR_Action" -ForegroundColor Red
-            Write-Host "Your DCR is now ready to be modified -> $DCRName.json" -ForegroundColor Magenta
+            Write-Host "Your DCR `"$DCRName`"is now ready to be modified -> $DCRName.json" -ForegroundColor Magenta
             Write-Host "Upon completion, you can run the CmdLet Invoke-DCRModify with the `"-DCR_Action Set`" option." -ForegroundColor Yellow
         }else{
             Write-Host "Action Selected: `"$DCR_Action`"" -ForegroundColor Red
             Write-Host "Your modified DCR: $DCRName.json, is now ready to be sent via Azure REST API!" -ForegroundColor Yellow
-            Write-Host "You can now go to Azure Monitor and validate the modification of: YOUR_DATA_COLLECTION_RULE." -ForegroundColor Yellow
+            Write-Host "You can now go to Azure Monitor and validate the modification of: $DCRName." -ForegroundColor Yellow
         }
     }
 }
