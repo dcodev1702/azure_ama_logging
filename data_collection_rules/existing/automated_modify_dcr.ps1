@@ -38,7 +38,7 @@ function Invoke-DCRModify {
         [string]$resourceGroup = $null
         $dataCollectionRule = $null
 
-        Write-Host "Welcome to Data Collection Rule (DCR) modify!" -ForegroundColor Green
+        Write-Host "Welcome to Invoke-DCRModify for your Data Collection Rules (DCR)!" -ForegroundColor Green
         Write-Host "You passed in $DCR_Action" -ForegroundColor Green
 
         if ($DCR_Action.ToLower() -eq 'get') {
@@ -72,9 +72,7 @@ function Invoke-DCRModify {
     }
 
     Process {
-
-        Write-Host "PROCESS BLOCK :: This code runs for each object passed to the function"
-
+    
         # Setting up REST API call to Azure Monitor to modify the DCR
         $resourceUrl    = (Get-AzContext).Environment.ResourceManagerUrl
         $subscriptionId = (Get-AzContext).Subscription.Id
