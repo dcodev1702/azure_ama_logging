@@ -8,7 +8,9 @@ Invoke-DCRModify -DCR_Action [Get|Set]
 
 End-State:
 ----------
-Automate (ish) the modifying of Data Collection Rules.
+Automate (ish) the getting and setting of Data Collection Rules so they can be
+modified appropriately.  That is all this script aims to accomplish. This script does not
+create new DCRs, it does not delete DCRs, and it does not associate DCRs with Resources.
 
 Pre-Condition:
 ---------------
@@ -21,7 +23,11 @@ TODO:
 -----
 Very little exception handling exists.  This is a down and dirty PowerShell script designed
 to get the job done using GET or SET options supplied to the CmdLet (Invoke-DCRModify). This
-script is not been refactored so there is a lot of duplicate code, it's also 2 AM! ;)
+script has been slightly refactored, however there is still lot of duplicate code and 
+I'm sure, plenty of bugs :|
+
+The intent of the script is to allow you to modify a Data Collection Rule (DCR) that reside
+in Azure Monitor via the REST API. That's pretty much the gist of it.
 #>
 
 function Invoke-DCRModify {
