@@ -115,7 +115,7 @@ function Invoke-DCRModify {
                 }
 
                 Write-Host "Your DCR `'$DCRName`' is now ready to be modified -> $DCRName.json" -ForegroundColor Magenta
-                Write-Host "Upon completion, you can run the CmdLet Invoke-DCRModify with the `"-DCR_Action Set`" option." -ForegroundColor Yellow
+                Write-Host "Upon completion, you can run Invoke-DCRModify with `'-DCR_Action Set`'." -ForegroundColor Yellow
 
             }
             else {
