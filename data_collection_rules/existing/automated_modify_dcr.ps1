@@ -47,7 +47,7 @@ function Invoke-DCRModify {
         $dataCollectionRule = $null
 
         Write-Host "Welcome to Invoke-DCRModify for your Data Collection Rules (DCR)!" -ForegroundColor Green
-        Write-Host "You passed in $DCR_Action" -ForegroundColor Green
+        Write-Host "You passed in $DCR_Action`n" -ForegroundColor Green
 
         # Get the collection of Data Collection Rules
         $dataCollectionRules = (Get-AzDataCollectionRule -WarningAction SilentlyContinue)
