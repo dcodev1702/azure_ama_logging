@@ -109,6 +109,7 @@ function Invoke-DCRModify {
 
             if ($confirm -eq 'Y' -or $confirm -eq 'y') {
                 $GOT_DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
+                Sleep 0.5
                 
                 if ($GOT_DCRContent) {
                     ConvertTo-JSON -Depth 64 -InputObject $GOT_DCRContent | Out-File "$DCRName.json"
