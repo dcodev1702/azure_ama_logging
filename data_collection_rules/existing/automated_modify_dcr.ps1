@@ -119,7 +119,7 @@ function Invoke-DCRModify {
 
             }
             else {
-                Write-Host "API call cancelled by user."
+                Write-Host "REST API call cancelled by user."
             }
         }
 
@@ -156,7 +156,7 @@ function Invoke-DCRModify {
                 Write-Host "Your modified DCR: $DCRName.json, is now ready to be sent via Azure REST API!" -ForegroundColor Yellow
                 Write-Host "You can now go to Azure Monitor and validate the modification of: $DCRName." -ForegroundColor Yellow
             } else {
-                Write-Host "API call cancelled by user."
+                Write-Host "REST API call cancelled by user."
             }
         }      
     }
