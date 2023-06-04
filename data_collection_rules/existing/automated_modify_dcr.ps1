@@ -84,6 +84,7 @@ function Invoke-DCRModify {
 
         $DCRId = $dataCollectionRule.Id
         $DCRName = $dataCollectionRule.Name
+        
         # Split the string into parts
         $parts = $DCRId -split '/'
 
