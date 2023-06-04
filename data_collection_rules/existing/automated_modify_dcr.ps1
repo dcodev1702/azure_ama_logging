@@ -146,12 +146,8 @@ function Invoke-DCRModify {
         $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
         $headers.Add("Authorization","Bearer $token")
         
-        
-        # Split the string into parts
-        $parts = $dataCollectionRule.Id -split '/'
-
-        # Select the resource group part
-        $resourceGroup = $parts[4]
+        # Parse the Resource Group from the DCR Resource Id
+        $resourceGroup = ($dataCollectionRule.Id -split '/')[4]
 
         # Output the resource group
         if ($resourceGroup) {
