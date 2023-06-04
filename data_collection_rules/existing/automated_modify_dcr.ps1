@@ -8,7 +8,7 @@ Invoke-DCRModify -DCR_Action [Get|Set]
 
 End-State:
 ----------
-Automate (ish) the modifying of Data Collection Rules.
+Automate (ish) the getting and setting (modifying) of Data Collection Rules for a given Azure subscription.
 
 Pre-Condition:
 ---------------
@@ -20,8 +20,8 @@ Pre-Condition:
 TODO:
 -----
 Very little exception handling exists.  This is a down and dirty PowerShell script designed
-to get the job done using GET or SET options supplied to the CmdLet (Invoke-DCRModify). This
-script is not been refactored so there is a lot of duplicate code, it's also 2 AM! ;)
+to get the job done using GET | SET options supplied to the CmdLet (Invoke-DCRModify). This
+script has been slightly refactored however, there is still a lot of duplicate code. :(
 #>
 
 function Invoke-DCRModify {
