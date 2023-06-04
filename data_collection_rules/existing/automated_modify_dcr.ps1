@@ -8,7 +8,7 @@ Invoke-DCRModify -DCR_Action [Get|Set]
 
 End-State:
 ----------
-Automate (ish) the getting and setting (modifying) of Data Collection Rules for a given Azure subscription.
+Automate (ish) the modifying of Data Collection Rules.
 
 Pre-Condition:
 ---------------
@@ -20,8 +20,8 @@ Pre-Condition:
 TODO:
 -----
 Very little exception handling exists.  This is a down and dirty PowerShell script designed
-to get the job done using GET | SET options supplied to the CmdLet (Invoke-DCRModify). This
-script has been slightly refactored however, there is still a lot of duplicate code. :(
+to get the job done using GET or SET options supplied to the CmdLet (Invoke-DCRModify). This
+script is not been refactored so there is a lot of duplicate code, it's also 2 AM! ;)
 #>
 
 function Invoke-DCRModify {
@@ -71,6 +71,7 @@ function Invoke-DCRModify {
                 Write-Host "Invalid index entered.  Exiting script." -ForegroundColor Red
                 Exit
             }
+
         }
 
         if ($DCR_Action.ToLower() -eq 'set') {
@@ -164,11 +165,13 @@ function Invoke-DCRModify {
 
                 if ($GOT_DCRContent) {
                     ConvertTo-JSON -Depth 64 -InputObject $GOT_DCRContent | Out-File "$DCRName.json"
+                
+                    Write-Host "DCR REST API call to Azure Monitor for $DCRName was successful!`n" -ForegroundColor Green
+                    Write-Host "Your DCR `'$DCRName`' is now ready to be modified -> $DCRName.json" -ForegroundColor Yellow
+                    Write-Host "Upon completion, you can run Invoke-DCRModify with the `"-DCR_Action Set`" option." -ForegroundColor Yellow
+                }else{
+                    Write-Host "DCR REST API call to Azure Monitor for $DCRName returned empty (null)" -ForegroundColor Red
                 }
-
-                Write-Host "Your DCR `'$DCRName`' is now ready to be modified -> $DCRName.json" -ForegroundColor Yellow
-                Write-Host "Upon completion, you can run Invoke-DCRModify with the `"-DCR_Action Set`" option." -ForegroundColor Yellow
-
             }
             else {
                 Write-Host "DCR REST API call to Azure Monitor for $DCRName was cancelled by the user." -ForegroundColor Red
