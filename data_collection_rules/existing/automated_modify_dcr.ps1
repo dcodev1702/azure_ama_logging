@@ -31,22 +31,25 @@ function Invoke-DCRModify {
         [ValidateSet("Get","Set")]
         [string]$DCR_Action
     )
+
     
     Begin {
 
         [string]$resourceGroup = $null
+        [string]$DCRName = $null
         $dataCollectionRule = $null
 
         Write-Host "Welcome to Invoke-DCRModify for your Data Collection Rules (DCR)!" -ForegroundColor Green
         Write-Host "You passed in $DCR_Action" -ForegroundColor Green
 
+        # Get the collection of Data Collection Rules
+        $dataCollectionRules = (Get-AzDataCollectionRule -WarningAction SilentlyContinue)
+        
+        # Calculate the length of the highest index for padding purposes
+        $idxLen = $dataCollectionRules.Count.ToString().Length
+
         if ($DCR_Action.ToLower() -eq 'get') {
             
-            $dataCollectionRules = (Get-AzDataCollectionRule -WarningAction SilentlyContinue)
-
-            # Calculate the length of the highest index for padding purposes
-            $idxLen = $dataCollectionRules.Count.ToString().Length
-
             # Display the resource groups with their index
             for ($i=0; $i -lt $dataCollectionRules.Count; $i++) {
 
@@ -55,18 +58,66 @@ function Invoke-DCRModify {
                 Write-Host $indexFormattedDCRs
             }
 
+            Write-Host ""
+
             # Prompt the user to enter an index
             $index = Read-Host -Prompt 'Enter the index of the Data Collection Rule (DCR) you want to select'
             $index = [int]$index.Trim()
-            
             # Check if the entered index is valid
             if ($index -ge 0 -and $index -lt $dataCollectionRules.Count) {
                 $dataCollectionRule = $dataCollectionRules[$index]
+                $DCRName = $dataCollectionRule.Name
             }
 
-        }else{
-            Write-Host "DCR Action: $DCR_Action" -ForegroundColor Yellow
-            Write-Host "Resource Group : $resourceGroup" -ForegroundColor Green
+        }
+
+        if ($DCR_Action.ToLower() -eq 'set') {
+
+            Write-Host "Process Block::DCR Action: $DCR_Action" -ForegroundColor Yellow
+            $DCRJsonFiles = (Get-ChildItem -Path .\ -Filter *.json).Name
+
+            $idxLen = $DCRJsonFiles.Count.ToString().Length
+            
+            # List JSON Files by index and prompt user to select an index
+            if ($DCRJsonFiles.Count -gt 1) {
+                Write-Host "The following JSON files were found in the current directory:" -ForegroundColor Green
+                
+                for ($i=0; $i -lt $DCRJsonFiles.Count; $i++) {
+
+                    $indexFormattedDCRJsonFiles = "{0,$idxLen} -> {1}" -f $i, $DCRJsonFiles[$i]
+                    Write-Host $indexFormattedDCRJsonFiles
+                }
+            }else{
+                $indexFormattedDCRJsonFiles = "0 -> {0}" -f $DCRJsonFiles
+                Write-Host $indexFormattedDCRJsonFiles
+            }
+           
+            # Prompt the user to enter an index
+            $index = Read-Host -Prompt 'Enter the index of the modified DCR you want to send to Azure Monitor'
+            $index = [int]$index.Trim()
+
+            # Check if the entered index is valid
+            if ($index -ge 0 -and $index -lt $DCRJsonFiles.Count) {
+                if ($DCRJsonFiles.Count -gt 1) {
+                    $DCRJsonFile = $DCRJsonFiles[$index]
+                }else{
+                    $DCRJsonFile = $DCRJsonFiles
+                }
+                $UserSelectedDCR = (Get-Item $DCRJsonFile).BaseName
+            }else{
+                Write-Host "Invalid index entered.  Exiting script." -ForegroundColor Red
+                Exit
+            }
+
+            # Display the resource groups with their index
+            for ($i=0; $i -lt $dataCollectionRules.Count; $i++) {
+
+                if ($dataCollectionRules[$i].Name -eq $UserSelectedDCR) {
+                    $dataCollectionRule = $dataCollectionRules[$i]
+                    $DCRName = $dataCollectionRules[$i].Name
+                    break
+                }
+            }
         }
 
     }
@@ -82,9 +133,8 @@ function Invoke-DCRModify {
         $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
         $headers.Add("Authorization","Bearer $token")
         
-        $DCRName = $dataCollectionRule.Name
         
-        # Extract Resource Group from selected DCR
+        # Split the string into parts
         $parts = $dataCollectionRule.Id -split '/'
 
         # Select the resource group part
@@ -99,72 +149,58 @@ function Invoke-DCRModify {
             Write-Host "Data Collection Rule : $DCRName" -ForegroundColor Green
         }
 
-        # Construct the URL for the REST API call
-        $url_DCRRule = "$resourceUrl/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRName)"
-        
         if ($DCR_Action.ToLower() -eq 'get') {
 
+            # Construct the URL for the REST API call
+            url_DCRRule = "$resourceUrl/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRName)"
+
             $confirm = Read-Host "Do you want to make a REST API call to GET `'$DCRName`'? (Y/N)"
+
             if ($confirm -eq 'Y' -or $confirm -eq 'y') {
                 $GOT_DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
                 Sleep 0.5
-                
+
                 if ($GOT_DCRContent) {
                     ConvertTo-JSON -Depth 64 -InputObject $GOT_DCRContent | Out-File "$DCRName.json"
                 }
 
                 Write-Host "Your DCR `'$DCRName`' is now ready to be modified -> $DCRName.json" -ForegroundColor Magenta
-                Write-Host "Upon completion, you can run Invoke-DCRModify with `'-DCR_Action Set`'." -ForegroundColor Yellow
+                Write-Host "Upon completion, you can run Invoke-DCRModify with the `"-DCR_Action Set`" option." -ForegroundColor Yellow
 
             }
             else {
-                Write-Host "REST API call cancelled by user."
+                Write-Host "API call cancelled by user."
             }
         }
 
         if ($DCR_Action.ToLower() -eq 'set') {
-            $DCRJsonFiles = (Get-ChildItem -Path .\ -Filter *.json).Name
 
-            $idxLen = $DCRJsonFiles.Count.ToString().Length
-            # List JSON Files and prompt user to select one
-            for ($i=0; $i -lt $DCRJsonFiles.Count; $i++) {
-
-                $indexFormattedDCRJsonFiles = "{0,$idxLen} -> {1}" -f $i, $DCRJsonFiles[$i]
-                Write-Host $indexFormattedDCRJsonFiles
-            }
-
-            # Prompt the user to enter an index
-            $index = Read-Host -Prompt 'Enter the index of the modified Data Collection Rule (DCR) you want to PUT via REST API.'
-            $index = [int]$index.Trim()
-
-            # Check if the entered index is valid
-            if ($index -ge 0 -and $index -lt $DCRJsonFiles.Count) {
-                $DCRJsonFile = $DCRJsonFiles[$index]
-            }
-            
             # Copy the deserialized JSON DCR to a variable
-            $GOT_DCRContent = Get-Content ./"$DCRJsonFile" -Raw
-            
-            $confirm = Read-Host "Do you want to make the REST API call (PUT)? (Y/N)"
+            $DCRContent = Get-Content ./"$DCRJsonFile" -Raw
+
+            Write-Host "Your modified DCR: $DCRName.json, is now ready to be sent via Azure REST API!" -ForegroundColor Yellow
+            $confirm = Read-Host "Do you want to send `'$DCRName`' to Azure Monitor via a REST API (PUT)? (Y/N)"
+
+            # Construct the URL for the REST API call
+            $url_DCRRule = "$resourceUrl/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRName)"
+
             if ($confirm -eq 'Y' -or $confirm -eq 'y') {
-                $result = Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $GOT_DCRContent
-                
-                # Validate that the REST API call was successful ($result)
-                Write-Host "PUT / REST API call for $DCRJsonFile completed successfully! $result" -ForegroundColor Green
-                Write-Host "Your modified DCR: $DCRName.json, is now ready to be sent via Azure REST API!" -ForegroundColor Yellow
-                Write-Host "You can now go to Azure Monitor and validate the modification of: $DCRName." -ForegroundColor Yellow
+                $result = Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $DCRContent
+                Sleep 0.5
+
+                # Validate the REST API call was successful ($result)
+                if ($result.StatusCode -eq 200) {
+                    Write-Host "REST API [PUT] to Azure Monitor for $DCRName completed successfully!" -ForegroundColor Green
+                    Write-Host "You can now go to Azure Monitor and validate the modification of: $DCRName." -ForegroundColor Green
+                } else {
+                    Write-Host "PUT via REST API call for $DCRName failed!" -ForegroundColor Red
+                    Write-Host "Error Message: $($result.Content.message)" -ForegroundColor Red
+                }
             } else {
-                Write-Host "REST API call cancelled by user."
+                Write-Host "API call cancelled by user."
             }
         }      
     }
 
-    End {
-        
-        if ($DCR_Action.ToLower() -eq 'get') {
-            Write-Host "Action Selected: $DCR_Action" -ForegroundColor Red
-        }else{
-            Write-Host "Action Selected: `"$DCR_Action`"" -ForegroundColor Red          
-        }
-    }
+    End {}
 }
