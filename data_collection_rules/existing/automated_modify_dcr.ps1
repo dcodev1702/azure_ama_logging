@@ -13,7 +13,9 @@ Automate (ish) the modifying of Data Collection Rules.
 Pre-Condition:
 ---------------
 1. Azure PS Modules are installed or you're in the Cloud Shell (PowerShell)
-2. Log in to your Azure tenant with the necessary permissions
+2. Your Cloud Environment is set to the appropriate cloud (AzureCloud or AzureUSGovernment)
+3. Log in to your Azure tenant with the necessary permissions
+   Connect-AzAccount -UseDeviceAuthentication -Environment <Your Cloud Env>
 
 TODO:
 -----
