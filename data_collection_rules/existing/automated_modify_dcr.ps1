@@ -31,7 +31,6 @@ function Invoke-DCRModify {
         [ValidateSet("Get","Set")]
         [string]$DCR_Action
     )
-
     
     Begin {
 
@@ -59,6 +58,7 @@ function Invoke-DCRModify {
             # Prompt the user to enter an index
             $index = Read-Host -Prompt 'Enter the index of the Data Collection Rule (DCR) you want to select'
             $index = [int]$index.Trim()
+            
             # Check if the entered index is valid
             if ($index -ge 0 -and $index -lt $dataCollectionRules.Count) {
                 $dataCollectionRule = $dataCollectionRules[$index]
@@ -130,7 +130,6 @@ function Invoke-DCRModify {
             # List JSON Files and prompt user to select one
             for ($i=0; $i -lt $DCRJsonFiles.Count; $i++) {
 
-                # Write-Host "$i  $($resourceGroups[$i])"
                 $indexFormattedDCRJsonFiles = "{0,$idxLen} -> {1}" -f $i, $DCRJsonFiles[$i]
                 Write-Host $indexFormattedDCRJsonFiles
             }
