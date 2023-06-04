@@ -155,7 +155,7 @@ function Invoke-DCRModify {
         }
 
         if ($dataCollectionRule) {
-            Write-Host "Data Collection Rule : $DCRName" -ForegroundColor Green
+            Write-Host "Data Collection Rule : $DCRName`n" -ForegroundColor Green
         }
 
         if ($DCR_Action.ToLower() -eq 'get') {
@@ -172,7 +172,7 @@ function Invoke-DCRModify {
                 if ($GOT_DCRContent) {
                     ConvertTo-JSON -Depth 64 -InputObject $GOT_DCRContent | Out-File "$DCRName.json"
                 
-                    Write-Host "`nDCR REST API call to Azure Monitor for $DCRName was successful!`n" -ForegroundColor Green
+                    Write-Host "`nDCR REST API call to Azure Monitor for `'$DCRName`' was successful!`n" -ForegroundColor Green
                     Write-Host "Your DCR `'$DCRName`' is now ready to be modified -> $DCRName.json" -ForegroundColor Yellow
                     Write-Host "Upon completion, you can run Invoke-DCRModify with the `"-DCR_Action Set`" option." -ForegroundColor Yellow
                 }else{
@@ -189,7 +189,7 @@ function Invoke-DCRModify {
             # Copy the deserialized JSON DCR to a variable
             $DCRContent = Get-Content ./"$DCRJsonFile" -Raw
 
-            Write-Host "Your modified DCR: $DCRName.json, is now ready to be sent via Azure REST API!" -ForegroundColor Yellow
+            Write-Host "Your modified DCR: $DCRName.json, is now ready to be sent via Azure REST API!`n" -ForegroundColor Yellow
             $confirm = Read-Host "Do you want to send `'$DCRName`' to Azure Monitor via a REST API (PUT)? (Y/N)"
 
             # Construct the URL for the REST API call
@@ -201,10 +201,10 @@ function Invoke-DCRModify {
 
                 # Validate the REST API call was successful ($result)
                 if ($result.StatusCode -eq 200) {
-                    Write-Host "REST API [PUT] to Azure Monitor for $DCRName completed successfully!" -ForegroundColor Green
+                    Write-Host "`nREST API [PUT] to Azure Monitor for $DCRName completed successfully!" -ForegroundColor Green
                     Write-Host "You can now go to Azure Monitor and validate the modification of: $DCRName." -ForegroundColor Green
                 } else {
-                    Write-Host "PUT via REST API call for $DCRName failed!" -ForegroundColor Red
+                    Write-Host "`nPUT via REST API call for $DCRName failed!" -ForegroundColor Red
                     Write-Host "Error Message: $($result.Content.message)" -ForegroundColor Red
                 }
             } else {
