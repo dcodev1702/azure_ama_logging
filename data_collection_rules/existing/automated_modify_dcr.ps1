@@ -81,12 +81,11 @@ function Invoke-DCRModify {
         $token = (Get-AzAccessToken -ResourceUrl $resourceUrl).Token
         $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
         $headers.Add("Authorization","Bearer $token")
-
-        $DCRId = $dataCollectionRule.Id
+        
         $DCRName = $dataCollectionRule.Name
         
-        # Split the string into parts
-        $parts = $DCRId -split '/'
+        # Extract Resource Group from selected DCR
+        $parts = $dataCollectionRule.Id -split '/'
 
         # Select the resource group part
         $resourceGroup = $parts[4]
