@@ -7,6 +7,18 @@ CmdLet:
 --------
 Invoke-DCRModify -DCR_Action [Get|Set]
 
+Usage:
+------
+1. . ./automated_modify_dcr.ps1
+
+2. Get a Data Collection Rule via Azure Monitor REST API
+   Invoke-DCRModify -DCR_Action Get
+
+3. Use your editor of choice to modify the Data Collection Rule (JSON)
+
+4. Send a Data Collection Rule via Azure Monitor REST API
+   Invoke-DCRModify -DCR_Action Set
+
 End-State:
 ----------
 Automate (ish) the getting and setting of Data Collection Rules so they can be
@@ -26,18 +38,6 @@ Data Collection Rule names take on the name of their corresponding JSON file. If
 the name of that JSON file, this script will NOT work as intended.  The assumption is made
 that you make the necessary changes to the JSON file that resembles the name of the DCR
 downloaded from Azure Monitor via the REST API.
-
-Usage:
-------
-. ./automated_modify_dcr.ps1
-
-Get a Data Collection Rule via Azure Monitor REST API
-Invoke-DCRModify -DCR_Action Get
-
-Use your editor of choice to modify the Data Collection Rule (JSON)
-
-Send a Data Collection Rule via Azure Monitor REST API
-Invoke-DCRModify -DCR_Action Set
 
 TODO:
 -----
