@@ -162,9 +162,9 @@ function Invoke-DCRModify {
 
             # Construct the URL for the REST API call
             $url_DCRRule = "$resourceUrl/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRName)"
-
-            $confirm = Read-Host "Do you want to make a REST API call to GET `'$DCRName`'? (Y/N)"
-
+            
+            $confirm = Read-Host "Do you want to GET Data Collection Rule: `'$DCRName`' via Azure Monitor REST API? (Y/N)"
+            
             if ($confirm -eq 'Y' -or $confirm -eq 'y') {
                 $GOT_DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
                 Sleep 0.5
@@ -200,8 +200,8 @@ function Invoke-DCRModify {
 
                 # Validate the REST API call was successful ($result)
                 if ($result.StatusCode -eq 200) {
-                    Write-Host "`nREST API [PUT] to Azure Monitor for $DCRName completed successfully!" -ForegroundColor Green
-                    Write-Host "You can now go to Azure Monitor and validate the modification of: $DCRName." -ForegroundColor Green
+                    Write-Host "`nREST API [PUT] to Azure Monitor for `'$DCRName`' completed successfully!" -ForegroundColor Green
+                    Write-Host "You can now go to Azure Monitor -> DCR and validate the modification of: $DCRName." -ForegroundColor Green
                 } else {
                     Write-Host "`nPUT via REST API call for $DCRName failed!" -ForegroundColor Red
                     Write-Host "Error Message: $($result.Content.message)" -ForegroundColor Red
