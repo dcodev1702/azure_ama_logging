@@ -131,8 +131,18 @@ function Invoke-DCRModify {
             }
            
             # Prompt the user to enter an index
-            $index = Read-Host -Prompt 'Enter the index of the modified DCR you want to send to Azure Monitor'
-            $index = [int]$index.Trim()
+            try {
+                $index = Read-Host -Prompt 'Enter the index of the modified DCR you want to send to Azure Monitor'
+                $index = [int]$index.Trim()
+            }
+            catch [System.FormatException] {
+                Write-Host "`nInvalid index entered `"$index`". Exiting script." -ForegroundColor Red
+                exit 1
+            }
+            catch {
+                Write-Host "An unexpected error occurred: $_" -ForegroundColor Red
+                exit 1
+            }
 
             # Check if the entered index is valid
             if ($index -ge 0 -and $index -lt $DCRJsonFiles.Count) {
