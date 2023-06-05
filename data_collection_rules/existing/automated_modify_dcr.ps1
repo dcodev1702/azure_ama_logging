@@ -9,7 +9,8 @@ Invoke-DCRModify -DCR_Action [Get|Set]
 
 Usage:
 ------
-1. . ./automated_modify_dcr.ps1
+1. Bring the custom defined CmdLet into the PowerShell Host
+   . ./automated_modify_dcr.ps1
 
 2. Get a Data Collection Rule via Azure Monitor REST API
    Invoke-DCRModify -DCR_Action Get
