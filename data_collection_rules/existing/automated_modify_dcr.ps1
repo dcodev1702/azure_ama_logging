@@ -27,6 +27,18 @@ the name of that JSON file, this script will NOT work as intended.  The assumpti
 that you make the necessary changes to the JSON file that resembles the name of the DCR
 downloaded from Azure Monitor via the REST API.
 
+Usage:
+------
+. ./automated_modify_dcr.ps1
+
+Get a Data Collection Rule via Azure Monitor REST API
+Invoke-DCRModify -DCR_Action Get
+
+Use your editor of choice to modify the Data Collection Rule (JSON)
+
+Send a Data Collection Rule via Azure Monitor REST API
+Invoke-DCRModify -DCR_Action Set
+
 TODO:
 -----
 Very little exception handling exists.  This is a down and dirty PowerShell script designed
