@@ -91,7 +91,7 @@ function Invoke-DCRModify {
                 $index = Read-Host -Prompt 'Enter the index of the Data Collection Rule (DCR) you want to select'
                 
                 if ($index.Trim() -eq "") {
-                    throw "No valid index entered. Exiting program..."
+                    throw "Invalid index entered. Exiting program..."
                 }
                 $index = [int]$index.Trim()
             }
@@ -139,7 +139,7 @@ function Invoke-DCRModify {
                 $index = Read-Host -Prompt 'Enter the index of the modified DCR you want to send to Azure Monitor'
                 
                 if ($index.Trim() -eq "") {
-                    throw "No valid index entered. Exiting program..."
+                    throw "Invalid index entered. Exiting program..."
                 }
                 $index = [int]$index.Trim()
             }
