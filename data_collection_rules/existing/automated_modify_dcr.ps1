@@ -21,20 +21,6 @@ at https://www.microsoft.com/en-us/legal/copyright.
 #####################################################################################>
 
 <#
-.SYNOPSIS
-   
-.DESCRIPTION
-
-.INPUTS
-   
-.OUTPUTS
-   
-.NOTES
-    Name:
-    Authors/Contributors:
-    DateCreated:
-    Revisions:
-
 Author: DCODev, GitHub Co-Pilot, and ChatGPT-4
 Date: 4 June 2023
 Filename: automated_modify_dcr.ps1
