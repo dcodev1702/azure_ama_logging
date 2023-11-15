@@ -230,7 +230,7 @@ function Invoke-DCRModify {
             $confirm = Read-Host "Do you want to GET Data Collection Rule: `'$DCRName`' via Azure Monitor REST API? (Y/N)"
             
             if ($confirm -eq 'Y' -or $confirm -eq 'y') {
-                $GOT_DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
+                $GOT_DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2022-06-01") -Method GET -Headers $headers
                 Start-Sleep 0.5
 
                 if ($GOT_DCRContent) {
@@ -259,7 +259,7 @@ function Invoke-DCRModify {
             $url_DCRRule = "$resourceUrl/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCRName)"
 
             if ($confirm -eq 'Y' -or $confirm -eq 'y') {
-                $result = Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $DCRContent
+                $result = Invoke-AzRestMethod ($url_DCRRule+"?api-version=2022-06-01") -Method PUT -Payload $DCRContent
                 Start-Sleep 0.5
 
                 # Validate the REST API call was successful ($result)
