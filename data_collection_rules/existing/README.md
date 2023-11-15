@@ -35,7 +35,7 @@ $headers.Add("Authorization","Bearer $token")
 ## GET the existing DCR using the REST API
 ```PowerShell
 $url_DCRRule = "$resourceUrl/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionRules/$($DCR_RuleName)"
-$GOT_DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method GET -Headers $headers
+$GOT_DCRContent = Invoke-RestMethod ($url_DCRRule+"?api-version=2022-06-01") -Method GET -Headers $headers
 ```
 
 ## Convert serialized JSON & send to a file
@@ -54,5 +54,5 @@ $GOT_DCRContent = Get-Content ./"$DCR_RuleName.json" -Raw
 
 ## Send the modified DCR to Azure via REST API  
 ```PowerShell
-Invoke-AzRestMethod ($url_DCRRule+"?api-version=2021-09-01-preview") -Method PUT -Payload $GOT_DCRContent
+Invoke-AzRestMethod ($url_DCRRule+"?api-version=2022-06-01") -Method PUT -Payload $GOT_DCRContent
 ```
