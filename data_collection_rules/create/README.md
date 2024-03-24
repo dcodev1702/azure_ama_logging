@@ -1,6 +1,4 @@
 ### Create a Data Collection Rule: [Here!](https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-rules/create?view=rest-monitor-2022-06-01&tabs=HTTP)
-### Filename: bt-demo-03232024.json
-![image](https://github.com/dcodev1702/azure_ama_logging/assets/32214072/6502200a-f09f-494a-820d-9be6bb890db8)
 
 ### Steps to create a Data Collection Rule
 1. Define the rule, what you want to collection and the destination where the logs will reside (Log Analytics Workspace)
@@ -9,6 +7,9 @@
    * Go to Azure -> Log Analytics Workspace (LAW) -> Select the LAW -> Select "JSON View" on the far right
    * Save the Data Collection Rule as JSON (bt-demo-03232024.json)
 ![image](https://github.com/dcodev1702/azure_ama_logging/assets/32214072/bf041a64-b087-4551-972a-746e52db5136)
+
+Filename: bt-demo-03232024.json
+![image](https://github.com/dcodev1702/azure_ama_logging/assets/32214072/6502200a-f09f-494a-820d-9be6bb890db8)
 
 2. Fill out the Resource ID for the Data Collection Rule (DCR)
 ```console
