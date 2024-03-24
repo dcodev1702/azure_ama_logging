@@ -4,7 +4,7 @@
 
 ### Steps to create a Data Collection Rule
 1. Define the rule, what you want to collection and the destination where the logs will reside (Log Analytics Workspace)
-   * Get the ResourceId of your Log Analytics Workspace
+   * Get the Resource Id of your Log Analytics Workspace
    * Copy that ResourceId to your Data Collection Rule (DCR)
    * Go to Azure -> Log Analytics Workspace (LAW) -> Select the LAW -> Select "JSON View" on the far right
    * Save the Data Collection Rule as JSON (bt-demo-03232024.json)
