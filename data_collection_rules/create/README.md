@@ -2,4 +2,5 @@
 ![image](https://github.com/dcodev1702/azure_ama_logging/assets/32214072/6502200a-f09f-494a-820d-9be6bb890db8)
 
 ### Upload via HTTP REST API
-![image](https://github.com/dcodev1702/azure_ama_logging/assets/32214072/3a014ca1-0e10-4fb3-8239-ba19a841556e)
+![image](https://github.com/dcodev1702/azure_ama_logging/assets/32214072/ff1f01ea-5654-4267-bac2-58977729f1c5)
+
