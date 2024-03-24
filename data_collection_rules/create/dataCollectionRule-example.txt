@@ -1,0 +1,59 @@
+{
+  "location": "eastus",
+  "tags": {
+    "Author": "The Cloud Security Team"
+  },
+  "properties": {
+    "dataSources": {
+      "windowsEventLogs": [
+        {
+          "name": "cloudSecurityTeamEvents",
+          "streams": [
+            "Microsoft-SecurityEvent"
+          ],
+          "xPathQueries": [
+            "Security!*[System[(band(Keywords,13510798882111488))]]",
+            "Microsoft-Windows-PowerShell/Operational!*[System[(EventID=4103 or EventID=4104)]]",
+            "Microsoft-Windows-AppLocker/EXE and DLL!*",
+            "Microsoft-Windows-AppLocker/MSI and Script!*",
+            "Application!*[System[(Level=1 or Level=2)]]",
+            "System!*[System[(Level=1 or Level=2)]]"
+          ]
+        }
+      ],
+      "syslog": [
+        {
+          "name": "CEFBase",
+          "streams": [
+            "Microsoft-CommonSecurityLog"
+          ],
+          "facilityNames": [
+            "*"
+          ],
+          "logLevels": [
+            "*"
+          ]
+        }
+      ]
+    },
+    "destinations": {
+      "logAnalytics": [
+        {
+          "workspaceResourceId": "/subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/providers/Microsoft.OperationalInsights/workspaces/<LOG-ANALYTICS-WORKSPACE>",
+          "name": "la-007007007"
+        }
+      ]
+    },
+    "dataFlows": [
+      {
+        "streams": [
+          "Microsoft-SecurityEvent",
+          "Microsoft-CommonSecurityLog"
+        ],
+        "destinations": [
+          "la-007007007"
+        ]
+      }
+    ]
+  }
+}
