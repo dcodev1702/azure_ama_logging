@@ -1,7 +1,7 @@
 ### Create a Data Collection Rule: [Here!](https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-rules/create?view=rest-monitor-2022-06-01&tabs=HTTP)
 
 ### Steps to create a Data Collection Rule
-1. Ensure you have access to PowerShell with the right permissions and Az module installed.
+1. Ensure you have access to PowerShell with the right permissions and [Az module](https://learn.microsoft.com/en-us/powershell/azure/install-azure-powershell?view=azps-11.4.0) installed.
 2. Define the rule, what you want to collection and the destination where the logs will reside (Log Analytics Workspace)
    * Get the Resource Id of your Log Analytics Workspace
    * Copy that Resource Id to your Data Collection Rule (DCR) -> logAnalytics -> workspaceResourceId: "COPY RESOURCE ID HERE"
