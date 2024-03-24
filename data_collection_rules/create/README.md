@@ -33,6 +33,7 @@ Invoke-AzRestMethod -Path("$RescourceId"+"?api-version=2022-06-01") -Method PUT 
 
 6. Go to Azure Monitor / Data Collection Rules and ensure the DCR you just uploaded exists
    * Go to "JSON View" and ensure the DCR you uploaded matches what you see there.
-   ![image](https://github.com/dcodev1702/azure_ama_logging/assets/32214072/08c748cd-954d-4bda-afcb-7a53071c5e34)
+   ![image](https://github.com/dcodev1702/azure_ama_logging/assets/32214072/6f366e42-ebaa-42f4-8cfe-74a942fede79)
+
 
 
