@@ -1,7 +1,8 @@
 # Assumptions:
 1. You have access to an Azure Subscription.
-2. Your identity has sufficient priviledges to perform data collection rule modifications.
-3. You can navigate PowerShell and understand basic coding concepts.
+2. You are using PowerShell 7.X or Azure Cloud Shell.
+3. Your identity has sufficient priviledges to perform data collection rule modifications.
+4. You can navigate PowerShell and understand basic coding concepts.
 
 # Instructions: From the Azure Cloud Shell
 The PowerShell code below is used to pull down an existing Data Collection Rule (DCR) so that it can be modified and published via requisite API calls.
