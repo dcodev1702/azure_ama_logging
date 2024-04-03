@@ -14,7 +14,7 @@ Filename: bt-demo-03232024.json
 
 3. Fill out the Resource ID for the Data Collection Rule (DCR)
 ```console
-$RescourceId = "/subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/providers/Microsoft.Insights/dataCollectionRules/bt-demo-03232024-dcr"
+$RescourceId = "/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/<RESOURCE_GROUP>/providers/Microsoft.Insights/dataCollectionRules/bt-demo-03232024-dcr"
 ```
 4. Assign contents of your DCR to a variable $DCRContent that will be used by the PowerShell CmdLet: Invoke-AzRestMethod
 ```console
