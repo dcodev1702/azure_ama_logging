@@ -2,7 +2,7 @@
 
 ### Steps to create a Data Collection Rule
 1. Ensure you have access to PowerShell (v5.1 or greater) with the right permissions and [Az module](https://learn.microsoft.com/en-us/powershell/azure/install-azure-powershell?view=azps-11.4.0) installed.
-   * Login via the CLI using the PowerShell AZ module
+   * Login via the CLI using the PowerShell AZ module [ENV: AzureCloud | AzureUSGovernment]
    ```console
    Connect-AzAccount -UseDeviceAuthentication -Environment <YOUR_CLOUD>
    ```
