@@ -60,9 +60,7 @@
           "la-007007007"
         ],
         "transformKql": "source",
-        "outputStreams": [
-          "Microsoft-CommonSecurityLog"
-        ]
+        "outputStream": "Microsoft-CommonSecurityLog"
       }
     ]
   }
