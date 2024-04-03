@@ -2,7 +2,12 @@
 
 ### Steps to create a Data Collection Rule
 1. Ensure you have access to PowerShell (v5.1 or greater) with the right permissions and [Az module](https://learn.microsoft.com/en-us/powershell/azure/install-azure-powershell?view=azps-11.4.0) installed.
-2. Define the rule, what you want to collection and the destination where the logs will reside (Log Analytics Workspace)
+   * Login via the CLI using the PowerShell AZ module
+   ```console
+   Connect-AzAccount -UseDeviceAuthentication -Environment <YOUR_CLOUD>
+   ```
+   * The Azure Cloud Shell is also a viable option if you cannot use PowerShell on your system.
+3. Define the rule, what you want to collection and the destination where the logs will reside (Log Analytics Workspace)
    * Get the Resource Id of your Log Analytics Workspace
    * Copy that Resource Id to your Data Collection Rule (DCR) -> logAnalytics -> workspaceResourceId: "COPY RESOURCE ID HERE"
    * Go to Azure -> Log Analytics Workspace (LAW) -> Select the LAW -> Select "JSON View" on the far right
