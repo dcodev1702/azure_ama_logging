@@ -1,4 +1,4 @@
-'''
+<#
 Author: Lorenzo J. Ireland | Senior CSA (Security) - Microsoft
 Date: 04/10/2024
 
@@ -7,19 +7,15 @@ This script will automate the creation of a data collection endpoint (DCE) and a
 in Azure Monitor for a Log Analytics Workspace (LAW) to collect and ingest assessment data from Azure Assessment.
 The script will create the DCE and DCR if they do not already exist and link them with a LAW. 
 
-Usage:
-1. Ensure your identity has the appropriate permissions to provision the DCE and DCR.
-2. Run this script in the Cloud Shell CLI or in a PowerShell Terminal
-   -- Connect-AzAccount -Envrionment [AzureCloud | AzureUSGovernment] -UseDeviceAuthentication
-'''
-''' !!! CHANGE ME !!! '''
+#>
+# !!! CHANGE ME !!!
 
 $resourceGroup  = "sec_telem_law_1"
-$workspaceName  = "aad-telem"
+$LAW            = "aad-telem"
 $location       = "eastus"
 $DCRFilePattern = "C:\\Assessment\\AAD\\AzureAssessment\\*.assessmentazurerecs"
 
-''' !!! CHANGE ME !!! '''
+# !!! CHANGE ME !!!
 
 
 # No need to change these variables
@@ -46,9 +42,9 @@ $DCEResourceId = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscription
 $dceExists = Invoke-AzRestMethod ($DCEResourceId+"?api-version=2022-06-01") -Method GET
 
 if ($dceExists.StatusCode -eq 200) {
-    Write-Host "Data Collection Endpoint already exists"
+    Write-Host "Data Collection Endpoint already exists" -ForegroundColor Green
 }else{
-    Write-Host "Data Collection Endpoint does not exist ..creating now!"
+    Write-Host "Data Collection Endpoint does not exist ..creating now!" -ForegroundColor White
     Invoke-AzRestMethod ($DCEResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dce
 }
 
@@ -57,19 +53,19 @@ Start-Sleep -Seconds 1
 
 # Get Log Analytics Workspace Resource Id
 # https://learn.microsoft.com/en-us/rest/api/loganalytics/workspaces/get?view=rest-loganalytics-2023-09-01&tabs=HTTP
-$LAWResourceId = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$resourceGroup/providers/Microsoft.OperationalInsights/workspaces/$workspaceName"
+$LAWResourceId = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$resourceGroup/providers/Microsoft.OperationalInsights/workspaces/$LAW"
 $LAWResult = Invoke-AzRestMethod ($LAWResourceId+"?api-version=2023-09-01") -Method GET
 
 # Get the LAW Resource Id
 $LAWResourceID = $LAWResult.Content | ConvertFrom-JSON
-Write-Host "LAW Resource Id: $($LAWResourceId.id)"
+Write-Host "LAW Resource Id: $($LAWResourceId.id)" -ForegroundColor Yellow
 
 
 # Get the DCE Resource Id
 $DCEResult = Invoke-AzRestMethod ($DCEResourceId+"?api-version=2022-06-01") -Method GET
 
 $DCEResourceID = $DCEResult.Content | ConvertFrom-JSON
-Write-Host "DCE Resource Id: $($DCEResourceId.id)"
+Write-Host "DCE Resource Id: $($DCEResourceId.id)" -ForegroundColor Yellow
 
 # Create the data collection rule (DCR), linking the DCE and the LAW to the DCR
 $dcr = @"
@@ -143,8 +139,8 @@ $dcrExists = Invoke-AzRestMethod ($DCRResourceId+"?api-version=2022-06-01") -Met
 Start-Sleep -Seconds 1
 
 if ($dcrExists.StatusCode -eq 200) {
-    Write-Host "Data Collection Endpoint already exists"
+    Write-Host "Data Collection Endpoint already exists" -ForegroundColor Green
 }else{
-    Write-Host "Data Collection Endpoint does not exist ..creating now!"
+    Write-Host "Data Collection Endpoint does not exist ..creating now!" -ForegroundColor White
     Invoke-AzRestMethod ($DCRResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dcr
 }
