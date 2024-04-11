@@ -19,8 +19,46 @@ $DCRFilePattern = "C:\\Assessment\\AAD\\AzureAssessment\\*.assessmentazurerecs"
 
 
 # No need to change these variables
-$dceName = "oda-dcr-endpoint"
-$dcrName = "oda-dcr-rule"
+$dceName     = "oda-dcr-endpoint"
+$dcrName     = "oda-dcr-rule"
+$customTable = "ODAStream_CL"
+
+# Create a custom log table in the LAW
+$customTablePayload = @"
+{
+    "properties": {
+        "schema" : {
+            "name": "$customTable",
+            "tableType": "CustomLog",
+            "columns": [
+                {
+                    "name": "TimeGenerated",
+                    "type": "datetime"
+                },
+                {
+                    "name": "RawData",
+                    "type": "string"
+                }
+            ]
+        }
+    }
+}
+"@
+
+# PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/tables/{tableName}?api-version=2022-10-01
+$CreateCustomTable = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$resourceGroup/providers/Microsoft.OperationalInsights/workspaces/$workspaceName/tables/$customTable"
+
+Write-Host "Data Collection Endpoint does not exist ..creating now!" -ForegroundColor Cyan
+$CTCheck = Invoke-AzRestMethod ($CreateCustomTable+"?api-version=2022-10-01") -Method GET
+
+if ($CTCheck.StatusCode -eq 200) {
+    Write-Host "The Custom Table: `"$customTable`" already exists" -ForegroundColor Green
+}else{
+    Write-Host "The Custom Table `"$customTable`" does not exist ..creating now!" -ForegroundColor Cyan
+    Invoke-AzRestMethod ($CreateCustomTable+"?api-version=2022-10-01") -Method PUT -Payload $customTablePayload
+}
+
+Start-Sleep -Seconds 1
 
 
 # Create the Data Collection Endpoint (DCE)
@@ -75,7 +113,7 @@ $dcr = @"
     "properties": {
         "dataCollectionEndpointId": "$($DCEResourceId.id)",
         "streamDeclarations": {
-            "Custom-ODAStream": {
+            "Custom-$customTable": {
                 "columns": [
                     {
                         "name": "TimeGenerated",
@@ -92,7 +130,7 @@ $dcr = @"
             "logFiles": [
                 {
                     "streams": [
-                        "Custom-ODAStream"
+                        "Custom-$customTable"
                     ],
                     "filePatterns": [
                         "$DCRFilePattern"
@@ -118,7 +156,7 @@ $dcr = @"
         "dataFlows": [
             {
                 "streams": [
-                    "Custom-ODAStream"
+                    "Custom-$customTable"
                 ],
                 "destinations": [
                     "law-destination"
