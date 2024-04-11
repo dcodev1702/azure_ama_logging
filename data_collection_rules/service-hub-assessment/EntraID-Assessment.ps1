@@ -3,7 +3,7 @@ Author: Lorenzo J. Ireland | Senior CSA (Security) - Microsoft
 Date: 04/10/2024
 
 Description:
-This script will automate the creation of a data collection endpoint (DCE) and a data collection rule (DCR) 
+This script will automate the creation of a custom table (CL), data collection endpoint (DCE) and a data collection rule (DCR) 
 in Azure Monitor for a Log Analytics Workspace (LAW) to collect and ingest assessment data from Azure Assessment.
 The script will create the DCE and DCR if they do not already exist and link them with a LAW. 
 
@@ -41,7 +41,7 @@ $customTablePayload = @"
                 }
             ]
         },
-        "retentionInDays": 45,
+        "retentionInDays": 90,
         "totalRetentionInDays": 90
     }
 }
@@ -81,9 +81,9 @@ $DCEResourceId = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscription
 $dceExists = Invoke-AzRestMethod ($DCEResourceId+"?api-version=2022-06-01") -Method GET
 
 if ($dceExists.StatusCode -eq 200) {
-    Write-Host "Data Collection Endpoint already exists" -ForegroundColor Green
+    Write-Host "Data Collection Endpoint: `"$dceName`" already exists" -ForegroundColor Green
 }else{
-    Write-Host "Data Collection Endpoint does not exist ..creating now!" -ForegroundColor Cyan
+    Write-Host "Data Collection Endpoint: `"$dceName`" does not exist ..creating now!" -ForegroundColor Cyan
     Invoke-AzRestMethod ($DCEResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dce | Out-Null
 }
 
@@ -178,8 +178,8 @@ $dcrExists = Invoke-AzRestMethod ($DCRResourceId+"?api-version=2022-06-01") -Met
 Start-Sleep -Seconds 1
 
 if ($dcrExists.StatusCode -eq 200) {
-    Write-Host "Data Collection Rule already exists" -ForegroundColor Green
+    Write-Host "Data Collection Rule: `"$dcrName`" already exists" -ForegroundColor Green
 }else{
-    Write-Host "Data Collection Rule does not exist ..creating now!" -ForegroundColor Cyan
+    Write-Host "Data Collection Rule `"$dcrName`" does not exist ..creating now!" -ForegroundColor Cyan
     Invoke-AzRestMethod ($DCRResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dcr | Out-Null
 }
