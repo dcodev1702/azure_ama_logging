@@ -45,7 +45,7 @@ if ($dceExists.StatusCode -eq 200) {
     Write-Host "Data Collection Endpoint already exists" -ForegroundColor Green
 }else{
     Write-Host "Data Collection Endpoint does not exist ..creating now!" -ForegroundColor Cyan
-    Invoke-AzRestMethod ($DCEResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dce
+    Invoke-AzRestMethod ($DCEResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dce | Out-Null
 }
 
 Start-Sleep -Seconds 1
@@ -142,5 +142,5 @@ if ($dcrExists.StatusCode -eq 200) {
     Write-Host "Data Collection Rule already exists" -ForegroundColor Green
 }else{
     Write-Host "Data Collection Rule does not exist ..creating now!" -ForegroundColor Cyan
-    Invoke-AzRestMethod ($DCRResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dcr
+    Invoke-AzRestMethod ($DCRResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dcr | Out-Null
 }
