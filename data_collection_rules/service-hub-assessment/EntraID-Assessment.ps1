@@ -5,7 +5,12 @@ Date: 04/10/2024
 Description:
 This script will automate the creation of a custom table (CL), data collection endpoint (DCE) and a data collection rule (DCR) 
 in Azure Monitor for a Log Analytics Workspace (LAW) to collect and ingest assessment data from Azure Assessment.
-The script will create the DCE and DCR if they do not already exist and link them with a LAW. 
+The script will create the DCE and DCR if they do not already exist and link them with a LAW.
+
+Usage:
+1. Open a PowerShell or Azure Cloud Shell session w/ Az module installed & the appropriate permissions
+2. Update the variables in the "CHANGE ME" section below
+3. Run the PowerShell script
 
 #>
 # !!! CHANGE ME !!!
