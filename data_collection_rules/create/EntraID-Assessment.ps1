@@ -67,7 +67,7 @@ if ($CTCheck.StatusCode -eq 200) {
 Start-Sleep -Seconds 1
 
 # Create the Data Collection Endpoint (DCE)
-$dce = @"
+$dcePayload = @"
 {
     "location": "$location",
     "properties": {
@@ -88,7 +88,7 @@ if ($dceExists.StatusCode -eq 200) {
     Write-Host "Data Collection Endpoint: `"$dceName`" already exists" -ForegroundColor Green
 }else{
     Write-Host "Data Collection Endpoint: `"$dceName`" does not exist ..creating now!" -ForegroundColor Cyan
-    Invoke-AzRestMethod ($DCEResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dce | Out-Null
+    Invoke-AzRestMethod ($DCEResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dcePayload | Out-Null
 }
 
 Start-Sleep -Seconds 1
@@ -111,7 +111,7 @@ $DCEResourceID = $DCEResult.Content | ConvertFrom-JSON
 Write-Host "DCE Resource Id: $($DCEResourceId.id)" -ForegroundColor Yellow
 
 # Create the data collection rule (DCR), linking the DCE and the LAW to the DCR
-$dcr = @"
+$dcrPayload = @"
 {
     "location": "$location",
     "kind": "Windows",
@@ -185,5 +185,5 @@ if ($dcrExists.StatusCode -eq 200) {
     Write-Host "Data Collection Rule: `"$dcrName`" already exists" -ForegroundColor Green
 }else{
     Write-Host "Data Collection Rule `"$dcrName`" does not exist ..creating now!" -ForegroundColor Cyan
-    Invoke-AzRestMethod ($DCRResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dcr | Out-Null
+    Invoke-AzRestMethod ($DCRResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dcrPayload | Out-Null
 }
