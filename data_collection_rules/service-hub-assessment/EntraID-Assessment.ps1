@@ -47,7 +47,7 @@ $customTablePayload = @"
 "@
 
 # Check to see if the custom table already exists. If it does, do nothing. If it does not, create it.
-# PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/tables/{tableName}?api-version=2022-10-01
+# https://learn.microsoft.com/en-us/rest/api/loganalytics/tables/create-or-update?view=rest-loganalytics-2023-09-01&tabs=HTTP
 $CreateCustomTable = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$resourceGroup/providers/Microsoft.OperationalInsights/workspaces/$workspaceName/tables/$customTable"
 $CTCheck = Invoke-AzRestMethod ($CreateCustomTable+"?api-version=2022-10-01") -Method GET
 
