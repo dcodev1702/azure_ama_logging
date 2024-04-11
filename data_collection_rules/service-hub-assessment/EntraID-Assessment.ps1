@@ -11,7 +11,7 @@ The script will create the DCE and DCR if they do not already exist and link the
 # !!! CHANGE ME !!!
 
 $resourceGroup  = "sec_telem_law_1"
-$LAW            = "aad-telem"
+$workspaceName  = "aad-telem"
 $location       = "eastus"
 $DCRFilePattern = "C:\\Assessment\\AAD\\AzureAssessment\\*.assessmentazurerecs"
 
@@ -53,7 +53,7 @@ Start-Sleep -Seconds 1
 
 # Get Log Analytics Workspace Resource Id
 # https://learn.microsoft.com/en-us/rest/api/loganalytics/workspaces/get?view=rest-loganalytics-2023-09-01&tabs=HTTP
-$LAWResourceId = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$resourceGroup/providers/Microsoft.OperationalInsights/workspaces/$LAW"
+$LAWResourceId = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$resourceGroup/providers/Microsoft.OperationalInsights/workspaces/$workspaceName"
 $LAWResult = Invoke-AzRestMethod ($LAWResourceId+"?api-version=2023-09-01") -Method GET
 
 # Get the LAW Resource Id
