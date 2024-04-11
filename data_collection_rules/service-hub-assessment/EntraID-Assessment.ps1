@@ -55,7 +55,7 @@ if ($CTCheck.StatusCode -eq 200) {
     Write-Host "The Custom Table: `"$customTable`" already exists" -ForegroundColor Green
 }else{
     Write-Host "The Custom Table `"$customTable`" does not exist ..creating now!" -ForegroundColor Cyan
-    Invoke-AzRestMethod ($CreateCustomTable+"?api-version=2022-10-01") -Method PUT -Payload $customTablePayload
+    Invoke-AzRestMethod ($CreateCustomTable+"?api-version=2022-10-01") -Method PUT -Payload $customTablePayload | Out-Null
 }
 
 Start-Sleep -Seconds 1
