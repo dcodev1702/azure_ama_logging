@@ -17,7 +17,6 @@ $DCRFilePattern = "C:\\Assessment\\AAD\\AzureAssessment\\*.assessmentazurerecs"
 
 # !!! CHANGE ME !!!
 
-
 # No need to change these variables
 $dceName     = "oda-dcr-endpoint"
 $dcrName     = "oda-dcr-rule"
@@ -61,7 +60,6 @@ if ($CTCheck.StatusCode -eq 200) {
 
 Start-Sleep -Seconds 1
 
-
 # Create the Data Collection Endpoint (DCE)
 $dce = @"
 {
@@ -88,7 +86,6 @@ if ($dceExists.StatusCode -eq 200) {
 }
 
 Start-Sleep -Seconds 1
-
 
 # Get Log Analytics Workspace Resource Id
 # https://learn.microsoft.com/en-us/rest/api/loganalytics/workspaces/get?view=rest-loganalytics-2023-09-01&tabs=HTTP
