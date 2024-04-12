@@ -12,10 +12,10 @@ Usage:
 2. Update the variables in the "CHANGE ME" section below
 3. Run the PowerShell script
     . ./create-ct-dce-dcr-api.ps1
-    Invoke-DCRCreate -Action Provision -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
+    Invoke-DCR-API -Action Provision -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
 #>
 
-function Invoke-DCRCreate {
+function Invoke-DCR-API {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory=$true)]
