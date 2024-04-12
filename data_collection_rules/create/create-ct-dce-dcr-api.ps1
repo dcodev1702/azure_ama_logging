@@ -27,6 +27,9 @@ function Invoke-DCR-API {
         [Parameter(Mandatory=$false)][string]$Location = "eastus"
     )
 
+    $ResourceManagerUrl = (Get-AzContext).Environment.ResourceManagerUrl
+    $SubscriptionId     = (Get-AzContext).Subscription.Id
+
     # !!! CHANGE ME !!!
     $DCRFilePattern = "C:\\Assessment\\AAD\\AzureAssessment\\*.assessmentazurerecs"
 
@@ -64,7 +67,7 @@ function Invoke-DCR-API {
 "@
 
     # Check to see if the custom table already exists. If it does, do nothing. If it does not, create it.
-    $CreateCustomTable = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$WorkspaceName/tables/$customTable"
+    $CreateCustomTable = "$ResourceManagerUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$WorkspaceName/tables/$customTable"
 
     $CTCheck = Invoke-AzRestMethod ($CreateCustomTable+"?api-version=2022-10-01") -Method GET
 
@@ -100,7 +103,7 @@ function Invoke-DCR-API {
 
     # Check to see if DCE already exists. If it does, do nothing. If it does not, create it.
     # https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-endpoints/get?view=rest-monitor-2022-06-01&tabs=HTTP
-    $DCEResourceId = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionEndpoints/$dceName"
+    $DCEResourceId = "$ResourceManagerUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionEndpoints/$dceName"
 
     $dceExists = Invoke-AzRestMethod ($DCEResourceId+"?api-version=2022-06-01") -Method GET
 
@@ -125,7 +128,7 @@ function Invoke-DCR-API {
     #
     # https://learn.microsoft.com/en-us/rest/api/loganalytics/workspaces/get?view=rest-loganalytics-2023-09-01&tabs=HTTP
     # ------------------------------------------------------------
-    $LAWResourceId = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$WorkspaceName"
+    $LAWResourceId = "$ResourceManagerUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$WorkspaceName"
 
     $LAWResult = Invoke-AzRestMethod ($LAWResourceId+"?api-version=2023-09-01") -Method GET
 
@@ -209,7 +212,7 @@ function Invoke-DCR-API {
 "@
 
     # Check to see if DCR already exists. If it does, do nothing. If it does not, create it.
-    $DCRResourceId = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$dcrName"
+    $DCRResourceId = "$ResourceManagerUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionRules/$dcrName"
 
     $dcrExists = Invoke-AzRestMethod ($DCRResourceId+"?api-version=2022-06-01") -Method GET
 
