@@ -35,7 +35,7 @@ if ($CTCheck.StatusCode -eq 200) {
     Write-Host "!!! DELETING -> Custom Table: `"$customTable`" !!!" -ForegroundColor Yellow
     $Result = Invoke-AzRestMethod ($CreateCustomTable+"?api-version=2022-10-01") -Method DELETE
     if ($Result.StatusCode -in (200,202,204)) {
-    	Write-Host "!!! SUCESSFULLY DELETED -> Custom Table: `"$customTable`" !!!" -ForegroundColor Red
+        Write-Host "!!! SUCESSFULLY DELETED -> Custom Table: `"$customTable`" !!!" -ForegroundColor Red
     }
 }else{
     Write-Host "The Custom Table `"$customTable`" does not exist ..nothing to delete!" -ForegroundColor Green
@@ -57,7 +57,7 @@ if ($dcrExists.StatusCode -eq 200) {
     Write-Host "!!! DELETING -> Data Collection Rule: `"$dcrName`" !!!" -ForegroundColor Yellow
     $Result = Invoke-AzRestMethod ($DCRResourceId+"?api-version=2022-06-01") -Method DELETE
     if ($Result.StatusCode -eq 200) {
-    	Write-Host "!!! SUCESSFULLY DELETED -> Data Collection Rule: `"$dcrName`" !!!" -ForegroundColor Red
+        Write-Host "!!! SUCESSFULLY DELETED -> Data Collection Rule: `"$dcrName`" !!!" -ForegroundColor Red
     }
 }else{
     Write-Host "Data Collection Rule `"$dcrName`" does not exist ..nothing to delete!" -ForegroundColor Green
@@ -77,7 +77,7 @@ if ($dceExists.StatusCode -eq 200) {
     Write-Host "!!! DELETING -> Data Collection Endpoint: `"$dceName`" !!!" -ForegroundColor Yellow
     $Result = Invoke-AzRestMethod ($DCEResourceId+"?api-version=2022-06-01") -Method DELETE
     if ($Result.StatusCode -eq 200) {
-    	Write-Host "!!! SUCESSFULLY DELETED -> Data Collection Endpoint: `"$dceName`" !!!" -ForegroundColor Red
+        Write-Host "!!! SUCESSFULLY DELETED -> Data Collection Endpoint: `"$dceName`" !!!" -ForegroundColor Red
     }
 }else{
     Write-Host "Data Collection Endpoint: `"$dceName`" does not exist ..nothing to delete!" -ForegroundColor Green
