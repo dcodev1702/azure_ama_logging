@@ -10,11 +10,12 @@ The script will create the DCE and DCR if they do not already exist and link the
 Usage:
 1. Open a PowerShell or Azure Cloud Shell session w/ Az module installed & the appropriate permissions
 2. Update the variables in the "CHANGE ME" section below
-3. Run the PowerShell script -> . ./create-ct-dce-dcr.ps1
-4. Invoke-DCRDemo -Action Provision -Verbose
+3. Run the PowerShell script:
+    . ./create-ct-dce-dcr.ps1
+    Invoke-DCRCreate -Action Provision -Verbose
 
 #>
-function Invoke-DCRDemo {
+function Invoke-DCRCreate {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory=$true)]
