@@ -75,6 +75,9 @@ function Invoke-DCR-API {
         $Result = Invoke-AzRestMethod ($CreateCustomTable+"?api-version=2022-10-01") -Method PUT -Payload $customTablePayload
         if ($Result.StatusCode -in (200, 202)) {
             Write-Host "!!! SUCESSFULLY PROVISIONED -> Custom Table: `"$customTable`" !!!" -ForegroundColor Green
+        }else{
+            Write-Host "!!! FAILED TO PROVISION -> Custom Table: `"$customTable`" !!!" -ForegroundColor Red
+            Exit 1
         }
     }
 
@@ -108,6 +111,9 @@ function Invoke-DCR-API {
         $Result = Invoke-AzRestMethod ($DCEResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dcePayload
         if ($Result.StatusCode -eq 200) {
             Write-Host "!!! SUCESSFULLY PROVISIONED -> Data Collection Endpoint: `"$dceName`" !!!" -ForegroundColor Green
+        }else{
+            Write-Host "!!! FAILED TO PROVISION -> Data Collection Endpoint: `"$dceName`" !!!" -ForegroundColor Red
+            Exit 1
         }
     }
 
@@ -216,6 +222,9 @@ function Invoke-DCR-API {
         $Result = Invoke-AzRestMethod ($DCRResourceId+"?api-version=2022-06-01") -Method PUT -Payload $dcrPayload
         if ($Result.StatusCode -eq 200) {
             Write-Host "!!! SUCESSFULLY PROVISIONED -> Data Collection Rule: `"$dcrName`" !!!" -ForegroundColor Green
+        }else{
+            Write-Host "!!! FAILED TO PROVISION -> Data Collection Rule: `"$dcrName`" !!!" -ForegroundColor Red
+            Exit 1
         }
     }
 }
