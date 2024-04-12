@@ -10,11 +10,11 @@ The script will create the DCE and DCR if they do not already exist and link the
 Usage:
 1. Open a PowerShell or Azure Cloud Shell session w/ Az module installed & the appropriate permissions
 2. Update the variables in the "CHANGE ME" section below
-3. Run the PowerShell script:
-    . ./create-ct-dce-dcr.ps1
-    Invoke-DCRCreate -Action Provision -Verbose
-
+3. Run the PowerShell script
+    . ./ct-dce-dcr-api.ps1
+    Invoke-DCRCreate -Action Provision -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
 #>
+
 function Invoke-DCRCreate {
     [CmdletBinding()]
     Param(
