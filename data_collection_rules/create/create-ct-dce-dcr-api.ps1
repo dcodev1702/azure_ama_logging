@@ -11,7 +11,7 @@ Usage:
 1. Open a PowerShell or Azure Cloud Shell session w/ Az module installed & the appropriate permissions
 2. Update the variables in the "CHANGE ME" section below
 3. Run the PowerShell script
-    . ./ct-dce-dcr-api.ps1
+    . ./create-ct-dce-dcr-api.ps1
     Invoke-DCRCreate -Action Provision -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
 #>
 
