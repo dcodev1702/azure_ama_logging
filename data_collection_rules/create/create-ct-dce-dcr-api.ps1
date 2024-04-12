@@ -13,6 +13,7 @@ Usage:
 3. Run the PowerShell script
     . ./create-ct-dce-dcr-api.ps1
     Invoke-DCR-API -Action Provision -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
+    Invoke-DCR-API -Action Delete -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
 #>
 
 function Invoke-DCR-API {
