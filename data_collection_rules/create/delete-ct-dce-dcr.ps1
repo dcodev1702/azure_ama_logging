@@ -26,8 +26,11 @@ $dceName     = "oda-dcr-endpoint"
 $dcrName     = "oda-dcr-rule"
 $customTable = "ODAStream_CL"
 
+$ResourceManagerUrl = (Get-AzContext).Environment.ResourceManagerUrl
+$SubscriptionId     = (Get-AzContext).Subscription.Id
+
 # Check to see if the custom table already exists. If it does, do nothing. If it does not, create it.
-$CreateCustomTable = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$resourceGroup/providers/Microsoft.OperationalInsights/workspaces/$workspaceName/tables/$customTable"
+$CreateCustomTable = "$ResourceManagerUrl/subscriptions/$SubscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.OperationalInsights/workspaces/$workspaceName/tables/$customTable"
 
 $CTCheck = Invoke-AzRestMethod ($CreateCustomTable+"?api-version=2022-10-01") -Method GET
 
@@ -47,7 +50,7 @@ Start-Sleep -Seconds 1
 # ------------------------------------------------------------
 # Delete the Data Collection Rule (DCR) if it exists
 # ------------------------------------------------------------
-$DCRResourceId = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionRules/$dcrName"
+$DCRResourceId = "$ResourceManagerUrl/subscriptions/$SubscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionRules/$dcrName"
 
 $dcrExists = Invoke-AzRestMethod ($DCRResourceId+"?api-version=2022-06-01") -Method GET
 
@@ -69,7 +72,7 @@ Start-Sleep -Seconds 1
 # ------------------------------------------------------------
 # Delete the Data Collection Endpoint (DCE) if it exists
 # ------------------------------------------------------------
-$DCEResourceId = "$((Get-AzContext).Environment.ResourceManagerUrl)/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionEndpoints/$dceName"
+$DCEResourceId = "$ResourceManagerUrl/subscriptions/$SubscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Insights/dataCollectionEndpoints/$dceName"
 
 $dceExists = Invoke-AzRestMethod ($DCEResourceId+"?api-version=2022-06-01") -Method GET
 
