@@ -39,10 +39,10 @@ function Invoke-DCR-API {
     $SubscriptionId     = (Get-AzContext).Subscription.Id
     
     # Get the LAW Resource Id
-    $LAW_API       = "$ResourceManagerUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$WorkspaceName"
-    $LAWResult     = Invoke-AzRestMethod ($LAW_API + "?api-version=2023-09-01") -Method GET
-    $LAWResourceId = $LAWResult.Content | ConvertFrom-JSON
-    Write-Verbose "LAW Resource Id: $($LAWResourceId.id)"
+    $LAW_API     = "$ResourceManagerUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$WorkspaceName"
+    $LAWResult   = Invoke-AzRestMethod ($LAW_API + "?api-version=2023-09-01") -Method GET
+    $LAWResource = $LAWResult.Content | ConvertFrom-JSON
+    Write-Verbose "LAW Resource Id: $($LAWResource.id)"
 
     # ------------------------------------------------------------
     # Create a custom log (table) in a Log Analytics Workspace
@@ -94,6 +94,8 @@ function Invoke-DCR-API {
 
     # ------------------------------------------------------------
     # Create the Data Collection Endpoint (DCE)
+    #
+    # https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-endpoints/create?view=rest-monitor-2022-06-01&tabs=HTTP
     # ------------------------------------------------------------
     $dcePayload = @"
     {
@@ -106,9 +108,7 @@ function Invoke-DCR-API {
     }
 "@
 
-
-    # Check to see if DCE already exists. If it does, do nothing. If it does not, create it.
-    # https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-endpoints/get?view=rest-monitor-2022-06-01&tabs=HTTP
+    # Check to see if DCE already exists. If it does, do nothing. If it does not, create it.    
     $DCE_API   = "$ResourceManagerUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionEndpoints/$dceName"
     $dceExists = Invoke-AzRestMethod ($DCE_API + "?api-version=2022-06-01") -Method GET
 
@@ -127,30 +127,22 @@ function Invoke-DCR-API {
 
     Start-Sleep -Seconds 1
 
-
-    # ------------------------------------------------------------
-    # Get the LAW & DCE Resource Ids
-    #
-    # https://learn.microsoft.com/en-us/rest/api/loganalytics/workspaces/get?view=rest-loganalytics-2023-09-01&tabs=HTTP
-    # ------------------------------------------------------------
-    
-    # Get the DCE Resource Id
-    $DCEResult     = Invoke-AzRestMethod ($DCE_API + "?api-version=2022-06-01") -Method GET
-    $DCEResourceId = $DCEResult.Content | ConvertFrom-JSON
-    Write-Verbose "DCE Resource Id: $($DCEResourceId.id)"
-
-
     # ---------------------------------------------------------------------------------
     # Create the data collection rule (DCR), linking the DCE and the LAW to the DCR
     #   
     # https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-rules/create?view=rest-monitor-2022-06-01&tabs=HTTP
     # ---------------------------------------------------------------------------------
+    # Get the DCE Resource Id
+    $DCEResult   = Invoke-AzRestMethod ($DCE_API + "?api-version=2022-06-01") -Method GET
+    $DCEResource = $DCEResult.Content | ConvertFrom-JSON
+    Write-Verbose "DCE Resource Id: $($DCEResource.id)"
+    
     $dcrPayload = @"
     {
         "Location": "$Location",
         "kind": "Windows",
         "properties": {
-            "dataCollectionEndpointId": "$($DCEResourceId.id)",
+            "dataCollectionEndpointId": "$($DCEResource.id)",
             "streamDeclarations": {
                 "Custom-$customTable": {
                     "columns": [
@@ -187,7 +179,7 @@ function Invoke-DCR-API {
             "destinations": {
                 "logAnalytics": [
                     {
-                        "workspaceResourceId": "$($LAWResourceId.id)",
+                        "workspaceResourceId": "$($LAWResource.id)",
                         "name": "law-destination"
                     }
                 ]
