@@ -104,10 +104,14 @@ function Invoke-DCR-API {
 
     # Delete Azure resources (Custom Table, DCE, & DCR) if the $Action is "Delete"
     if ($Action -eq "Delete") {
-        CNP-AzResource -Resource_API $LATable_API -ResourceName $customTable
-        CNP-AzResource -Resource_API $DCR_API -ResourceName $dcrName
-        CNP-AzResource -Resource_API $DCE_API -ResourceName $dceName
-        return
+        try {
+            CNP-AzResource -Resource_API $LATable_API -ResourceName $customTable
+            CNP-AzResource -Resource_API $DCR_API -ResourceName $dcrName
+            CNP-AzResource -Resource_API $DCE_API -ResourceName $dceName
+            return
+        } catch {
+            Write-Host "An error occurred: $_" -ForegroundColor Red; Exit 1
+        }
     }
 
 
