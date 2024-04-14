@@ -113,84 +113,20 @@ function Invoke-DCR-API {
         }
     }
 
-
-    # ------------------------------------------------------------
-    # Create a custom log (table) in a Log Analytics Workspace
-    #
-    # https://learn.microsoft.com/en-us/rest/api/loganalytics/tables/create-or-update?view=rest-loganalytics-2023-09-01&tabs=HTTP
-    # ------------------------------------------------------------
-    [string]$customTablePayload = @"
-    {
-        "properties": {
-            "schema" : {
-                "name": "$customTable",
-                "tableType": "CustomLog",
-                "columns": [
-                    {
-                        "name": "TimeGenerated",
-                        "type": "datetime"
-                    },
-                    {
-                        "name": "RawData",
-                        "type": "string"
-                    }
-                ]
-            },
-            "retentionInDays": 90,
-            "totalRetentionInDays": 90
-        }
-    }
-"@
-
-    # Call the helper function to provision Azure resource: LA - Custom Table
-    try {
-        CNP-AzResource -Resource_API $LATable_API -ResourceName $customTable -ResourcePayload $customTablePayload
-    } catch {
-        Write-Host "An error occurred: `"$customTable`" : $_" -ForegroundColor Red; Exit 1
-    }
-
-    # ------------------------------------------------------------
-    # Create the Data Collection Endpoint (DCE)
-    #
-    # https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-endpoints/create?view=rest-monitor-2022-06-01&tabs=HTTP
-    # ------------------------------------------------------------
-    [string]$dcePayload = @"
-    {
-        "Location": "$Location",
-        "properties": {
-            "networkAcls": {
-                "publicNetworkAccess": "Enabled"
-            }
-        }
-    }
-"@
-
-    # Call the helper function to provision Azure resource: Data Collection Endpoint (DCE)
-    try {
-        CNP-AzResource -Resource_API $DCE_API -ResourceName $dceName -ResourcePayload $dcePayload
-    } catch {
-        Write-Host "An error occurred: `"$dceName`" : $_" -ForegroundColor Red; Exit 1
-    }
-
-
-    # ---------------------------------------------------------------------------------
-    # Create the data collection rule (DCR), linking the DCE and the LAW to the DCR
-    #   
-    # https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-rules/create?view=rest-monitor-2022-06-01&tabs=HTTP
-    # ---------------------------------------------------------------------------------
-    # Get the DCE Resource Id for DCR association
-    $DCEResult   = Invoke-AzRestMethod -Uri ($DCE_API) -Method GET
-    $DCEResource = $DCEResult.Content | ConvertFrom-JSON
-    Write-Verbose "DCE Resource Id: $($DCEResource.id)"
+    # Provision Azure resources (Custom Table, DCE, & DCR) if the $Action is "Provision"
+    if ($Action -eq "Provision") {
     
-    [string]$dcrPayload = @"
-    {
-        "Location": "$Location",
-        "kind": "Windows",
-        "properties": {
-            "dataCollectionEndpointId": "$($DCEResource.id)",
-            "streamDeclarations": {
-                "Custom-$customTable": {
+        # ------------------------------------------------------------
+        # Create a custom log (table) in a Log Analytics Workspace
+        #
+        # https://learn.microsoft.com/en-us/rest/api/loganalytics/tables/create-or-update?view=rest-loganalytics-2023-09-01&tabs=HTTP
+        # ------------------------------------------------------------
+        [string]$customTablePayload = @"
+        {
+            "properties": {
+                "schema" : {
+                    "name": "$customTable",
+                    "tableType": "CustomLog",
                     "columns": [
                         {
                             "name": "TimeGenerated",
@@ -201,56 +137,124 @@ function Invoke-DCR-API {
                             "type": "string"
                         }
                     ]
+                },
+                "retentionInDays": 90,
+                "totalRetentionInDays": 90
+            }
+        }
+"@
+
+        # Call the helper function to provision Azure resource: LA - Custom Table
+        try {
+            CNP-AzResource -Resource_API $LATable_API -ResourceName $customTable -ResourcePayload $customTablePayload
+        } catch {
+            Write-Host "An error occurred: `"$customTable`" : $_" -ForegroundColor Red; Exit 1
+        }
+
+        # ------------------------------------------------------------
+        # Create the Data Collection Endpoint (DCE)
+        #
+        # https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-endpoints/create?view=rest-monitor-2022-06-01&tabs=HTTP
+        # ------------------------------------------------------------
+        [string]$dcePayload = @"
+        {
+            "Location": "$Location",
+            "properties": {
+                "networkAcls": {
+                    "publicNetworkAccess": "Enabled"
                 }
-            },
-            "dataSources": {
-                "logFiles": [
+            }
+        }
+"@
+
+        # Call the helper function to provision Azure resource: Data Collection Endpoint (DCE)
+        try {
+            CNP-AzResource -Resource_API $DCE_API -ResourceName $dceName -ResourcePayload $dcePayload
+        } catch {
+            Write-Host "An error occurred: `"$dceName`" : $_" -ForegroundColor Red; Exit 1
+        }
+
+
+        # ---------------------------------------------------------------------------------
+        # Create the data collection rule (DCR), linking the DCE and the LAW to the DCR
+        #   
+        # https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-rules/create?view=rest-monitor-2022-06-01&tabs=HTTP
+        # ---------------------------------------------------------------------------------
+        # Get the DCE Resource Id for DCR association
+        $DCEResult   = Invoke-AzRestMethod -Uri ($DCE_API) -Method GET
+        $DCEResource = $DCEResult.Content | ConvertFrom-JSON
+        Write-Verbose "DCE Resource Id: $($DCEResource.id)"
+        
+        [string]$dcrPayload = @"
+        {
+            "Location": "$Location",
+            "kind": "Windows",
+            "properties": {
+                "dataCollectionEndpointId": "$($DCEResource.id)",
+                "streamDeclarations": {
+                    "Custom-$customTable": {
+                        "columns": [
+                            {
+                                "name": "TimeGenerated",
+                                "type": "datetime"
+                            },
+                            {
+                                "name": "RawData",
+                                "type": "string"
+                            }
+                        ]
+                    }
+                },
+                "dataSources": {
+                    "logFiles": [
+                        {
+                            "streams": [
+                                "Custom-$customTable"
+                            ],
+                            "filePatterns": [
+                                "$DCRFilePattern"
+                            ],
+                            "format": "text",
+                            "settings": {
+                                "text": {
+                                    "recordStartTimestampFormat": "ISO 8601"
+                                }
+                            },
+                            "name": "myLogFileFormat-Windows"
+                        }
+                    ]
+                },
+                "destinations": {
+                    "logAnalytics": [
+                        {
+                            "workspaceResourceId": "$($LAWResource.id)",
+                            "name": "law-destination"
+                        }
+                    ]
+                },
+                "dataFlows": [
                     {
                         "streams": [
                             "Custom-$customTable"
                         ],
-                        "filePatterns": [
-                            "$DCRFilePattern"
+                        "destinations": [
+                            "law-destination"
                         ],
-                        "format": "text",
-                        "settings": {
-                            "text": {
-                                "recordStartTimestampFormat": "ISO 8601"
-                            }
-                        },
-                        "name": "myLogFileFormat-Windows"
+                        "transformKql": "source | extend rowData = split(parse_json(RawData),\"\t\") | project SourceSystem = tostring(rowData[2]) , AssessmentId = toguid(rowData[3]) , AssessmentName ='Azure', RecommendationId = toguid(rowData[4]) , Recommendation = tostring(rowData[5]) , Description = tostring(rowData[6]) , RecommendationResult = tostring(rowData[7]) , TimeGenerated = todatetime(rowData[8]) , FocusAreaId = toguid(rowData[9]) , FocusArea = tostring(rowData[10]) , ActionAreaId = toguid(rowData[11]) , ActionArea = tostring(rowData[12]) , RecommendationScore = toreal(rowData[13]) , RecommendationWeight = toreal(rowData[14]) , Computer = tostring(rowData[15]) , AffectedObjectType = tostring(rowData[17]) , AffectedObjectName = tostring(rowData[19]), AffectedObjectUniqueName = tostring(rowData[20]) , AffectedObjectDetails = tostring(rowData[22]) , AADTenantName = tostring(rowData[24]) , AADTenantId = tostring(rowData[25]) , AADTenantDomain = tostring(rowData[26]) , Resource = tostring(rowData[27]) , Technology = tostring(rowData[28]) , CustomData = tostring(rowData[23])",
+                        "outputStream": "Microsoft-AzureAssessmentRecommendation"
                     }
                 ]
-            },
-            "destinations": {
-                "logAnalytics": [
-                    {
-                        "workspaceResourceId": "$($LAWResource.id)",
-                        "name": "law-destination"
-                    }
-                ]
-            },
-            "dataFlows": [
-                {
-                    "streams": [
-                        "Custom-$customTable"
-                    ],
-                    "destinations": [
-                        "law-destination"
-                    ],
-                    "transformKql": "source | extend rowData = split(parse_json(RawData),\"\t\") | project SourceSystem = tostring(rowData[2]) , AssessmentId = toguid(rowData[3]) , AssessmentName ='Azure', RecommendationId = toguid(rowData[4]) , Recommendation = tostring(rowData[5]) , Description = tostring(rowData[6]) , RecommendationResult = tostring(rowData[7]) , TimeGenerated = todatetime(rowData[8]) , FocusAreaId = toguid(rowData[9]) , FocusArea = tostring(rowData[10]) , ActionAreaId = toguid(rowData[11]) , ActionArea = tostring(rowData[12]) , RecommendationScore = toreal(rowData[13]) , RecommendationWeight = toreal(rowData[14]) , Computer = tostring(rowData[15]) , AffectedObjectType = tostring(rowData[17]) , AffectedObjectName = tostring(rowData[19]), AffectedObjectUniqueName = tostring(rowData[20]) , AffectedObjectDetails = tostring(rowData[22]) , AADTenantName = tostring(rowData[24]) , AADTenantId = tostring(rowData[25]) , AADTenantDomain = tostring(rowData[26]) , Resource = tostring(rowData[27]) , Technology = tostring(rowData[28]) , CustomData = tostring(rowData[23])",
-                    "outputStream": "Microsoft-AzureAssessmentRecommendation"
-                }
-            ]
+            }
         }
-    }
 "@
 
-    # Call the helper function to provision Azure resource: Data Collection Rule (DCR)
-    try {
-        CNP-AzResource -Resource_API $DCR_API -ResourceName $dcrName -ResourcePayload $dcrPayload
-    } catch {
-        Write-Host "An error occurred: `"$dcrName`" : $_" -ForegroundColor Red; Exit 1
+        # Call the helper function to provision Azure resource: Data Collection Rule (DCR)
+        try {
+            CNP-AzResource -Resource_API $DCR_API -ResourceName $dcrName -ResourcePayload $dcrPayload
+        } catch {
+            Write-Host "An error occurred: `"$dcrName`" : $_" -ForegroundColor Red; Exit 1
+        }
+
     }
 
 }
