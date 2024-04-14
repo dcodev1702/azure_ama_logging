@@ -53,7 +53,6 @@ function Invoke-DCR-API {
     $LAWResource = $LAWResult.Content | ConvertFrom-JSON
     Write-Verbose "LAW Resource Id: $($LAWResource.id)"
 
-
     # --------------------------------------------------------------------------------------
     # Helper function to check and provision Azure Resources 
     # via REST API: Custom Table, DCE, DCR, etc.
