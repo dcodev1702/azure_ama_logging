@@ -59,7 +59,8 @@ function Invoke-DCR-API {
     # via REST API: Custom Table, DCE, DCR, etc.
     # --------------------------------------------------------------------------------------
     function CNP-AzResource {
-        param(
+        [CmdletBinding()]
+        Param(
             [Parameter(Mandatory=$true)]
             [string]$Resource_API,
             [Parameter(Mandatory=$true)]
@@ -96,8 +97,7 @@ function Invoke-DCR-API {
                 Write-Host "The Azure Resource: `"$ResourceName`" does not exist ..nothing to delete!" -ForegroundColor Green
             }
         } else {
-            Write-Host "!!! INVALID OPTION FOR REST API: `"$ResourcePayload`" !!!" -ForegroundColor Red
-            Exit 1
+            Write-Host "!!! INVALID OPTION FOR REST API: `"$ResourcePayload`" !!!" -ForegroundColor Red; Exit 1
         }
         Start-Sleep -Milliseconds 500
     }
