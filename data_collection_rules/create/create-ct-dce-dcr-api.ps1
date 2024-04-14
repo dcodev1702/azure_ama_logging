@@ -70,14 +70,14 @@ function Invoke-DCR-API {
         )
 
         # Check to see if Azure resource already exists. If it does, do nothing. If it does not, create it.    
-        $ResourceExists = Invoke-AzRestMethod -Uri $Resource_API -Method GET
+        $ResourceExists = Invoke-AzRestMethod -Uri ($Resource_API) -Method GET
 
         if ($Action -eq "Provision") {
             if ($ResourceExists.StatusCode -in (200, 202)) {
                 Write-Host "Azure Resource: `"$ResourceName`" already exists" -ForegroundColor Green
             } else {
                 Write-Host "Azure Resource: `"$ResourceName`" does not exist ..provisioning now!" -ForegroundColor Cyan
-                $Result = Invoke-AzRestMethod -Uri $Resource_API -Method PUT -Payload $ResourcePayload
+                $Result = Invoke-AzRestMethod -Uri ($Resource_API) -Method PUT -Payload $ResourcePayload
                 if ($Result.StatusCode -in (200, 202)) {
                     Write-Host "!!! SUCCESSFULLY PROVISIONED AZURE RESOURCE -> `"$ResourceName`" !!!" -ForegroundColor Green
                 } else {
@@ -88,7 +88,7 @@ function Invoke-DCR-API {
         } elseif ($Action -eq "Delete") {
             if ($ResourceExists.StatusCode -in (200, 202)) {
                 Write-Host "!!! DELETING AZURE RESOURCE: `"$ResourceName`" !!!" -ForegroundColor Yellow
-                $Result = Invoke-AzRestMethod ($Resource_API) -Method DELETE
+                $Result = Invoke-AzRestMethod -Uri ($Resource_API) -Method DELETE
                 if ($Result.StatusCode -in (200,202,204)) {
                     Write-Host "!!! SUCESSFULLY DELETED AZURE RESOURCE -> `"$ResourceName`" !!!" -ForegroundColor Red
                 }
@@ -176,7 +176,7 @@ function Invoke-DCR-API {
     # https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-rules/create?view=rest-monitor-2022-06-01&tabs=HTTP
     # ---------------------------------------------------------------------------------
     # Get the DCE Resource Id for the DCR payload
-    $DCEResult   = Invoke-AzRestMethod ($DCE_API) -Method GET
+    $DCEResult   = Invoke-AzRestMethod -Uri ($DCE_API) -Method GET
     $DCEResource = $DCEResult.Content | ConvertFrom-JSON
     Write-Verbose "DCE Resource Id: $($DCEResource.id)"
     
