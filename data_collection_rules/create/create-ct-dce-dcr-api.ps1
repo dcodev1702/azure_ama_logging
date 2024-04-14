@@ -107,7 +107,7 @@ function Invoke-DCR-API {
         CNP-AzResource -Resource_API $LATable_API -ResourceName $customTable
         CNP-AzResource -Resource_API $DCR_API -ResourceName $dcrName
         CNP-AzResource -Resource_API $DCE_API -ResourceName $dceName
-        exit 0
+        return
     }
 
 
