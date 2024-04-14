@@ -38,9 +38,9 @@ function Invoke-DCR-API {
     [string]$ResourceManagerUrl = (Get-AzContext).Environment.ResourceManagerUrl
     [string]$SubscriptionId     = (Get-AzContext).Subscription.Id
     
-    # ---------------------------------------------------------------------------------------
-    # REST API calls to validate, provision, and get the status of the resources (id's, etc.)
-    # ---------------------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------------------
+    # REST API calls to validate, provision, and get the status of Azure resources (id's, etc.)
+    # -----------------------------------------------------------------------------------------
     [string]$LAW_API     = "$ResourceManagerUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/${WorkspaceName}?api-version=2023-09-01"
     [string]$LATable_API = "$ResourceManagerUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$WorkspaceName/tables/${customTable}?api-version=2022-10-01"
     [string]$DCE_API     = "$ResourceManagerUrl/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.Insights/dataCollectionEndpoints/${dceName}?api-version=2022-06-01"
