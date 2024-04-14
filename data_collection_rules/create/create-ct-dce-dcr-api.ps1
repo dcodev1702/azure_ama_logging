@@ -62,25 +62,45 @@ function Invoke-DCR-API {
         param(
             [Parameter(Mandatory=$true)][string]$Resource_API,
             [Parameter(Mandatory=$true)][string]$ResourceName,
-            [Parameter(Mandatory=$true)][string]$ResourcePayload
+            [Parameter(Mandatory=$false)][string]$ResourcePayload
         )
 
         # Check to see if Azure resource already exists. If it does, do nothing. If it does not, create it.    
         $ResourceExists = Invoke-AzRestMethod -Uri $Resource_API -Method GET
 
-        if ($ResourceExists.StatusCode -in (200, 202)) {
-            Write-Host "Azure Resource: `"$ResourceName`" already exists" -ForegroundColor Green
-        } else {
-            Write-Host "Azure Resource: `"$ResourceName`" does not exist ..provisioning now!" -ForegroundColor Cyan
-            $Result = Invoke-AzRestMethod -Uri $Resource_API -Method PUT -Payload $ResourcePayload
-            if ($Result.StatusCode -in (200, 202)) {
-                Write-Host "!!! SUCCESSFULLY PROVISIONED AZURE RESOURCE -> `"$ResourceName`" !!!" -ForegroundColor Green
+        if ($Action -eq "Provision") {
+            if ($ResourceExists.StatusCode -in (200, 202)) {
+                Write-Host "Azure Resource: `"$ResourceName`" already exists" -ForegroundColor Green
             } else {
-                Write-Host "!!! FAILED TO PROVISION AZURE RESOURCE -> `"$ResourceName`" !!!" -ForegroundColor Red
-                Exit 1
+                Write-Host "Azure Resource: `"$ResourceName`" does not exist ..provisioning now!" -ForegroundColor Cyan
+                $Result = Invoke-AzRestMethod -Uri $Resource_API -Method PUT -Payload $ResourcePayload
+                if ($Result.StatusCode -in (200, 202)) {
+                    Write-Host "!!! SUCCESSFULLY PROVISIONED AZURE RESOURCE -> `"$ResourceName`" !!!" -ForegroundColor Green
+                } else {
+                    Write-Host "!!! FAILED TO PROVISION AZURE RESOURCE -> `"$ResourceName`" !!!" -ForegroundColor Red
+                    Exit 1
+                }
+            }
+        } elseif ($Action -eq "Delete") {
+            if ($ResourceExists.StatusCode -in (200, 202)) {
+                Write-Host "!!! DELETING AZURE RESOURCE: `"$ResourceName`" !!!" -ForegroundColor Yellow
+                $Result = Invoke-AzRestMethod ($Resource_API) -Method DELETE
+                if ($Result.StatusCode -in (200,202,204)) {
+                    Write-Host "!!! SUCESSFULLY DELETED AZURE RESOURCE -> `"$ResourceName`" !!!" -ForegroundColor Red
+                }
+            }else{
+                Write-Host "The Azure Resource: `"$ResourceName`" does not exist ..nothing to delete!" -ForegroundColor Green
             }
         }
         Start-Sleep -Milliseconds 500
+    }
+
+    # Delete Azure resources (Custom Table, DCE, & DCR) if the action is "Delete"
+    if ($Action -eq "Delete") {
+        CNP-AzResource -Resource_API $LATable_API -ResourceName $customTable
+        CNP-AzResource -Resource_API $DCR_API -ResourceName $dcrName
+        CNP-AzResource -Resource_API $DCE_API -ResourceName $dceName
+        exit 0
     }
 
 
