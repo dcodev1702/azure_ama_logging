@@ -254,7 +254,5 @@ function Invoke-DCR-API {
         } catch {
             Write-Host "An error occurred: `"$dcrName`" : $_" -ForegroundColor Red; Exit 1
         }
-
     }
-
 }
