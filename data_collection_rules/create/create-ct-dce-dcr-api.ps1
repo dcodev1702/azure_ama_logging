@@ -60,9 +60,9 @@ function Invoke-DCR-API {
     # --------------------------------------------------------------------------------------
     function CNP-AzResource {
         param(
-            [string]$Resource_API,
-            [string]$ResourceName,
-            [string]$ResourcePayload
+            [Parameter(Mandatory=$true)][string]$Resource_API,
+            [Parameter(Mandatory=$true)][string]$ResourceName,
+            [Parameter(Mandatory=$true)][string]$ResourcePayload
         )
 
         # Check to see if Azure resource already exists. If it does, do nothing. If it does not, create it.    
