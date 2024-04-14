@@ -95,7 +95,7 @@ function Invoke-DCR-API {
         Start-Sleep -Milliseconds 500
     }
 
-    # Delete Azure resources (Custom Table, DCE, & DCR) if the action is "Delete"
+    # Delete Azure resources (Custom Table, DCE, & DCR) if the $Action is "Delete"
     if ($Action -eq "Delete") {
         CNP-AzResource -Resource_API $LATable_API -ResourceName $customTable
         CNP-AzResource -Resource_API $DCR_API -ResourceName $dcrName
