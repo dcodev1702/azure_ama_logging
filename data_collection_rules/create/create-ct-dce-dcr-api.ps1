@@ -92,11 +92,11 @@ function Invoke-DCR-API {
                 if ($Result.StatusCode -in (200,202,204)) {
                     Write-Host "!!! SUCESSFULLY DELETED AZURE RESOURCE -> `"$ResourceName`" !!!" -ForegroundColor Red
                 }
-            }else{
+            } else {
                 Write-Host "The Azure Resource: `"$ResourceName`" does not exist ..nothing to delete!" -ForegroundColor Green
             }
         } else {
-            Write-Host "!!! INVALID PAYLOAD FOR REST API: `"$ResourcePayload`" !!!" -ForegroundColor Red
+            Write-Host "!!! INVALID OPTION FOR REST API: `"$ResourcePayload`" !!!" -ForegroundColor Red
             Exit 1
         }
         Start-Sleep -Milliseconds 500
