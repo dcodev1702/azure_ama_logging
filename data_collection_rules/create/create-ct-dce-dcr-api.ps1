@@ -24,7 +24,7 @@ function Invoke-DCR-API {
         [string]$Action,
         [Parameter(Mandatory=$true)][string]$ResourceGroup,
         [Parameter(Mandatory=$true)][string]$WorkspaceName,
-        [Parameter(Mandatory=$ture)][string]$Location
+        [Parameter(Mandatory=$true)][string]$Location
     )
 
     # !!! CHANGE ME !!!
