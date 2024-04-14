@@ -49,7 +49,7 @@ function Invoke-DCR-API {
     # ------------------------------------------------------------
     # Get the Log Analytics Workspace (LAW) Resource Id
     # ------------------------------------------------------------
-    $LAWResult   = Invoke-AzRestMethod ($LAW_API) -Method GET
+    $LAWResult   = Invoke-AzRestMethod -Uri ($LAW_API) -Method GET
     $LAWResource = $LAWResult.Content | ConvertFrom-JSON
     Write-Verbose "LAW Resource Id: $($LAWResource.id)"
 
