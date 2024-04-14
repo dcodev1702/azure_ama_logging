@@ -22,9 +22,9 @@ function Invoke-DCR-API {
         [Parameter(Mandatory=$true)]
         [ValidateSet("Provision","Delete")]
         [string]$Action,
-        [Parameter(Mandatory=$false)][string]$ResourceGroup = "sec_telem_law_1",
-        [Parameter(Mandatory=$false)][string]$WorkspaceName = "aad-telem",
-        [Parameter(Mandatory=$false)][string]$Location      = "eastus"
+        [Parameter(Mandatory=$true)][string]$ResourceGroup,
+        [Parameter(Mandatory=$true)][string]$WorkspaceName,
+        [Parameter(Mandatory=$ture)][string]$Location
     )
 
     # !!! CHANGE ME !!!
