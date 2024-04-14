@@ -142,7 +142,7 @@ function Invoke-DCR-API {
     }
 "@
 
-    # Call the helper function with the parameters
+    # Call the helper function to provision Azure resource: LA - Custom Table
     try {
         CNP-AzResource -Resource_API $LATable_API -ResourceName $customTable -ResourcePayload $customTablePayload
     } catch {
@@ -165,7 +165,7 @@ function Invoke-DCR-API {
     }
 "@
 
-    # Call the helper function with the parameters
+    # Call the helper function to provision Azure resource: Data Collection Endpoint (DCE)
     try {
         CNP-AzResource -Resource_API $DCE_API -ResourceName $dceName -ResourcePayload $dcePayload
     } catch {
@@ -178,7 +178,7 @@ function Invoke-DCR-API {
     #   
     # https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-rules/create?view=rest-monitor-2022-06-01&tabs=HTTP
     # ---------------------------------------------------------------------------------
-    # Get the DCE Resource Id for the DCR payload
+    # Get the DCE Resource Id for DCR association
     $DCEResult   = Invoke-AzRestMethod -Uri ($DCE_API) -Method GET
     $DCEResource = $DCEResult.Content | ConvertFrom-JSON
     Write-Verbose "DCE Resource Id: $($DCEResource.id)"
@@ -246,7 +246,7 @@ function Invoke-DCR-API {
     }
 "@
 
-    # Call the helper function with the parameters
+    # Call the helper function to provision Azure resource: Data Collection Rule (DCR)
     try {
         CNP-AzResource -Resource_API $DCR_API -ResourceName $dcrName -ResourcePayload $dcrPayload
     } catch {
