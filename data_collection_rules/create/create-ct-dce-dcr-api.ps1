@@ -209,5 +209,6 @@ function Invoke-DCR-API {
     }
 "@
 
+    # Call the helper function with the parameters
     CNP-AzResource -Resource_API $DCR_API -ResourceName $dcrName -ResourcePayload $dcrPayload
 }
