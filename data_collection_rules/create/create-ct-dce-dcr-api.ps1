@@ -56,7 +56,7 @@ function Invoke-DCR-API {
 
     # --------------------------------------------------------------------------------------
     # Helper function to check and provision Azure Resources 
-    # via API: Custom Table, DCE, DCR, etc.
+    # via REST API: Custom Table, DCE, DCR, etc.
     # --------------------------------------------------------------------------------------
     function CNP-AzResource {
         param(
