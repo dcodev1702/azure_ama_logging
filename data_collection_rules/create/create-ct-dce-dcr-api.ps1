@@ -54,6 +54,36 @@ function Invoke-DCR-API {
     Write-Verbose "LAW Resource Id: $($LAWResource.id)"
 
 
+    # --------------------------------------------------------------------------------------
+    # Helper function to check and provision Azure Resources 
+    # via API: Custom Table, DCE, DCR, etc.
+    # --------------------------------------------------------------------------------------
+    function CNP-AzResource {
+        param(
+            [string]$Resource_API,
+            [string]$ResourceName,
+            [string]$ResourcePayload
+        )
+
+        # Check to see if Azure resource already exists. If it does, do nothing. If it does not, create it.    
+        $ResourceExists = Invoke-AzRestMethod -Uri $Resource_API -Method GET
+
+        if ($ResourceExists.StatusCode -in (200, 202)) {
+            Write-Host "Azure Resource: `"$ResourceName`" already exists" -ForegroundColor Green
+        } else {
+            Write-Host "Azure Resource: `"$ResourceName`" does not exist ..provisioning now!" -ForegroundColor Cyan
+            $Result = Invoke-AzRestMethod -Uri $Resource_API -Method PUT -Payload $ResourcePayload
+            if ($Result.StatusCode -in (200, 202)) {
+                Write-Host "!!! SUCCESSFULLY PROVISIONED AZURE RESOURCE -> `"$ResourceName`" !!!" -ForegroundColor Green
+            } else {
+                Write-Host "!!! FAILED TO PROVISION AZURE RESOURCE -> `"$ResourceName`" !!!" -ForegroundColor Red
+                Exit 1
+            }
+        }
+        Start-Sleep -Milliseconds 500
+    }
+
+
     # ------------------------------------------------------------
     # Create a custom log (table) in a Log Analytics Workspace
     #
@@ -82,54 +112,9 @@ function Invoke-DCR-API {
     }
 "@
 
-    <#
-    # Check to see if the custom table already exists. If it does, do nothing. If it does not, create it.
-
-    $CTCheck = Invoke-AzRestMethod ($LATable_API) -Method GET
-    #$CTCheck = Invoke-AzRestMethod ($LATable_API + "?api-version=2022-10-01") -Method GET
-
-    if ($CTCheck.StatusCode -eq 200) {
-        Write-Host "The Custom Table: `"$customTable`" already exists" -ForegroundColor Green
-    }else{
-        Write-Host "The Custom Table `"$customTable`" does not exist ..provisioning now!" -ForegroundColor Cyan
-        $Result = Invoke-AzRestMethod ($LATable_API) -Method PUT -Payload $customTablePayload
-        if ($Result.StatusCode -in (200, 202)) {
-            Write-Host "!!! SUCESSFULLY PROVISIONED -> Custom Table: `"$customTable`" !!!" -ForegroundColor Green
-        }else{
-            Write-Host "!!! FAILED TO PROVISION -> Custom Table: `"$customTable`" !!!" -ForegroundColor Red
-            Exit 1
-        }
-    }
-    #>
-
-    # Helper function to manage the Data Collection Endpoint
-    function CNP-AzResource {
-        param(
-            [string]$Resource_API,
-            [string]$ResourceName,
-            [string]$ResourcePayload
-        )
-
-        # Check to see if DCE already exists. If it does, do nothing. If it does not, create it.    
-        $ResourceExists = Invoke-AzRestMethod -Uri $Resource_API -Method GET
-
-        if ($ResourceExists.StatusCode -in (200, 202)) {
-            Write-Host "Azure Resource: `"$ResourceName`" already exists" -ForegroundColor Green
-        } else {
-            Write-Host "Azure Resource: `"$ResourceName`" does not exist ..provisioning now!" -ForegroundColor Cyan
-            $Result = Invoke-AzRestMethod -Uri $Resource_API -Method PUT -Payload $ResourcePayload
-            if ($Result.StatusCode -in (200, 202)) {
-                Write-Host "!!! SUCCESSFULLY PROVISIONED AZURE RESOURCE -> `"$ResourceName`" !!!" -ForegroundColor Green
-            } else {
-                Write-Host "!!! FAILED TO PROVISION AZURE RESOURCE -> `"$ResourceName`" !!!" -ForegroundColor Red
-                Exit 1
-            }
-        }
-        Start-Sleep -Milliseconds 500
-    }
-
     # Call the helper function with the parameters
     CNP-AzResource -Resource_API $LATable_API -ResourceName $customTable -ResourcePayload $customTablePayload
+
 
     # ------------------------------------------------------------
     # Create the Data Collection Endpoint (DCE)
@@ -147,35 +132,16 @@ function Invoke-DCR-API {
     }
 "@
 
-    <#
-    # Check to see if DCE already exists. If it does, do nothing. If it does not, create it.    
-    $dceExists = Invoke-AzRestMethod ($DCE_API) -Method GET
-
-    if ($dceExists.StatusCode -eq 200) {
-        Write-Host "Data Collection Endpoint: `"$dceName`" already exists" -ForegroundColor Green
-    }else{
-        Write-Host "Data Collection Endpoint: `"$dceName`" does not exist ..provisioning now!" -ForegroundColor Cyan
-        $Result = Invoke-AzRestMethod ($DCE_API) -Method PUT -Payload $dcePayload
-        if ($Result.StatusCode -eq 200) {
-            Write-Host "!!! SUCESSFULLY PROVISIONED -> Data Collection Endpoint: `"$dceName`" !!!" -ForegroundColor Green
-        }else{
-            Write-Host "!!! FAILED TO PROVISION -> Data Collection Endpoint: `"$dceName`" !!!" -ForegroundColor Red
-            Exit 1
-        }
-    }
-    #>
-
     # Call the helper function with the parameters
     CNP-AzResource -Resource_API $DCE_API -ResourceName $dceName -ResourcePayload $dcePayload
 
-    #Start-Sleep -Seconds 1
 
     # ---------------------------------------------------------------------------------
     # Create the data collection rule (DCR), linking the DCE and the LAW to the DCR
     #   
     # https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-rules/create?view=rest-monitor-2022-06-01&tabs=HTTP
     # ---------------------------------------------------------------------------------
-    # Get the DCE Resource Id
+    # Get the DCE Resource Id for the DCR payload
     $DCEResult   = Invoke-AzRestMethod ($DCE_API) -Method GET
     $DCEResource = $DCEResult.Content | ConvertFrom-JSON
     Write-Verbose "DCE Resource Id: $($DCEResource.id)"
@@ -243,26 +209,5 @@ function Invoke-DCR-API {
     }
 "@
 
-    <#
-    # Check to see if DCR already exists. If it does, do nothing. If it does not, create it.
-    $dcrExists = Invoke-AzRestMethod ($DCR_API) -Method GET
-
-    Start-Sleep -Seconds 1
-
-    if ($dcrExists.StatusCode -eq 200) {
-        Write-Host "Data Collection Rule: `"$dcrName`" already exists" -ForegroundColor Green
-    }else{
-        Write-Host "Data Collection Rule `"$dcrName`" does not exist ..provisioning now!" -ForegroundColor Cyan
-        $Result = Invoke-AzRestMethod ($DCR_API) -Method PUT -Payload $dcrPayload
-        if ($Result.StatusCode -eq 200) {
-            Write-Host "!!! SUCESSFULLY PROVISIONED -> Data Collection Rule: `"$dcrName`" !!!" -ForegroundColor Green
-        }else{
-            Write-Host "!!! FAILED TO PROVISION -> Data Collection Rule: `"$dcrName`" !!!" -ForegroundColor Red
-            Exit 1
-        }
-    }
-    #>
-
-    # Call the helper function with the parameters
     CNP-AzResource -Resource_API $DCR_API -ResourceName $dcrName -ResourcePayload $dcrPayload
 }
