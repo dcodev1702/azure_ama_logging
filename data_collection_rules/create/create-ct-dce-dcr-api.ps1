@@ -57,7 +57,7 @@ function Invoke-DCR-API {
     # Helper function to check and provision Azure Resources 
     # via REST API: Custom Table, DCE, DCR, etc.
     # --------------------------------------------------------------------------------------
-    function CNP-AzResource {
+    function Set-AzResource {
         [CmdletBinding()]
         Param(
             [Parameter(Mandatory=$true)]
@@ -104,9 +104,9 @@ function Invoke-DCR-API {
     # Delete Azure resources (Custom Table, DCE, & DCR) if the $Action is "Delete"
     if ($Action -eq "Delete") {
         try {
-            CNP-AzResource -Resource_API $LATable_API -ResourceName $customTable
-            CNP-AzResource -Resource_API $DCR_API -ResourceName $dcrName
-            CNP-AzResource -Resource_API $DCE_API -ResourceName $dceName
+            Set-AzResource -Resource_API $LATable_API -ResourceName $customTable
+            Set-AzResource -Resource_API $DCR_API -ResourceName $dcrName
+            Set-AzResource -Resource_API $DCE_API -ResourceName $dceName
             return
         } catch {
             Write-Host "An error occurred: $_" -ForegroundColor Red; Exit 1
@@ -146,7 +146,7 @@ function Invoke-DCR-API {
 
         # Call the helper function to provision Azure resource: LA - Custom Table
         try {
-            CNP-AzResource -Resource_API $LATable_API -ResourceName $customTable -ResourcePayload $customTablePayload
+            Set-AzResource -Resource_API $LATable_API -ResourceName $customTable -ResourcePayload $customTablePayload
         } catch {
             Write-Host "An error occurred: `"$customTable`" : $_" -ForegroundColor Red; Exit 1
         }
@@ -169,7 +169,7 @@ function Invoke-DCR-API {
 
         # Call the helper function to provision Azure resource: Data Collection Endpoint (DCE)
         try {
-            CNP-AzResource -Resource_API $DCE_API -ResourceName $dceName -ResourcePayload $dcePayload
+            Set-AzResource -Resource_API $DCE_API -ResourceName $dceName -ResourcePayload $dcePayload
         } catch {
             Write-Host "An error occurred: `"$dceName`" : $_" -ForegroundColor Red; Exit 1
         }
@@ -250,7 +250,7 @@ function Invoke-DCR-API {
 
         # Call the helper function to provision Azure resource: Data Collection Rule (DCR)
         try {
-            CNP-AzResource -Resource_API $DCR_API -ResourceName $dcrName -ResourcePayload $dcrPayload
+            Set-AzResource -Resource_API $DCR_API -ResourceName $dcrName -ResourcePayload $dcrPayload
         } catch {
             Write-Host "An error occurred: `"$dcrName`" : $_" -ForegroundColor Red; Exit 1
         }
