@@ -111,27 +111,29 @@ function Invoke-WindowsFW-API {
     # Delete Azure resources (Custom Table, DCE, & DCR) if the $Action is "Delete"
     if ($Action -eq "Delete") {
         try {
-            # Get data collection rule associations and remove associated VM's (Resources)
-            $VMResources = Get-AzDataCollectionRuleAssociation -DataCollectionRuleName $dcrName -ResourceGroupName $ResourceGroup 
+            # Get data collection rule associations
+            $VMResources = Get-AzDataCollectionRuleAssociation -DataCollectionRuleName $dcrName -ResourceGroupName $ResourceGroup -ErrorAction SilentlyContinue
 
-            foreach ($VMResource in $VMResources) {  
-                $parts = $VMResource.Id -split '/'
-                $RType = "$($parts[6])/$($parts[7])"    
-                $vmName = $parts[8]
+            if ($VMResources -eq $null) {
+                Write-Host "No data collection rule associations found for DCR: `"$dcrName`" in resource group: `"$ResourceGroup`"" -ForegroundColor Green
+            } else {
+                foreach ($VMResource in $VMResources) {  
+                    $parts = $VMResource.Id -split '/'
+                    $RType = "$($parts[6])/$($parts[7])"    
+                    $vmName = $parts[8]
 
-                # Get the VM resource
-                $VM = Get-AzResource -ResourceGroupName $RGroupName -Name $vmName -ResourceType $RType
+                    # Get the VM resource
+                    $VM = Get-AzResource -ResourceGroupName $RGroupName -Name $vmName -ResourceType $RType
 
-                if ($vmResource) {
-                    # Output the resource id
-                    Remove-AzDataCollectionRuleAssociation -AssociationName $VMResource.Name -ResourceUri $VM.Id
-                } else {
-                    Write-Warning "VM resource '$vmName' with resource type '$RType' not found in resource group '$RGroupName'."
+                    if ($vmResource) {
+                        # Output the resource id
+                        Remove-AzDataCollectionRuleAssociation -AssociationName $VMResource.Name -ResourceUri $VM.Id
+                    } else {
+                        Write-Warning "VM resource '$vmName' with resource type '$RType' not found in resource group '$RGroupName'."
+                    }
                 }
             }
 
-            # Upon successfull resource disassociation to DCR..
-            # Now begin sequence of removing the Custom Log (table), DCR, and DCE.
             Set-AzResource -Resource_API $LATable_API -ResourceName $customTable
             Set-AzResource -Resource_API $DCR_API -ResourceName $dcrName
             Set-AzResource -Resource_API $DCE_API -ResourceName $dceName
