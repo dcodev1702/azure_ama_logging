@@ -130,6 +130,8 @@ function Invoke-WindowsFW-API {
                 }
             }
 
+            # Upon successfull resource disassociation to DCR..
+            # Now begin sequence of removing the Custom Log (table), DCR, and DCE.
             Set-AzResource -Resource_API $LATable_API -ResourceName $customTable
             Set-AzResource -Resource_API $DCR_API -ResourceName $dcrName
             Set-AzResource -Resource_API $DCE_API -ResourceName $dceName
