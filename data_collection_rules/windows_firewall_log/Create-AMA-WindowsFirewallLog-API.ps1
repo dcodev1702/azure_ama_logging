@@ -17,7 +17,7 @@ Usage:
 1. Open a PowerShell or Azure Cloud Shell session w/ Az module installed & the appropriate permissions
 2. Update the variables in the "CHANGE ME" section below
 3. Run the PowerShell script
-    . ./create-ct-dce-dcr-api.ps1
+    . ./Create-AMA-WindowsFirewallLog-API.ps1
     Invoke-WFW-API -Action Provision -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
     Invoke-WFW-API -Action Delete -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
 #>
