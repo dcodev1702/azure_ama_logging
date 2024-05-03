@@ -18,11 +18,11 @@ Usage:
 2. Update the variables in the "CHANGE ME" section below
 3. Run the PowerShell script
     . ./Create-AMA-WindowsFirewallLog-API.ps1
-    Invoke-WFW-API -Action Provision -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
-    Invoke-WFW-API -Action Delete -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
+    Invoke-WindowsFW-API -Action Provision -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
+    Invoke-WindowsFW-API -Action Delete -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
 #>
 
-function Invoke-WFW-API {
+function Invoke-WindowsFW-API {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory=$true)]
