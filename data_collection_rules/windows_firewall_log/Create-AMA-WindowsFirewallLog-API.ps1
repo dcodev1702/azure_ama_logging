@@ -128,6 +128,7 @@ function Invoke-WindowsFW-API {
                     if ($vmResource) {
                         # Output the resource id
                         Remove-AzDataCollectionRuleAssociation -AssociationName $VMResource.Name -ResourceUri $VM.Id
+                        Write-Host "Removed data collection rule association for VM: `"$vmName`" with resource type: `"$RType`"" -ForegroundColor Red
                     } else {
                         Write-Warning "VM resource '$vmName' with resource type '$RType' not found in resource group '$RGroupName'."
                     }
