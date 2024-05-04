@@ -104,6 +104,30 @@ function Invoke-DCR-API {
     # Delete Azure resources (Custom Table, DCE, & DCR) if the $Action is "Delete"
     if ($Action -eq "Delete") {
         try {
+            # Get data collection rule associations
+            $VMResources = Get-AzDataCollectionRuleAssociation -DataCollectionRuleName $dcrName -ResourceGroupName $ResourceGroup -ErrorAction SilentlyContinue
+
+            if ($VMResources -eq $null) {
+                Write-Host "No data collection rule associations found for DCR: `"$dcrName`" in resource group: `"$ResourceGroup`"" -ForegroundColor Green
+            } else {
+                foreach ($VMResource in $VMResources) {  
+                    $parts = $VMResource.Id -split '/'
+                    $RType = "$($parts[6])/$($parts[7])"    
+                    $vmName = $parts[8]
+
+                    # Get the VM resource
+                    $VM = Get-AzResource -ResourceGroupName $ResourceGroup -Name $vmName -ResourceType $RType
+
+                    if ($vmResource) {
+                        # Output the resource id
+                        Remove-AzDataCollectionRuleAssociation -AssociationName $VMResource.Name -ResourceUri $VM.Id
+                        Write-Host "Removed data collection rule association for VM: `"$vmName`" with resource type: `"$RType`"" -ForegroundColor Red
+                    } else {
+                        Write-Warning "VM resource '$vmName' with resource type '$RType' not found in resource group '$RGroupName'."
+                    }
+                }
+            }
+            
             Set-AzResource -Resource_API $LATable_API -ResourceName $customTable
             Set-AzResource -Resource_API $DCR_API -ResourceName $dcrName
             Set-AzResource -Resource_API $DCE_API -ResourceName $dceName
@@ -138,8 +162,8 @@ function Invoke-DCR-API {
                         }
                     ]
                 },
-                "retentionInDays": 90,
-                "totalRetentionInDays": 90
+                "retentionInDays": 120,
+                "totalRetentionInDays": 365
             }
         }
 "@
