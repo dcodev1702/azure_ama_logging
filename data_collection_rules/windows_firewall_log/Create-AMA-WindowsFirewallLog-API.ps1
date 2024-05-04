@@ -123,7 +123,7 @@ function Invoke-WindowsFW-API {
                     $vmName = $parts[8]
 
                     # Get the VM resource
-                    $VM = Get-AzResource -ResourceGroupName $RGroupName -Name $vmName -ResourceType $RType
+                    $VM = Get-AzResource -ResourceGroupName $ResourceGroup -Name $vmName -ResourceType $RType
 
                     if ($vmResource) {
                         # Output the resource id
@@ -135,6 +135,7 @@ function Invoke-WindowsFW-API {
                 }
             }
 
+            # Delete the Azure resources (Custom Table, DCE, & DCR)
             Set-AzResource -Resource_API $LATable_API -ResourceName $customTable
             Set-AzResource -Resource_API $DCR_API -ResourceName $dcrName
             Set-AzResource -Resource_API $DCE_API -ResourceName $dceName
