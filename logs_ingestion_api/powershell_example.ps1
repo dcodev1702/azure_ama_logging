@@ -51,9 +51,9 @@ $staticData  = @"
 "@
 
 ### Step 3: Send the data to the Log Analytics workspace via the DCE.
-$body = $staticData
+$body    = $staticData
 $headers = @{"Authorization"="Bearer $bearerToken";"Content-Type"="application/json"}
-$uri = "$dceEndpoint/dataCollectionRules/$dcrImmutableId/streams/$($streamName)?api-version=2023-01-01"
+$uri     = "$dceEndpoint/dataCollectionRules/$dcrImmutableId/streams/$($streamName)?api-version=2023-01-01"
 
 Invoke-RestMethod -Uri $uri -Method POST -Body $body -Headers $headers -ErrorVariable RestError
 
