@@ -1,3 +1,4 @@
+# https://learn.microsoft.com/en-us/azure/azure-monitor/logs/tutorial-logs-ingestion-code?tabs=powershell
 ### Step 0: Set variables required for the rest of the script.
 # Add-Type -AssemblyName System.Web
 
