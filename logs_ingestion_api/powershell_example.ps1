@@ -62,5 +62,3 @@ if ($RestError) {
 } else {
     Write-Host "Data uploaded successfully to the Log Analytics Custom Table: `"$streamName`"." -ForegroundColor Green
 }
-
-Write-Host $uploadResponse
