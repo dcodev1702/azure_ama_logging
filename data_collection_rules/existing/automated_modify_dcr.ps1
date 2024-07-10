@@ -268,7 +268,7 @@ function Invoke-DCRModify {
                     Write-Host "You can now go to Azure Monitor -> DCR and validate the modification of: $DCRName." -ForegroundColor Green
                 } else {
                     Write-Host "`nPUT via REST API call for $DCRName failed!" -ForegroundColor Red
-                    Write-Host "Error Message: $($result.Content.message)" -ForegroundColor Red
+                    Write-Host "Error Message: $($result)" -ForegroundColor Red
                 }
             } else {
                 Write-Host "DCR REST API call to Azure Monitor for $DCRName was cancelled by the user." -ForegroundColor Red
