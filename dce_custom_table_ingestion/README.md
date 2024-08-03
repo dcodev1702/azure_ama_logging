@@ -2,7 +2,8 @@
 [Source Document](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/tutorial-logs-ingestion-code?tabs=powershell)
 
 Source Code: dce_custom_data_ingestion.ps1
-![0A318DBC-7670-4D9E-8BDF-3008A31C75C1](https://github.com/user-attachments/assets/3c05935e-eede-4fcd-b67c-c38d97d2c353)
+![AA6803A4-527E-4287-9568-43284A7F0E6A](https://github.com/user-attachments/assets/98072433-c0fa-409a-af50-94fc68084a03)
 
-Result:
+
+Result (Log Analytics):
 ![F01B6E10-07D8-4C8B-A36A-51BCC9AEFF32](https://github.com/user-attachments/assets/ec13aab0-aaa9-46a4-a374-1def99410cca)
