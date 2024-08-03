@@ -38,8 +38,8 @@ $appId        = ""; # Client ID created and granted permissions
 $appSecret    = ""; # Client Secret created for the above app - never store your secrets in the source code
 $DceURI       = ""; # DCE ingestion url
 
-$DcrImmutableId = "dcr-9c84df938e9b4d1ab7fffb909bf0abf3"
-$StreamName = "Custom-ACEHW_CL"
+$DcrImmutableId = ""
+$StreamName = ""
 
 # JSON payload to be sent to the custom table (ACEHW_CL) within Log Analytics
 $json_data = @"
