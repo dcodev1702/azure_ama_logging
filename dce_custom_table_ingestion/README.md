@@ -1,7 +1,7 @@
 ## Log Ingestion via Data Collection Endpoint (DCE) REST API
 [Source Document](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/tutorial-logs-ingestion-code?tabs=powershell)
 
-Source Code:
+Source Code: dce_custom_data_ingestion.ps1
 ![0A318DBC-7670-4D9E-8BDF-3008A31C75C1](https://github.com/user-attachments/assets/3c05935e-eede-4fcd-b67c-c38d97d2c353)
 
 Result:
