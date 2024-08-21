@@ -1,2 +1,2 @@
 ## Use customTableCreation_tool.ps1 first
-## Use create_customTable.ps1 second
+## Use create_syslog_customTable.ps1 second
