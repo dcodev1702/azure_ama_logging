@@ -3,7 +3,7 @@ Author: DCODEV1702
 Date: 08/21/2024
 
 Cited Source: 
-Inspiration for this tool came directly from @markolauren: https://github.com/markolauren/sentinel/blob/main/tableCreator%20tool/tableCreator.ps1
+Inspiration, flow & source code for this tool came directly from @markolauren: https://github.com/markolauren/sentinel/blob/main/tableCreator%20tool/tableCreator.ps1
 
 Description:
 This script will automate the creation of a custom table (CL) by exporting the schema of a current table directly to a custom table (CL)v2
