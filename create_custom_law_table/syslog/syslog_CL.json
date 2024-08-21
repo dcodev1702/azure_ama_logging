@@ -1,0 +1,68 @@
+{
+    "properties" : {
+        "schema": {
+            "name": "craneSyslog_CL",
+            "tableType": "CustomLog",
+            "columns": [
+                {
+                    "Name": "SourceSystem", 
+                    "Type": "String"
+                },
+                {
+                    "Name": "TimeGenerated", 
+                    "Type": "DateTime"
+                },
+                {
+                    "Name": "Computer", 
+                    "Type": "String"
+                },
+                {
+                    "Name": "EventTime", 
+                    "Type": "DateTime"
+                },
+                {
+                    "Name": "Facility", 
+                    "Type": "String"
+                },
+                {
+                    "Name": "HostName", 
+                    "Type": "String"
+                },
+                {
+                    "Name": "SeverityLevel", 
+                    "Type": "String"
+                },
+                {
+                    "Name": "SyslogMessage", 
+                    "Type": "String"
+                },
+                {
+                    "Name": "ProcessID", 
+                    "Type": "Int"
+                },
+                {
+                    "Name": "HostIP", 
+                    "Type": "String"
+                },
+                {
+                    "Name": "ProcessName", 
+                    "Type": "String"
+                },
+                {
+                    "Name": "MG", 
+                    "Type": "Guid"
+                },
+                {
+                    "Name": "CollectorHostName", 
+                    "Type": "String"
+                },
+                {
+                    "Name": "_ResourceId", 
+                    "Type": "String"
+                }
+            ]
+        },
+        "retentionInDays": 90,
+        "totalRetentionInDays": 90
+    }
+}
