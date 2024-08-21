@@ -76,16 +76,23 @@ if ($ResourceExists.StatusCode -in (200, 202)) {
     Write-Host "!!! AZURE RESOURCE -> `"$newTableName`" ALREADY EXISTS !!!" -ForegroundColor Yellow
     Exit 0
 } else {
+    # Ask user if they want to continue with creating the new custom table
+    $userChoice = Read-Host "The Azure resource `$newTableName` does not exist. Do you want to create it? (Y/N)"
+    if ($userChoice -eq 'Y' -or $userChoice -eq 'y') {
     # The custom table does not exist in log analytics, create it!
-    $sol = Invoke-AzRestMethod -Uri $LATable_API -Method PUT -Payload $customTablePayload
+        $sol = Invoke-AzRestMethod -Uri $LATable_API -Method PUT -Payload $customTablePayload
 
-    if ($sol.StatusCode -in (200, 202)) {
-        Write-Host "!!! SUCCESSFULLY PROVISIONED AZURE RESOURCE -> `"$newTableName`" !!!" -ForegroundColor Green
+        if ($sol.StatusCode -in (200, 202)) {
+            Write-Host "!!! SUCCESSFULLY PROVISIONED AZURE RESOURCE -> `"$newTableName`" !!!" -ForegroundColor Green
+        } else {
+            $r = $sol.Content | ConvertFrom-Json
+            Write-Host $r.error.message -ForegroundColor Red
+            Write-host $r.error.details -ForegroundColor Red
+            Write-Host "!!! FAILED TO PROVISION AZURE RESOURCE -> `"$newTableName`" !!!" -ForegroundColor Red
+            Exit 1
+        }
     } else {
-        $r = $sol.Content | ConvertFrom-Json
-        Write-Host $r.error.message -ForegroundColor Red
-        Write-host $r.error.details -ForegroundColor Red
-        Write-Host "!!! FAILED TO PROVISION AZURE RESOURCE -> `"$newTableName`" !!!" -ForegroundColor Red
-        Exit 1
+        Write-Host "!!! USER ABORTED CREATION OF AZURE RESOURCE -> `"$newTableName`" !!!" -ForegroundColor Yellow
+        Exit 0
     }
 }
