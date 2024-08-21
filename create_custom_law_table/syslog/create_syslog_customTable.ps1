@@ -29,7 +29,7 @@ function New-CustomSyslogTable {
     [string]$ResourceManagerUrl = (Get-AzContext).Environment.ResourceManagerUrl
     [string]$SubscriptionId     = (Get-AzContext).Subscription.Id
 
-    # No need to change these variables
+    # Change these variables as required
     [string]$dceName     = "crane-csyslog-dce"
     [string]$dcrName     = "crane-csyslog-dcr"
     [string]$customTable = "craneSyslog_CL"
@@ -141,8 +141,8 @@ function New-CustomSyslogTable {
     if ($Action -eq "Provision") {
     
         # ------------------------------------------------------------
-        # Create a custom log (table) in a Log Analytics Workspace
-        #
+        # Bring in schema for the custom log (table) written in JSON
+        # Call Set-AzResource with LAW ResourceId, custom table name, and its associated schema (JSON).
         # https://learn.microsoft.com/en-us/rest/api/loganalytics/tables/create-or-update?view=rest-loganalytics-2023-09-01&tabs=HTTP
         # ------------------------------------------------------------
         [string]$customTablePayload = Get-Content -Path "syslog_CL.json" -Raw
@@ -156,7 +156,6 @@ function New-CustomSyslogTable {
 
         # ------------------------------------------------------------
         # Create the Data Collection Endpoint (DCE)
-        #
         # https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-endpoints/create?view=rest-monitor-2022-06-01&tabs=HTTP
         # ------------------------------------------------------------
         [string]$dcePayload = @"
@@ -182,7 +181,6 @@ function New-CustomSyslogTable {
 
         # ---------------------------------------------------------------------------------
         # Create the data collection rule (DCR), linking the DCE and the LAW to the DCR
-        #   
         # https://learn.microsoft.com/en-us/rest/api/monitor/data-collection-rules/create?view=rest-monitor-2022-06-01&tabs=HTTP
         # ---------------------------------------------------------------------------------
         # Get the DCE Resource Id for DCR association
