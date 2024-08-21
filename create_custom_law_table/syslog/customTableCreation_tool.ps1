@@ -17,6 +17,7 @@ Usage:
     - Enter name of the custom table that will inherit the schema
 #>
 
+
 param (
     [string]$tableName = $(Read-Host -Prompt "Enter TableName to get schema from"),
     [string]$newTableName = $(Read-Host -Prompt "Enter new TableName to be created with the same Schema (remember _CL -suffix)")
@@ -28,16 +29,23 @@ param (
 [string]$ResourceGroup      = "sec_telem_law_1"
 [string]$WorkspaceName      = "aad-telem"
 
-$workspaceId = 'c4186dce-d540-4c9d-84ed-01e02cc92506'
+[string]$LATable_API = "${ResourceManagerUrl}subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$WorkspaceName/tables/${newTableName}?api-version=2022-10-01"
+[string]$LAW_API     = "${ResourceManagerUrl}subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/${WorkspaceName}?api-version=2023-09-01"
 
-$query = "$tableName | getschema | project name=ColumnName, type=ColumnType"
+# ------------------------------------------------------------
+# Get the Log Analytics Workspace (LAW) Resource Id
+# ------------------------------------------------------------
+$LAWResult   = Invoke-AzRestMethod -Uri ($LAW_API) -Method GET
+$LAWResource = $LAWResult.Content | ConvertFrom-JSON
 
-$result = Invoke-AzOperationalInsightsQuery -WorkspaceId $workspaceId -Query $query
 
-$columns = $result.Results | Where-Object { $_.name -notin @("TenantId", "Type") }
+[string]$query  = "$tableName | getschema | project Name=ColumnName, Type=ColumnType"
+$result = Invoke-AzOperationalInsightsQuery -WorkspaceId $LAWResource.properties.customerId -Query $query
 
-# Modify the type of 'MG' column to fix the datatype
-foreach ($column in $columns) {
+$tableColumns = $result.Results | Where-Object { $_.name -notin @("TenantId", "Type") }
+
+# Modify the type of 'MG' column
+foreach ($column in $tableColumns) {
     if ($column.name -eq "MG") {
         $column.type = "guid"
     }
@@ -51,29 +59,35 @@ $customTablePayload = [ordered]@{
         "schema" = [ordered]@{
             "name" = $newTableName
             "tableType" = "CustomLog"
-            "columns" = $columns
+            "columns" = $tableColumns
         }
         "retentionInDays" = 90
         "totalRetentionInDays" = 90
     }
 } | ConvertTo-Json -Depth 10
 
+# Create a file using custom table name and dump the schema
 $customTablePayload | Out-File -FilePath "${newTableName}.json"
-
 
 Get-Content -Path "${newTableName}.json" -Raw
 
-[string]$LATable_API = "${ResourceManagerUrl}subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$WorkspaceName/tables/${newTableName}?api-version=2022-10-01"
+# Check to see if Azure resource already exists. If it does, do nothing. If it does not, create it.    
+$ResourceExists = Invoke-AzRestMethod -Uri ($LATable_API) -Method GET
 
-# Create the new custom table in log analytics
-$sol = Invoke-AzRestMethod -Uri $LATable_API -Method PUT -Payload $customTablePayload
-
-if ($sol.StatusCode -in (200, 202)) {
-    Write-Host "!!! SUCCESSFULLY PROVISIONED AZURE RESOURCE -> `"$newTableName`" !!!" -ForegroundColor Green
+if ($ResourceExists.StatusCode -in (200, 202)) {
+    Write-Host "!!! AZURE RESOURCE -> `"$newTableName`" ALREADY EXISTS !!!" -ForegroundColor Yellow
+    Exit 0
 } else {
-    $r = $sol.Content | ConvertFrom-Json
-    Write-Host $r.error.message -ForegroundColor Red
-    Write-host $r.error.details -ForegroundColor Red
-    Write-Host "!!! FAILED TO PROVISION AZURE RESOURCE -> `"$newTableName`" !!!" -ForegroundColor Red
-    Exit 1
+    # The custom table does not exist in log analytics, create it!
+    $sol = Invoke-AzRestMethod -Uri $LATable_API -Method PUT -Payload $customTablePayload
+
+    if ($sol.StatusCode -in (200, 202)) {
+        Write-Host "!!! SUCCESSFULLY PROVISIONED AZURE RESOURCE -> `"$newTableName`" !!!" -ForegroundColor Green
+    } else {
+        $r = $sol.Content | ConvertFrom-Json
+        Write-Host $r.error.message -ForegroundColor Red
+        Write-host $r.error.details -ForegroundColor Red
+        Write-Host "!!! FAILED TO PROVISION AZURE RESOURCE -> `"$newTableName`" !!!" -ForegroundColor Red
+        Exit 1
+    }
 }
