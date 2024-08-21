@@ -1,22 +1,20 @@
 <#
 Author: DCODEV1702
-Date: 08/20/2024
+Date: 08/21/2024
 
 Cited Source: 
 Inspiration for this tool came directly from @markolauren: https://github.com/markolauren/sentinel/blob/main/tableCreator%20tool/tableCreator.ps1
 
 Description:
-This script will automate the creation of a custom table (CL), data collection endpoint (DCE) and a data collection rule (DCR) 
-in Azure Monitor for a Log Analytics Workspace (LAW) to collect and ingest assessment data from Azure Assessment.
-The script will create the DCE and DCR if they do not already exist and link them with a LAW.
+This script will automate the creation of a custom table (CL) by exporting the schema of a current table directly to a custom table (CL)v2
 
 Usage:
 1. Open a PowerShell or Azure Cloud Shell session w/ Az module installed & the appropriate permissions
 2. Update the variables in the "CHANGE ME" section below
 3. Run the PowerShell script
-    . ./create_customTable.ps1
-    New-CustomSyslogTable -Action Provision -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
-    New-CustomSyslogTable -Action Delete -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
+   ./customTableCreation_tool.ps1
+    - Enter existing table to acquire schema from
+    - Enter name of the custom table that will inherit the schema
 #>
 
 param (
@@ -38,7 +36,7 @@ $result = Invoke-AzOperationalInsightsQuery -WorkspaceId $workspaceId -Query $qu
 
 $columns = $result.Results | Where-Object { $_.name -notin @("TenantId", "Type") }
 
-# Modify the type of 'MG' column
+# Modify the type of 'MG' column to fix the datatype
 foreach ($column in $columns) {
     if ($column.name -eq "MG") {
         $column.type = "guid"
