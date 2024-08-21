@@ -44,7 +44,7 @@ $result = Invoke-AzOperationalInsightsQuery -WorkspaceId $LAWResource.properties
 
 $tableColumns = $result.Results | Where-Object { $_.Name -notin @("TenantId", "Type") }
 
-# Modify the type of 'MG' column
+# Modify the type of 'MG' column [schema dumps MG as string but has to be 'guid' in order for DCR to map the MG data type properly!]
 foreach ($column in $tableColumns) {
     if ($column.Name -eq "MG") {
         $column.Type = "guid"
