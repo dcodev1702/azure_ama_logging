@@ -16,8 +16,6 @@ Usage:
     - Enter existing table to acquire schema from
     - Enter name of the custom table that will inherit the schema
 #>
-
-
 param (
     [string]$tableName = $(Read-Host -Prompt "Enter TableName to get schema from"),
     [string]$newTableName = $(Read-Host -Prompt "Enter new TableName to be created with the same Schema (remember _CL -suffix)")
