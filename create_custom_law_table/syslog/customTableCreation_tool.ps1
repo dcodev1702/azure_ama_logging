@@ -42,12 +42,12 @@ $LAWResource = $LAWResult.Content | ConvertFrom-JSON
 [string]$query  = "$tableName | getschema | project Name=ColumnName, Type=ColumnType"
 $result = Invoke-AzOperationalInsightsQuery -WorkspaceId $LAWResource.properties.customerId -Query $query
 
-$tableColumns = $result.Results | Where-Object { $_.name -notin @("TenantId", "Type") }
+$tableColumns = $result.Results | Where-Object { $_.Name -notin @("TenantId", "Type") }
 
 # Modify the type of 'MG' column
 foreach ($column in $tableColumns) {
-    if ($column.name -eq "MG") {
-        $column.type = "guid"
+    if ($column.Name -eq "MG") {
+        $column.Type = "guid"
     }
 }
 
