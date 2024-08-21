@@ -12,8 +12,8 @@ Usage:
 2. Update the variables in the "CHANGE ME" section below
 3. Run the PowerShell script
     . ./create_system_customTable.ps1
-    New-CustomSyslogTable -Action Provision -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
-    New-CustomSyslogTable -Action Delete -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem" -Location "eastus"
+    New-CustomSyslogTable -Action Provision -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem"
+    New-CustomSyslogTable -Action Delete -ResourceGroup "sec_telem_law_1" -WorkspaceName "aad-telem"
 #>
 function New-CustomSyslogTable {
     [CmdletBinding()]
@@ -22,8 +22,7 @@ function New-CustomSyslogTable {
         [ValidateSet("Provision","Delete")]
         [string]$Action,
         [Parameter(Mandatory=$true)][string]$ResourceGroup,
-        [Parameter(Mandatory=$true)][string]$WorkspaceName,
-        [Parameter(Mandatory=$true)][string]$Location
+        [Parameter(Mandatory=$true)][string]$WorkspaceName
     )
 
     [string]$ResourceManagerUrl = (Get-AzContext).Environment.ResourceManagerUrl
@@ -160,7 +159,7 @@ function New-CustomSyslogTable {
         # ------------------------------------------------------------
         [string]$dcePayload = @"
         {
-            "Location": "$Location",
+            "Location": "$($LAWResource.properties.customerId)",
             "properties": {
                 "networkAcls": {
                     "publicNetworkAccess": "Enabled"
@@ -191,7 +190,7 @@ function New-CustomSyslogTable {
         [string]$dcrPayload = @"
         {
             "name": "$dcrName",
-            "location": "$Location",
+            "location": "$($LAWResource.properties.customerId)",
             "kind": "Linux",
             "properties": {
                 "dataSources": {
