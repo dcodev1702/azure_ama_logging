@@ -31,7 +31,7 @@ param (
 [string]$LAW_API     = "${ResourceManagerUrl}subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/${WorkspaceName}?api-version=2023-09-01"
 
 # ------------------------------------------------------------
-# Get the Log Analytics Workspace (LAW) Resource Id
+# Get the Log Analytics Workspace (LAW) Customer Id
 # ------------------------------------------------------------
 $LAWResult   = Invoke-AzRestMethod -Uri ($LAW_API) -Method GET
 $LAWResource = $LAWResult.Content | ConvertFrom-JSON
