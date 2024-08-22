@@ -190,7 +190,7 @@ function New-CustomSyslogTable {
         [string]$dcrPayload = @"
         {
             "name": "$dcrName",
-            "location": "$($LAWResource.properties.customerId)",
+            "location": "$($LAWResource.location)",
             "kind": "Linux",
             "properties": {
                 "dataSources": {
