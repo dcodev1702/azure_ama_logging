@@ -159,7 +159,7 @@ function New-CustomSyslogTable {
         # ------------------------------------------------------------
         [string]$dcePayload = @"
         {
-            "Location": "$($LAWResource.properties.customerId)",
+            "Location": "$($LAWResource.location)",
             "properties": {
                 "networkAcls": {
                     "publicNetworkAccess": "Enabled"
