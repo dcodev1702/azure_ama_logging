@@ -40,9 +40,7 @@ $LAWResource = $LAWResult.Content | ConvertFrom-JSON
 
 # Construct KQL query to dump the schema of source table ($tableName)
 [string]$query  = "$tableName | getschema | project Name=ColumnName, Type=ColumnType"
-$result = Invoke-AzOperationalInsightsQuery -WorkspaceId $LAWResource.properties.customerId -Query $query
-
-$tableColumns = $result.Results | Where-Object { $_.Name -notin @("TenantId", "Type") }
+$tableColumns = (Invoke-AzOperationalInsightsQuery -WorkspaceId $LAWResource.properties.customerId -Query $query).Results | Where-Object { $_.Name -notin @("TenantId", "Type") }
 
 # Modify columns of data type guid [schema dumps guid columns as string but has to be 'guid' in order for DCR to map the data type properly!]
 # Satisfies tables: Syslog, SecurityEvent, Event, and others.  Not all tables have been tested. This is a workaround to the issue with 'getschema'
