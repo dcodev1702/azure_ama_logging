@@ -24,8 +24,10 @@ param (
 # This script will get the schema of the Syslog table in the specified Log Analytics workspace and exclude specific columns by name
 [string]$ResourceManagerUrl = (Get-AzContext).Environment.ResourceManagerUrl
 [string]$SubscriptionId     = (Get-AzContext).Subscription.Id
-[string]$ResourceGroup      = "sec_telem_law_1"
-[string]$WorkspaceName      = "aad-telem"
+
+# !!!! CHANGE ME AS REQUIRED !!!!
+[string]$ResourceGroup      = "!!! CHANGE ME !!!"
+[string]$WorkspaceName      = "!!! CHANGE ME !!!"
 
 [string]$LATable_API = "${ResourceManagerUrl}subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/$WorkspaceName/tables/${newTableName}?api-version=2022-10-01"
 [string]$LAW_API     = "${ResourceManagerUrl}subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup/providers/Microsoft.OperationalInsights/workspaces/${WorkspaceName}?api-version=2023-09-01"
@@ -36,17 +38,17 @@ param (
 $LAWResult   = Invoke-AzRestMethod -Uri ($LAW_API) -Method GET
 $LAWResource = $LAWResult.Content | ConvertFrom-JSON
 
-
+# Construct KQL query to dump the schema of source table ($tableName)
 [string]$query  = "$tableName | getschema | project Name=ColumnName, Type=ColumnType"
 $result = Invoke-AzOperationalInsightsQuery -WorkspaceId $LAWResource.properties.customerId -Query $query
 
 $tableColumns = $result.Results | Where-Object { $_.Name -notin @("TenantId", "Type") }
 
-# Modify the type of 'MG' column [schema dumps MG as string but has to be 'guid' in order for DCR to map the MG data type properly!]
+# Modify columns of data type guid [schema dumps guid columns as string but has to be 'guid' in order for DCR to map the data type properly!]
+# Satisfies tables: Syslog, SecurityEvent, Event, and others.  Not all tables have been tested. This is a workaround to the issue with 'getschema'
+# reporting guid data types inaccurately as strings.
 foreach ($column in $tableColumns) {
-    if ($column.Name -eq "MG") {
-        $column.Type = "guid"
-    }
+    if ($column.Name -in ("MG", "InterfaceUuid", "LogonGuid", "SourceComputerId", "SubcategoryGuid", "TargetLogonGuid")) { $column.Type = "guid" }
 }
 
 #$columns | ConvertTo-Json
