@@ -77,7 +77,7 @@ if ($ResourceExists.StatusCode -in (200, 202)) {
     Exit 0
 } else {
     # Ask user if they want to continue with creating the new custom table
-    $userChoice = Read-Host "The Azure resource `$newTableName` does not exist. Do you want to create it? (Y/N)"
+    $userChoice = Read-Host "The Azure resource $newTableName does not exist. Do you want to create it? (Y/N)"
     if ($userChoice -eq 'Y' -or $userChoice -eq 'y') {
     # The custom table does not exist in log analytics, create it!
         $sol = Invoke-AzRestMethod -Uri $LATable_API -Method PUT -Payload $customTablePayload
