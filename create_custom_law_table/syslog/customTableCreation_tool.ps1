@@ -43,8 +43,8 @@ $LAWResource = $LAWResult.Content | ConvertFrom-JSON
 $tableColumns = (Invoke-AzOperationalInsightsQuery -WorkspaceId $LAWResource.properties.customerId -Query $query).Results | Where-Object { $_.Name -notin @("TenantId", "Type") }
 
 # Modify columns of data type guid [schema dumps guid columns as string but has to be 'guid' in order for DCR to map the data type properly!]
-# Satisfies tables: Syslog, SecurityEvent, Event, and others.  Not all tables have been tested. This is a workaround to the issue with 'getschema'
-# reporting guid data types inaccurately as strings.
+# Satisfies tables: Syslog, SecurityEvent, Event, and others.  Not all tables have been tested. This is a workaround to the issue between
+# Azure Monitor - Log Analytics use of the 'guid' datatype and Kusto table specifications which uses 'string' datatype.
 foreach ($column in $tableColumns) {
     if ($column.Name -in ("MG", "InterfaceUuid", "LogonGuid", "SourceComputerId", "SubcategoryGuid", "TargetLogonGuid")) { $column.Type = "guid" }
 }
