@@ -28,7 +28,7 @@ $DCR_RuleName = 'CHANGE-TO-YOUR-EXISTING-DCR'  # (Get-AzDataCollectionRule).Name
 
 ## Setup Authorization for REST API
 ```PowerShell
-$token = (Get-AzAccessToken -ResourceUrl $resourceUrl).Token
+$token = (Get-AzAccessToken -AsSecureString -ResourceUrl $resourceUrl).Token
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Authorization","Bearer $token")
 ```
