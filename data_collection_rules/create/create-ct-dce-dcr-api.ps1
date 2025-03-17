@@ -162,7 +162,7 @@ function Invoke-DCR-API {
                         }
                     ]
                 },
-                "retentionInDays": 120,
+                "retentionInDays": 180,
                 "totalRetentionInDays": 365
             }
         }
