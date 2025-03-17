@@ -1,0 +1,57 @@
+{
+    "properties": {
+        "immutableId": "dcr-9c84df938e9b4d1ab7fffb909bf0abf3",
+        "dataCollectionEndpointId": "/subscriptions/b641e8f9-640c-4efe-9e3e-b8a9a00d7a2d/resourceGroups/sec_telem_law_1/providers/Microsoft.Insights/dataCollectionEndpoints/acehw-dce",
+        "streamDeclarations": {
+            "Custom-ACEHW_CL": {
+                "columns": [
+                    {
+                        "name": "TimeGenerated",
+                        "type": "datetime"
+                    },
+                    {
+                        "name": "RawData",
+                        "type": "dynamic"
+                    }
+                ]
+            }
+        },
+        "dataSources": {},
+        "destinations": {
+            "logAnalytics": [
+                {
+                    "workspaceResourceId": "/subscriptions/b641e8f9-640c-4efe-9e3e-b8a9a00d7a2d/resourcegroups/sec_telem_law_1/providers/microsoft.operationalinsights/workspaces/aad-telem",
+                    "workspaceId": "c4186dce-d540-4c9d-84ed-01e02cc92506",
+                    "name": "c4186dced5404c9d84ed01e02cc92506"
+                }
+            ]
+        },
+        "dataFlows": [
+            {
+                "streams": [
+                    "Custom-ACEHW_CL"
+                ],
+                "destinations": [
+                    "c4186dced5404c9d84ed01e02cc92506"
+                ],
+                "transformKql": "source\n| extend TimeGenerated = now()\n| project TimeGenerated, RawData\n",
+                "outputStream": "Custom-ACEHW_CL"
+            }
+        ],
+        "provisioningState": "Succeeded"
+    },
+    "location": "eastus",
+    "id": "/subscriptions/b641e8f9-640c-4efe-9e3e-b8a9a00d7a2d/resourceGroups/sec_telem_law_1/providers/Microsoft.Insights/dataCollectionRules/acehw-dcr",
+    "name": "acehw-dcr",
+    "type": "Microsoft.Insights/dataCollectionRules",
+    "etag": "\"1c00b19d-0000-0100-0000-66adbe7c0000\"",
+    "systemData": {
+        "createdBy": "lireland@moderncomms165424.onmicrosoft.com",
+        "createdByType": "User",
+        "createdAt": "2024-08-02T20:47:26.4405819Z",
+        "lastModifiedBy": "lireland@moderncomms165424.onmicrosoft.com",
+        "lastModifiedByType": "User",
+        "lastModifiedAt": "2024-08-03T05:22:02.9384064Z"
+    },
+    "apiVersion": "2022-06-01"
+}
