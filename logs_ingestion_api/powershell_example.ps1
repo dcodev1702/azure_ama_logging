@@ -1,5 +1,7 @@
 # https://learn.microsoft.com/en-us/azure/azure-monitor/logs/tutorial-logs-ingestion-code?tabs=powershell
 ### Step 0: Set variables required for the rest of the script.
+# Create an application registration and give it the Metrics Publishing RBAC role to the DCR!
+
 # Add-Type -AssemblyName System.Web
 
 # information needed to authenticate to Entra ID and obtain a bearer token
