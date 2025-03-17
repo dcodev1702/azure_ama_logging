@@ -90,7 +90,7 @@ Function Import-AzLACustomTable {
                     }
                     [ordered]@{
                         name = "RawData"
-                        type = "string"
+                        type = "dynamic"
                     }
                 )
             }
