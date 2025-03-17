@@ -14,7 +14,7 @@ Purpose: Create a Custom Log (CL) for a Log Analytics Workspace
 5.  Allows the user to specify the number of columns and corresponding data types for their CL.
 6.  Automatically includes the 2 required columns for all Tables
         TimeGenerated:dateTime
-        RawData:string
+        RawData:dynamic
 7.  Provides the user the ability to send their Custom Log to a specified Log A via REST API.
 
 Usage: 
