@@ -23,7 +23,7 @@ $uri = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token"
 $bearerToken = (Invoke-RestMethod -Uri $uri -Method POST -Body $body -Headers $headers).access_token
 
 ### Step 2: Import JSON data from file into the $staticData variable.
-$staticData = Get-Content -Path "mde_log_details_2025-03-02_093350550_100.json" -Raw
+$staticData = Get-Content -Path "mde_log_01.json" -Raw
 
 ### Step 3: Send the data to the Log Analytics workspace via the DCE.
 $body    = $staticData
