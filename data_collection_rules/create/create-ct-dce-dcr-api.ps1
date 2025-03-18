@@ -28,12 +28,12 @@ function Invoke-DCR-API {
     )
 
     # !!! CHANGE ME !!!
-    [string]$DCRFilePattern = "C:\\Assessment\\AAD\\AzureAssessment\\*.assessmentazurerecs"
+    [string]$DCRFilePattern = "C:\\mde\\mde*.json"
 
     # No need to change these variables
-    [string]$dceName     = "oda-dcr-endpoint"
-    [string]$dcrName     = "oda-dcr-rule"
-    [string]$customTable = "ODAStream_CL"
+    [string]$dceName     = "acedco-dce"
+    [string]$dcrName     = "acedco-dcr"
+    [string]$customTable = "ACEDCO_CL"
 
     [string]$ResourceManagerUrl = (Get-AzContext).Environment.ResourceManagerUrl
     [string]$SubscriptionId     = (Get-AzContext).Subscription.Id
@@ -163,7 +163,7 @@ function Invoke-DCR-API {
                     ]
                 },
                 "retentionInDays": 180,
-                "totalRetentionInDays": 365
+                "totalRetentionInDays": 180
             }
         }
 "@
@@ -264,8 +264,8 @@ function Invoke-DCR-API {
                         "destinations": [
                             "law-destination"
                         ],
-                        "transformKql": "source | extend rowData = split(parse_json(RawData),\"\t\") | project SourceSystem = tostring(rowData[2]) , AssessmentId = toguid(rowData[3]) , AssessmentName ='Azure', RecommendationId = toguid(rowData[4]) , Recommendation = tostring(rowData[5]) , Description = tostring(rowData[6]) , RecommendationResult = tostring(rowData[7]) , TimeGenerated = todatetime(rowData[8]) , FocusAreaId = toguid(rowData[9]) , FocusArea = tostring(rowData[10]) , ActionAreaId = toguid(rowData[11]) , ActionArea = tostring(rowData[12]) , RecommendationScore = toreal(rowData[13]) , RecommendationWeight = toreal(rowData[14]) , Computer = tostring(rowData[15]) , AffectedObjectType = tostring(rowData[17]) , AffectedObjectName = tostring(rowData[19]), AffectedObjectUniqueName = tostring(rowData[20]) , AffectedObjectDetails = tostring(rowData[22]) , AADTenantName = tostring(rowData[24]) , AADTenantId = tostring(rowData[25]) , AADTenantDomain = tostring(rowData[26]) , Resource = tostring(rowData[27]) , Technology = tostring(rowData[28]) , CustomData = tostring(rowData[23])",
-                        "outputStream": "Microsoft-AzureAssessmentRecommendation"
+                        "transformKql": "source | extend rd = parse_json(RawData) | extend TimeGenerated = now() | project TimeGenerated, rd",
+                        "outputStream": "Custom-$customTable",
                     }
                 ]
             }
