@@ -1,0 +1,185 @@
+{
+  "properties": {
+    "immutableId": "dcr-32b5834d471d460fb7888034fa7bc7b9",
+    "dataCollectionEndpointId": "/subscriptions/4260a1bd-84f2-4114-8197-2bbf9a9350a1/resourceGroups/RCC-E/providers/Microsoft.Insights/dataCollectionEndpoints/acedco-dce",
+    "streamDeclarations": {
+      "Custom-ACEDCO_CL": {
+        "columns": [
+          {
+            "name": "id",
+            "type": "string"
+          },
+          {
+            "name": "incidentId",
+            "type": "int"
+          },
+          {
+            "name": "investigationId",
+            "type": "int"
+          },
+          {
+            "name": "assignedTo",
+            "type": "string"
+          },
+          {
+            "name": "severity",
+            "type": "dynamic"
+          },
+          {
+            "name": "status",
+            "type": "string"
+          },
+          {
+            "name": "classification",
+            "type": "string"
+          },
+          {
+            "name": "determination",
+            "type": "string"
+          },
+          {
+            "name": "investigationState",
+            "type": "string"
+          },
+          {
+            "name": "detectionSource",
+            "type": "string"
+          },
+          {
+            "name": "detectorId",
+            "type": "string"
+          },
+          {
+            "name": "category",
+            "type": "dynamic"
+          },
+          {
+            "name": "threatFamilyName",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "alertCreationTime",
+            "type": "datetime"
+          },
+          {
+            "name": "firstEventTime",
+            "type": "datetime"
+          },
+          {
+            "name": "lastEventTime",
+            "type": "datetime"
+          },
+          {
+            "name": "lastUpdateTime",
+            "type": "datetime"
+          },
+          {
+            "name": "resolvedTime",
+            "type": "string"
+          },
+          {
+            "name": "machineId",
+            "type": "string"
+          },
+          {
+            "name": "computerDnsName",
+            "type": "datetime"
+          },
+          {
+            "name": "rbacGroupName",
+            "type": "string"
+          },
+          {
+            "name": "aadTenantId",
+            "type": "string"
+          },
+          {
+            "name": "threatName",
+            "type": "string"
+          },
+          {
+            "name": "mitreTechniques",
+            "type": "dynamic"
+          },
+          {
+            "name": "relatedUser",
+            "type": "string"
+          },
+          {
+            "name": "loggedOnUsers",
+            "type": "dynamic"
+          },
+          {
+            "name": "comments",
+            "type": "dynamic"
+          },
+          {
+            "name": "evidence",
+            "type": "dynamic"
+          },
+          {
+            "name": "domains",
+            "type": "dynamic"
+          }
+        ]
+      }
+    },
+    "dataSources": {
+      "logFiles": [
+          {
+              "streams": [
+                  "Custom-ACEDCO_CL"
+              ],
+              "filePatterns": [
+                  "C:\\mde\\mde*.json"
+              ],
+              "format": "json",
+              "name": "Custom-ACEDCO_CL"
+          }
+      ]
+    },
+    "destinations": {
+      "logAnalytics": [
+        {
+          "workspaceResourceId": "/subscriptions/4260a1bd-84f2-4114-8197-2bbf9a9350a1/resourcegroups/rcc-e/providers/microsoft.operationalinsights/workspaces/rccelab-law",
+          "workspaceId": "1f7b9123-67b5-42bd-9128-169618b26d67",
+          "name": "1f7b912367b542bd9128169618b26d67"
+        }
+      ]
+    },
+    "dataFlows": [
+      {
+        "streams": [
+          "Custom-ACEDCO_CL"
+        ],
+        "destinations": [
+          "1f7b912367b542bd9128169618b26d67"
+        ],
+        "transformKql": "source | extend TimeGenerated = now() | project-rename threatTitle = ['title']\n",
+        "outputStream": "Custom-ACEDCO_CL"
+      }
+    ],
+    "provisioningState": "Succeeded"
+  },
+  "location": "eastus2",
+  "id": "/subscriptions/4260a1bd-84f2-4114-8197-2bbf9a9350a1/resourceGroups/RCC-E/providers/Microsoft.Insights/dataCollectionRules/acedco-dcr",
+  "name": "acedco-dcr",
+  "type": "Microsoft.Insights/dataCollectionRules",
+  "etag": "\"0a00f92e-0000-0200-0000-67d907780000\"",
+  "systemData": {
+    "createdBy": "lireland@cyberloriangcc.onmicrosoft.com",
+    "createdByType": "User",
+    "createdAt": "2025-03-18T05:41:10.9998981Z",
+    "lastModifiedBy": "lireland@cyberloriangcc.onmicrosoft.com",
+    "lastModifiedByType": "User",
+    "lastModifiedAt": "2025-03-18T05:41:10.9998981Z"
+  }
+}
