@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Date: 14 AUG 2025
+# Author(s): DCODEV1702 & Claude.AI
 # Universal AMA Cache Check Script for Ubuntu and RHEL
 # This script checks both log files and XML configuration files
 
