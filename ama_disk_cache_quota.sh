@@ -3,7 +3,6 @@
 # Date: 14 AUG 2025
 # Author(s): DCODEV1702 & Claude.AI
 # Universal AMA Cache Check Script for Ubuntu and RHEL
-# This script checks both log files and XML configuration files
 
 # Color codes for better readability
 RED='\033[0;31m'
@@ -15,12 +14,8 @@ NC='\033[0m' # No Color
 # Path to AMA log file
 LOG_FILE="/var/opt/microsoft/azuremonitoragent/log/mdsd.info"
 
-# Path to XML configuration files (RHEL)
-XML_CONFIG_PATH="/etc/opt/microsoft/azuremonitoragent/config-cache"
-XML_FILES=(
-    "$XML_CONFIG_PATH/mcsconfig.lkg.xml"
-    "$XML_CONFIG_PATH/mcsconfig.latest.xml"
-)
+# Path to configuration files
+CONFIG_CHUNKS_PATH="/etc/opt/microsoft/azuremonitoragent/config-cache/configchunks"
 
 # Function to log output with color
 log_message() {
@@ -34,9 +29,9 @@ print_separator() {
     echo "════════════════════════════════════════════════════════════════════"
 }
 
-# Function to check disk quota in log file (Ubuntu method)
+# Function to check disk quota in log file (Old method)
 check_log_file() {
-    log_message "$BLUE" "\n📋 Checking AMA Log File (Ubuntu method)..."
+    log_message "$BLUE" "\n📋 Checking AMA Log File..."
     
     if [[ ! -f "$LOG_FILE" ]]; then
         log_message "$YELLOW" "   ⚠ AMA log file not found: $LOG_FILE"
@@ -62,44 +57,54 @@ check_log_file() {
     return 0
 }
 
-# Function to check disk quota in XML config files (RHEL method)
-check_xml_config() {
-    log_message "$BLUE" "\n📋 Checking XML Configuration Files (RHEL method)..."
+# Function to check disk quota in configuration chunks (correct method for AMA)
+check_config_chunks() {
+    log_message "$BLUE" "\n📋 Checking AMA Configuration Chunks..."
     
     local found=0
+    local config_file=""
+    DISK_QUOTA=""
     
-    for xml_file in "${XML_FILES[@]}"; do
-        if [[ -f "$xml_file" ]]; then
-            log_message "$NC" "   Checking: $(basename $xml_file)"
-            
-            # Extract diskQuotaInMB from AgentResourceUsage
-            DISK_QUOTA=$(grep -oP 'AgentResourceUsage.*diskQuotaInMB\s*=\s*"\K[0-9]+' "$xml_file" 2>/dev/null)
-            
-            if [[ -n "$DISK_QUOTA" ]]; then
-                log_message "$GREEN" "   ✓ Found AgentResourceUsage diskQuotaInMB: ${DISK_QUOTA} MB"
+    # Check if config chunks directory exists
+    if [[ ! -d "$CONFIG_CHUNKS_PATH" ]]; then
+        log_message "$YELLOW" "   ⚠ Config chunks directory not found: $CONFIG_CHUNKS_PATH"
+        return 1
+    fi
+    
+    # Search for MaxDiskQuotaInMB in all JSON files
+    for json_file in "$CONFIG_CHUNKS_PATH"/*.json; do
+        if [[ -f "$json_file" ]]; then
+            if grep -q "MaxDiskQuotaInMB" "$json_file" 2>/dev/null; then
+                config_file="$json_file"
                 
-                # Convert to GB for display if >= 1000 MB
-                if [[ $DISK_QUOTA -ge 1000 ]]; then
-                    DISK_QUOTA_GB=$(echo "scale=1; $DISK_QUOTA/1000" | bc 2>/dev/null || echo "$((DISK_QUOTA/1000))")
-                    log_message "$GREEN" "   ✓ Cache Size: ${DISK_QUOTA_GB} GB (${DISK_QUOTA} MB)"
+                if command -v jq &> /dev/null; then
+                    # Use jq if available for clean parsing
+                    DISK_QUOTA=$(grep -h "MaxDiskQuotaInMB" "$json_file" 2>/dev/null | jq -r '.settings[] | select(.name == "MaxDiskQuotaInMB") | .value' 2>/dev/null)
                 else
-                    log_message "$GREEN" "   ✓ Cache Size: ${DISK_QUOTA} MB"
+                    # Fallback method without jq
+                    DISK_QUOTA=$(grep -A2 "MaxDiskQuotaInMB" "$json_file" | grep -oP '"value"\s*:\s*"\K[0-9]+' | head -1)
                 fi
                 
-                # Also check for HeartBeat diskQuotaInMB (usually much smaller)
-                HB_QUOTA=$(grep -oP 'HeartBeat.*diskQuotaInMB\s*=\s*"\K[0-9]+' "$xml_file" 2>/dev/null)
-                if [[ -n "$HB_QUOTA" ]]; then
-                    log_message "$NC" "   ℹ HeartBeat diskQuotaInMB: ${HB_QUOTA} MB (separate allocation)"
+                if [[ -n "$DISK_QUOTA" ]] && [[ "$DISK_QUOTA" =~ ^[0-9]+$ ]]; then
+                    log_message "$GREEN" "   ✓ Found MaxDiskQuotaInMB: ${DISK_QUOTA} MB (Custom Configuration)"
+                    log_message "$NC" "   📄 Config File: $(basename $config_file)"
+                    log_message "$NC" "   📁 Full Path: $config_file"
+                    found=1
+                    break
                 fi
-                
-                found=1
-            else
-                log_message "$YELLOW" "   ⚠ No diskQuotaInMB found in $(basename $xml_file)"
             fi
         fi
     done
     
-    return $((1-found))
+    if [[ $found -eq 0 ]]; then
+        # Use default value
+        DISK_QUOTA=10240  # 10GB default in MB
+        log_message "$BLUE" "   ℹ No custom MaxDiskQuotaInMB found in $CONFIG_CHUNKS_PATH/*.json"
+        log_message "$GREEN" "   ✓ Using AMA default: ${DISK_QUOTA} MB (10 GB)"
+        return 0  # This is still a success, just using defaults
+    fi
+    
+    return 0
 }
 
 # Function to get actual cache usage
@@ -207,26 +212,42 @@ show_system_info
 LOG_RESULT=1
 XML_RESULT=1
 
-# Check both methods
+# Main execution
+clear
+print_separator
+log_message "$GREEN" "        🔍 Azure Monitor Agent (AMA) Cache Configuration Check"
+print_separator
+
+# Show system information
+show_system_info
+
+# Initialize results
+LOG_RESULT=1
+CONFIG_RESULT=1
+
+# Check log file (Ubuntu method - kept for compatibility)
 check_log_file
 LOG_RESULT=$?
 
-check_xml_config
-XML_RESULT=$?
+# Check configuration chunks (correct method for AMA)
+check_config_chunks
+CONFIG_RESULT=$?
 
-# Get actual cache usage (now sets global variable TOTAL_CACHE_MB)
+# Get actual cache usage (sets global variable TOTAL_CACHE_MB)
 get_cache_usage
 
 # Summary
 print_separator
 log_message "$BLUE" "\n📊 SUMMARY:"
 
-if [[ $LOG_RESULT -eq 0 ]] || [[ $XML_RESULT -eq 0 ]]; then
-    if [[ $XML_RESULT -eq 0 ]]; then
-        log_message "$GREEN" "   ✅ AMA Disk Cache Configuration: ${DISK_QUOTA} MB"
+if [[ $CONFIG_RESULT -eq 0 ]] || [[ $LOG_RESULT -eq 0 ]]; then
+    # Prefer config chunks result as it's the authoritative source
+    if [[ $CONFIG_RESULT -eq 0 ]]; then
         if [[ $DISK_QUOTA -ge 1000 ]]; then
             DISK_QUOTA_GB=$(echo "scale=1; $DISK_QUOTA/1000" | bc 2>/dev/null || echo "$((DISK_QUOTA/1000))")
-            log_message "$GREEN" "   ✅ Configured Limit: ${DISK_QUOTA_GB} GB (${DISK_QUOTA} MB)"
+            log_message "$GREEN" "   ✅ AMA Disk Cache Configured: ${DISK_QUOTA_GB} GB (${DISK_QUOTA} MB)"
+        else
+            log_message "$GREEN" "   ✅ AMA Disk Cache Configured: ${DISK_QUOTA} MB"
         fi
     elif [[ $LOG_RESULT -eq 0 ]]; then
         log_message "$GREEN" "   ✅ AMA Disk Cache Configuration: ${CACHE_MB} MB"
@@ -273,11 +294,11 @@ if [[ $LOG_RESULT -eq 0 ]] || [[ $XML_RESULT -eq 0 ]]; then
     fi
     
     log_message "$NC" "\n   Detection Method:"
-    [[ $LOG_RESULT -eq 0 ]] && log_message "$GREEN" "   • Log file (Ubuntu-style) ✓"
-    [[ $XML_RESULT -eq 0 ]] && log_message "$GREEN" "   • XML configuration (RHEL-style) ✓"
+    [[ $CONFIG_RESULT -eq 0 ]] && log_message "$GREEN" "   • Configuration chunks (authoritative) ✓"
+    [[ $LOG_RESULT -eq 0 ]] && log_message "$GREEN" "   • Log file (Old-style) ✓"
 else
     log_message "$YELLOW" "   ⚠ Could not determine cache configuration"
-    log_message "$NC" "   The agent may be using the default value of 10GB (10,000 MB)"
+    log_message "$NC" "   The agent may be using the default value of 10GB (10,240 MB)"
     
     # Still show actual usage if found
     if [[ "$TOTAL_CACHE_MB" -gt 0 ]]; then
@@ -287,7 +308,7 @@ else
     
     log_message "$NC" "\n   Troubleshooting tips:"
     log_message "$NC" "   • Ensure AMA service is running: systemctl status azuremonitoragent"
-    log_message "$NC" "   • Check for config files: ls -la $XML_CONFIG_PATH/"
+    log_message "$NC" "   • Check for config chunks: ls -la $CONFIG_CHUNKS_PATH/"
     log_message "$NC" "   • Review logs: tail -f $LOG_FILE"
 fi
 
